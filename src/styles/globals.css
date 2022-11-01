@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.withHover {
+  @apply transform cursor-pointer duration-150 ease-in-out hover:opacity-60;
+}
+
+.img {
+  @apply absolute top-0 left-0 h-[100%] w-[100%] object-cover;
+}
