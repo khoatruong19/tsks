@@ -20,13 +20,13 @@ const Sidebar = () => {
           <div className="grid place-items-center rounded-md bg-slate-300 p-2">
             <BookOpenIcon className="h-5 w-5" />
           </div>
-          <span className="font-semibold text-textColor">School</span>
+          <span className="text-lg font-semibold text-textColor">School</span>
         </div>
         <div className="withHover flex items-center gap-3 py-4 pl-8">
           <div className="grid place-items-center rounded-md bg-slate-300 p-2">
             <BookOpenIcon className="h-5 w-5" />
           </div>
-          <span className="font-semibold text-textColor">School</span>
+          <span className="text-lg font-semibold text-textColor">School</span>
         </div>
       </div>
     </div>
