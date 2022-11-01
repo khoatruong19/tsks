@@ -1,7 +1,7 @@
 import { BookOpenIcon } from "@heroicons/react/24/solid";
 import { useAtom } from "jotai";
 import React from "react";
-import { openSidebarAtom } from "../store";
+import { openSidebarAtom } from "../../store";
 
 const Sidebar = () => {
   const [openSidebar] = useAtom(openSidebarAtom);

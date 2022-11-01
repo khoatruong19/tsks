@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import React, { FC, PropsWithChildren } from "react";
-import Header from "../Header";
+import Header from "./header/Header";
 
 const MainLayout: FC<PropsWithChildren> = ({ children }) => {
   const router = useRouter();

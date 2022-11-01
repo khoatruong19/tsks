@@ -7,7 +7,7 @@ import {
   Squares2X2Icon,
 } from "@heroicons/react/24/solid";
 import { useAtom } from "jotai";
-import { openSidebarAtom } from "../store";
+import { openSidebarAtom } from "../../../store";
 import ActiveLink from "./ActiveLink";
 
 interface IProps {
