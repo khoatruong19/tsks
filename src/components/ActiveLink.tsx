@@ -33,8 +33,8 @@ const ActiveLink = ({
 
       const newClassName =
         linkPathname === activePathname
-          ? `${childClassName} ${activeClassName}`.trim()
-          : childClassName;
+          ? `${childClassName}  ${activeClassName}`.trim()
+          : `${childClassName} text-slate-500`;
 
       if (newClassName !== className) {
         setClassName(newClassName);
@@ -50,6 +50,12 @@ const ActiveLink = ({
     setClassName,
     className,
   ]);
+
+  console.log(
+    React.cloneElement(child, {
+      className: className || null,
+    })
+  );
 
   return (
     <Link {...props} legacyBehavior>
