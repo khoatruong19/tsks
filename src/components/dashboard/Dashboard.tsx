@@ -40,8 +40,14 @@ const Dashboard = () => {
             </div>
 
             <div className="flex flex-col gap-5">
-              <CollectionToday />
-              <CollectionToday />
+              {viewMode === 0 ? (
+                <>
+                  <CollectionToday />
+                  <CollectionToday />
+                </>
+              ) : (
+                <p>Statis</p>
+              )}
             </div>
           </div>
         </div>
