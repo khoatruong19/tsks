@@ -15,7 +15,7 @@ const CollectionToday = () => {
 
   useEffect(() => {
     containerRef.current && autoAnimate(containerRef.current);
-  }, [parent]);
+  }, [containerRef]);
 
   const reveal = () => setShowTasks((prev) => !prev);
 
