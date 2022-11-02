@@ -40,10 +40,7 @@ const Header = ({ hasSidebar }: IProps) => {
         </div>
 
         <div className="hidden items-center gap-5 lg:inline-flex">
-          <div
-            className="withHover grid h-7 w-7 place-items-center rounded-md bg-gradient-to-r from-indigo-500 
-                to-tertiaryColor shadow-md"
-          >
+          <div className="withHover gradientBgColor grid h-7 w-7 place-items-center rounded-md shadow-md">
             <PlusIcon className="h-5 w-5 text-white" />
           </div>
           <div>
