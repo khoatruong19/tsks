@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Sidebar from "../layout/Sidebar";
 import CollectionToday from "./CollectionToday";
+import WeeklyGoal from "./WeeklyGoal";
 
 const Dashboard = () => {
   const [viewMode, setViewMode] = useState<0 | 1>(0);
@@ -20,7 +21,7 @@ const Dashboard = () => {
                   className={`${
                     viewMode === 0
                       ? "bg-dashboardSecondaryColor"
-                      : "border-2 border-secondaryColor bg-transparent"
+                      : "border-2 border-secondaryColor bg-transparent shadow-md"
                   } dashboardBtn`}
                   onClick={() => viewMode !== 0 && setViewMode(0)}
                 >
@@ -30,7 +31,7 @@ const Dashboard = () => {
                   className={`${
                     viewMode === 1
                       ? "bg-dashboardSecondaryColor"
-                      : "border-2 border-secondaryColor bg-transparent"
+                      : "border-2 border-secondaryColor bg-transparent shadow-md"
                   } dashboardBtn`}
                   onClick={() => viewMode !== 1 && setViewMode(1)}
                 >
@@ -46,7 +47,9 @@ const Dashboard = () => {
                   <CollectionToday />
                 </>
               ) : (
-                <p>Statis</p>
+                <>
+                  <WeeklyGoal />
+                </>
               )}
             </div>
           </div>
