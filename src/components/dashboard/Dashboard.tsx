@@ -1,3 +1,4 @@
+import { EllipsisHorizontalIcon } from "@heroicons/react/24/solid";
 import { useState } from "react";
 import Sidebar from "../layout/Sidebar";
 import CollectionToday from "./CollectionToday";
@@ -13,7 +14,12 @@ const Dashboard = () => {
         <div className="mx-auto h-[100%] w-full max-w-3xl overflow-y-scroll  pb-10 scrollbar-hide">
           <div className="pt-10">
             <div className="mb-6 flex flex-col gap-12">
-              <h3 className="text-2xl font-bold text-textColor">Dashboard</h3>
+              <div className="flex items-center justify-between  text-textColor">
+                <h3 className="text-3xl font-bold">Dashboard</h3>
+                <div>
+                  <EllipsisHorizontalIcon className="withHover h-8 w-8" />
+                </div>
+              </div>
               <h1 className="text-4xl font-bold leading-tight text-textColor">
                 Good morning, <br /> Khoa Truong
               </h1>
