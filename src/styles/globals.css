@@ -46,7 +46,6 @@
   width: 30px;
   background-color: transparent;
   border-radius: 10px;
-  border: solid red;
 }
 
 .container input:checked ~ .checkmark {

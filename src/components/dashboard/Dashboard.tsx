@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Sidebar from "../layout/Sidebar";
 import CollectionToday from "./CollectionToday";
+import StatisticChart from "./StatisticChart";
 import WeeklyGoal from "./WeeklyGoal";
 
 const Dashboard = () => {
@@ -49,6 +50,7 @@ const Dashboard = () => {
               ) : (
                 <>
                   <WeeklyGoal />
+                  <StatisticChart />
                 </>
               )}
             </div>

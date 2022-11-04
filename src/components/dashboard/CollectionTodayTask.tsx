@@ -5,7 +5,7 @@ const CollectionTodayTask = () => {
     <div className="flex gap-4 p-4">
       <label className="container">
         <input type="checkbox" />
-        <span className="checkmark"></span>
+        <span className="checkmark border-[3px] border-primaryColor"></span>
       </label>
       <div>
         <p className="text-lg font-medium text-textColor/95">Do homeword</p>
