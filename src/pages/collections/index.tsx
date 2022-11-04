@@ -7,6 +7,7 @@ import MainLayout from "../../components/layout/MainLayout";
 
 const Collections: NextPage = () => {
   const [viewMode, setViewMode] = useState<0 | 1>(0);
+
   return (
     <>
       <Head>

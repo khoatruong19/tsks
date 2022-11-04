@@ -4,9 +4,11 @@ import Sidebar from "../layout/Sidebar";
 import CollectionToday from "./CollectionToday";
 import StatisticChart from "./StatisticChart";
 import WeeklyGoal from "./WeeklyGoal";
+import { signOut, useSession } from "next-auth/react";
 
 const Dashboard = () => {
   const [viewMode, setViewMode] = useState<0 | 1>(0);
+  const { data } = useSession();
   return (
     <div className="flex">
       <Sidebar />
@@ -15,13 +17,15 @@ const Dashboard = () => {
           <div className="pt-10">
             <div className="mb-6 flex flex-col gap-12">
               <div className="flex items-center justify-between  text-textColor">
-                <h3 className="text-3xl font-bold">Dashboard</h3>
+                <h3 className="text-3xl font-bold" onClick={() => signOut()}>
+                  Dashboard
+                </h3>
                 <div>
                   <EllipsisHorizontalIcon className="withHover h-8 w-8" />
                 </div>
               </div>
-              <h1 className="text-4xl font-bold leading-tight text-textColor">
-                Good morning, <br /> Khoa Truong
+              <h1 className="text-4xl font-bold capitalize leading-tight text-textColor">
+                Good morning, <br /> {data?.user?.name}
               </h1>
               <div className="flex items-center gap-4">
                 <button

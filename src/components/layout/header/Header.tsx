@@ -7,6 +7,8 @@ import {
   Squares2X2Icon,
 } from "@heroicons/react/24/solid";
 import { useAtom } from "jotai";
+import { useSession } from "next-auth/react";
+import Image from "next/image";
 import { openSidebarAtom } from "../../../store";
 import ActiveLink from "./ActiveLink";
 
@@ -16,6 +18,7 @@ interface IProps {
 
 const Header = ({ hasSidebar }: IProps) => {
   const [openSidebar, setOpenSidebar] = useAtom(openSidebarAtom);
+  const { data } = useSession();
   return (
     <div className="w-full border-b-[1px] border-black/20 bg-secondaryColor px-6 py-4">
       <div className="flex items-center justify-between ">
@@ -49,7 +52,14 @@ const Header = ({ hasSidebar }: IProps) => {
           <div>
             <BellIcon className="h-6 w-6 text-white" />
           </div>
-          <div className="relative h-8 w-8 rounded-full bg-blue-400"></div>
+          <div className="relative h-8 w-8 overflow-hidden rounded-full">
+            <Image
+              alt="avatar"
+              src={data?.user?.image || ""}
+              fill
+              className="absolute"
+            />
+          </div>
         </div>
       </div>
     </div>
