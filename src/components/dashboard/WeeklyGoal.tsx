@@ -1,8 +1,9 @@
 import autoAnimate from "@formkit/auto-animate";
 import { BookOpenIcon, CalendarDaysIcon } from "@heroicons/react/24/solid";
 import { useEffect, useRef } from "react";
+import { getCircumfence } from "../../utils/constants";
 
-const circumference = 30 * 2 * Math.PI;
+const circumference = getCircumfence(30);
 
 const WeeklyGoal = () => {
   const containerRef = useRef<HTMLDivElement>(null);
