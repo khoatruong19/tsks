@@ -7,6 +7,7 @@ import {
 import { useState, useRef, useEffect } from "react";
 import autoAnimate from "@formkit/auto-animate";
 import CollectionTodayTask from "./CollectionTodayTask";
+import ChevronController from "../others/ChevronController";
 
 const CollectionToday = () => {
   const [showTasks, setShowTasks] = useState(true);
@@ -31,16 +32,10 @@ const CollectionToday = () => {
           </div>
           <span className="text-xl font-semibold text-textColor">School</span>
         </div>
-        <div
-          className="withHover text-textColor"
-          onClick={() => setShowTasks((prev) => !prev)}
-        >
-          {showTasks ? (
-            <ChevronDownIcon className="h-5 w-5" />
-          ) : (
-            <ChevronUpIcon className="h-5 w-5" />
-          )}
-        </div>
+        <ChevronController
+          show={showTasks}
+          clickHandler={() => setShowTasks((prev) => !prev)}
+        />
       </div>
       {showTasks && (
         <div className="border-b border-dashboardSecondaryColor/50 bg-secondaryColor">

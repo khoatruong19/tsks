@@ -22,7 +22,7 @@ const CollectionDetail = () => {
           <div className="h-[calc(100vh_-_65px)] w-full overflow-hidden">
             <div className="mx-auto h-[100%] w-full max-w-3xl overflow-y-scroll  pb-10 scrollbar-hide">
               <div className="pt-10">
-                <div className="mb-6 flex flex-col gap-12">
+                <div className="mb-6 flex flex-col gap-12 overflow-hidden">
                   <div className="flex items-center justify-between  text-textColor">
                     <div className="flex items-center gap-4">
                       <div className="withHover rounded-lg bg-secondaryColor p-3">
