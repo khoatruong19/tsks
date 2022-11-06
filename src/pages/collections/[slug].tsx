@@ -1,6 +1,11 @@
-import { EllipsisHorizontalIcon } from "@heroicons/react/24/solid";
+import {
+  ChevronLeftIcon,
+  EllipsisHorizontalIcon,
+  PlusIcon,
+} from "@heroicons/react/24/solid";
 import Head from "next/head";
 import { useState } from "react";
+import TodoTasksContainer from "../../components/collections/TodoTasksContainer";
 import MainLayout from "../../components/layout/MainLayout";
 import Sidebar from "../../components/layout/Sidebar";
 
@@ -19,36 +24,27 @@ const CollectionDetail = () => {
               <div className="pt-10">
                 <div className="mb-6 flex flex-col gap-12">
                   <div className="flex items-center justify-between  text-textColor">
-                    <h3 className="text-3xl font-bold">Dashboard</h3>
+                    <div className="flex items-center gap-4">
+                      <div className="withHover rounded-lg bg-secondaryColor p-3">
+                        <ChevronLeftIcon className="h-6 w-6 text-textColor" />
+                      </div>
+                      <h3 className="text-3xl font-bold">School</h3>
+                    </div>
                     <div>
                       <EllipsisHorizontalIcon className="withHover h-8 w-8" />
                     </div>
                   </div>
-                  <h1 className="text-4xl font-bold leading-tight text-textColor">
-                    Good morning, <br /> Khoa Truong
-                  </h1>
-                  <div className="flex items-center gap-4">
-                    <button
-                      className={`${
-                        viewMode === 0
-                          ? "bg-dashboardSecondaryColor"
-                          : "border-2 border-secondaryColor bg-transparent shadow-md"
-                      } dashboardBtn`}
-                      onClick={() => viewMode !== 0 && setViewMode(0)}
-                    >
-                      Daily Overview
-                    </button>
-                    <button
-                      className={`${
-                        viewMode === 1
-                          ? "bg-dashboardSecondaryColor"
-                          : "border-2 border-secondaryColor bg-transparent shadow-md"
-                      } dashboardBtn`}
-                      onClick={() => viewMode !== 1 && setViewMode(1)}
-                    >
-                      Statistic
-                    </button>
+
+                  <div className="withHover flex w-full items-center gap-3 rounded-2xl border-[1px] border-secondaryColor/80 p-3">
+                    <div className="w-fit rounded-lg bg-tertiaryColor p-2">
+                      <PlusIcon className="h-5 w-5 text-textColor" />
+                    </div>
+                    <p className="text-lg font-medium text-white/60">
+                      Add a task
+                    </p>
                   </div>
+
+                  <TodoTasksContainer />
                 </div>
               </div>
             </div>

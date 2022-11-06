@@ -12,7 +12,7 @@ const CollectionCard = () => {
       className="withHover rounded-3xl bg-secondaryColor"
       onClick={() => router.push("/collections/asd")}
     >
-      <div className="p-4 md:p-5">
+      <div className=" p-4 md:p-6">
         <div className="mb-10 grid max-w-fit place-items-center rounded-md bg-slate-300 p-2">
           <BookOpenIcon className="h-5 w-5" />
         </div>
