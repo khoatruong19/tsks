@@ -9,7 +9,7 @@ import {
 import { useAtom } from "jotai";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { openSidebarAtom } from "../../../store";
+import { openSidebarAtom, openTaskModal } from "../../../store";
 import ActiveLink from "./ActiveLink";
 
 interface IProps {
@@ -18,6 +18,7 @@ interface IProps {
 
 const Header = ({ hasSidebar }: IProps) => {
   const [openSidebar, setOpenSidebar] = useAtom(openSidebarAtom);
+  const [_, setOpenModal] = useAtom(openTaskModal);
   const { data } = useSession();
   return (
     <div className="w-full border-b-[1px] border-black/20 bg-secondaryColor px-6 py-4">
@@ -43,7 +44,10 @@ const Header = ({ hasSidebar }: IProps) => {
         </div>
 
         <div className="hidden items-center gap-5 lg:inline-flex">
-          <div className="withHover gradientBgColor grid h-7 w-7 place-items-center rounded-md shadow-md">
+          <div
+            className="withHover gradientBgColor grid h-7 w-7 place-items-center rounded-md shadow-md"
+            onClick={() => setOpenModal("Add")}
+          >
             <PlusIcon className="h-5 w-5 text-white" />
           </div>
           <div>
