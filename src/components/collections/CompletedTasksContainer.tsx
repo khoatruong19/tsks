@@ -7,7 +7,7 @@ import {
 import { useState } from "react";
 import TodoTaskCard from "./TodoTaskCard";
 
-const TodoTasksContainer = () => {
+const CompletedTasksContainer = () => {
   const [languages, setLanguages] = useState<string[]>([
     "Javascript",
     "Python",
@@ -26,7 +26,9 @@ const TodoTasksContainer = () => {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold text-textColor">Tasks - 8</h1>
+      <h1 className="m-0 text-2xl font-semibold text-textColor">
+        Completed - 8
+      </h1>
       <div className="flex flex-col gap-2.5 py-5">
         <DndContext onDragEnd={handleDragEnd}>
           <SortableContext
@@ -34,7 +36,7 @@ const TodoTasksContainer = () => {
             strategy={verticalListSortingStrategy}
           >
             {languages.map((item) => (
-              <TodoTaskCard key={item} content={item} />
+              <TodoTaskCard done key={item} content={item} />
             ))}
           </SortableContext>
         </DndContext>
@@ -43,4 +45,4 @@ const TodoTasksContainer = () => {
   );
 };
 
-export default TodoTasksContainer;
+export default CompletedTasksContainer;

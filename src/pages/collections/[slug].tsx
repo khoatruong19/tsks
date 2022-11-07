@@ -4,13 +4,12 @@ import {
   PlusIcon,
 } from "@heroicons/react/24/solid";
 import Head from "next/head";
-import { useState } from "react";
+import CompletedTasksContainer from "../../components/collections/CompletedTasksContainer";
 import TodoTasksContainer from "../../components/collections/TodoTasksContainer";
 import MainLayout from "../../components/layout/MainLayout";
 import Sidebar from "../../components/layout/Sidebar";
 
 const CollectionDetail = () => {
-  const [viewMode, setViewMode] = useState<0 | 1>(0);
   return (
     <>
       <Head>
@@ -45,6 +44,7 @@ const CollectionDetail = () => {
                   </div>
 
                   <TodoTasksContainer />
+                  <CompletedTasksContainer />
                 </div>
               </div>
             </div>

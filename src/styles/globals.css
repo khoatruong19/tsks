@@ -72,3 +72,8 @@
   -ms-transform: rotate(45deg);
   transform: rotate(45deg);
 }
+
+.lineThroughWhite {
+  text-decoration-color: white;
+  text-decoration-thickness: 2px;
+}
