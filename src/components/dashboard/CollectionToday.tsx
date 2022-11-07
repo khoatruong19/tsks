@@ -1,13 +1,9 @@
-import { ChevronRightIcon } from "@heroicons/react/24/outline";
-import {
-  BookOpenIcon,
-  ChevronDownIcon,
-  ChevronUpIcon,
-} from "@heroicons/react/24/solid";
-import { useState, useRef, useEffect } from "react";
 import autoAnimate from "@formkit/auto-animate";
-import CollectionTodayTask from "./CollectionTodayTask";
+import { ChevronRightIcon } from "@heroicons/react/24/outline";
+import { BookOpenIcon } from "@heroicons/react/24/solid";
+import { useEffect, useRef, useState } from "react";
 import ChevronController from "../others/ChevronController";
+import CollectionTodayTask from "./CollectionTodayTask";
 
 const CollectionToday = () => {
   const [showTasks, setShowTasks] = useState(true);

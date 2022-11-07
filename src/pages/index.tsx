@@ -2,8 +2,21 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import MainLayout from "../components/layout/MainLayout";
 import Dashboard from "../components/dashboard/Dashboard";
+import { useSession } from "next-auth/react";
+import Loading from "../components/layout/Loading";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
 
 const Home: NextPage = () => {
+  const { status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === "unauthenticated") router.push("/login");
+  }, [status, router]);
+
+  if (status === "loading") return <Loading />;
+
   return (
     <>
       <Head>
