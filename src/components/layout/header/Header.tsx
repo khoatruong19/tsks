@@ -7,10 +7,12 @@ import {
   Squares2X2Icon,
 } from "@heroicons/react/24/solid";
 import { useAtom } from "jotai";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import Image from "next/image";
 import { openSidebarAtom, openTaskModal } from "../../../store";
 import ActiveLink from "./ActiveLink";
+import { useState } from "react";
+import { useRouter } from "next/router";
 
 interface IProps {
   hasSidebar: boolean;
@@ -19,7 +21,14 @@ interface IProps {
 const Header = ({ hasSidebar }: IProps) => {
   const [openSidebar, setOpenSidebar] = useAtom(openSidebarAtom);
   const [_, setOpenModal] = useAtom(openTaskModal);
+  const [openLogout, setOpenLogout] = useState(false);
   const { data } = useSession();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    router.replace("/login");
+    signOut();
+  };
   return (
     <div className="w-full border-b-[1px] border-black/20 bg-secondaryColor px-6 py-4">
       <div className="flex items-center justify-between ">
@@ -56,13 +65,27 @@ const Header = ({ hasSidebar }: IProps) => {
           <div>
             <BellIcon className="h-6 w-6 text-white" />
           </div>
-          <div className="relative h-8 w-8 overflow-hidden rounded-full">
-            <Image
-              alt="avatar"
-              src={data?.user?.image || ""}
-              fill
-              className="absolute"
-            />
+          <div className="relative">
+            <div
+              className="withHover relative h-8 w-8 overflow-hidden rounded-full"
+              onClick={() => setOpenLogout((prev) => !prev)}
+            >
+              <Image
+                alt="avatar"
+                src={data?.user?.image || ""}
+                fill
+                className="absolute"
+              />
+            </div>
+            {openLogout && (
+              <div
+                className="withHover absolute left-[-45px] bottom-[-45px] z-[999] rounded-md bg-white/70 px-3 py-2 
+            font-semibold text-primaryColor shadow-lg"
+                onClick={handleLogout}
+              >
+                Logout
+              </div>
+            )}
           </div>
         </div>
       </div>
