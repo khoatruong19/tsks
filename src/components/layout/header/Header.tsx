@@ -70,12 +70,7 @@ const Header = ({ hasSidebar }: IProps) => {
               className="withHover relative h-8 w-8 overflow-hidden rounded-full"
               onClick={() => setOpenLogout((prev) => !prev)}
             >
-              <Image
-                alt="avatar"
-                src={data?.user?.image || ""}
-                fill
-                className="absolute"
-              />
+              <Image alt="avatar" src={data?.user?.image || ""} fill />
             </div>
             {openLogout && (
               <div

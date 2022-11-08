@@ -51,7 +51,7 @@ const TodoTaskCard = ({ content, done }: IProps) => {
         <div className="flex justify-between p-3">
           <div className="flex gap-3">
             <label className="container">
-              <input type="checkbox" checked={done} />
+              <input type="checkbox" checked={done} onChange={() => {}} />
               <span className="checkmark border-[3px] border-primaryColor"></span>
             </label>
             <div>
