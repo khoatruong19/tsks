@@ -6,6 +6,7 @@ import { useSession } from "next-auth/react";
 import Loading from "../components/layout/Loading";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
+import { trpc } from "../utils/trpc";
 
 const Home: NextPage = () => {
   const { status } = useSession();

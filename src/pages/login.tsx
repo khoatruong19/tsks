@@ -1,8 +1,8 @@
-import Head from "next/head";
-import React, { use, useEffect } from "react";
-import { signIn, signOut, useSession, getProviders } from "next-auth/react";
 import { GetServerSideProps, NextPage } from "next";
+import { getProviders, signIn, useSession } from "next-auth/react";
+import Head from "next/head";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 interface Props {
   providers: any;
