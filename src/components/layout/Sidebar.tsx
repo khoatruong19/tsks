@@ -13,8 +13,9 @@ import {
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import { BookOpenIcon } from "@heroicons/react/24/solid";
 import { useAtom } from "jotai";
-import { useState } from "react";
-import { openSidebarAtom } from "../../store";
+import { useEffect, useState } from "react";
+import { openCollectionModal, openSidebarAtom } from "../../store";
+import { trpc } from "../../utils/trpc";
 import ActiveLink from "./header/ActiveLink";
 import SortableItem from "./SortableItem";
 
@@ -22,7 +23,9 @@ const color = "#00579B";
 
 const Sidebar = () => {
   const [openSidebar] = useAtom(openSidebarAtom);
-  const [links, setLinks] = useState(["School", "Gaming"]);
+  const [_, setOpenCollectionModal] = useAtom(openCollectionModal);
+  const { data, isLoading } = trpc.collection.getAllCollections.useQuery();
+  const [collections, setCollections] = useState<string[]>([]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -35,13 +38,17 @@ const Sidebar = () => {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (active.id !== over?.id) {
-      setLinks((items: string[]) => {
+      setCollections((items: string[]) => {
         const activeIndex = items.indexOf(active.id as string);
         const overIndex = items.indexOf(over?.id as string);
         return arrayMove(items, activeIndex, overIndex);
       });
     }
   };
+
+  useEffect(() => {
+    if (data) setCollections(data.map((item) => item.title));
+  }, [data, isLoading]);
 
   return (
     <div
@@ -55,13 +62,16 @@ const Sidebar = () => {
           <h1 className="text-2xl font-semibold text-textColor/80">
             Collections
           </h1>
-          <div className="pt-0.5">
+          <div className="pt-0.5" onClick={() => setOpenCollectionModal("Add")}>
             <PlusCircleIcon className="withHover h-7 w-7 text-textColor/80" />
           </div>
         </div>
         <DndContext onDragEnd={handleDragEnd} sensors={sensors}>
-          <SortableContext items={links} strategy={verticalListSortingStrategy}>
-            {links.map((item) => (
+          <SortableContext
+            items={collections}
+            strategy={verticalListSortingStrategy}
+          >
+            {collections.map((item) => (
               <SortableItem key={item} id={item}>
                 <ActiveLink
                   href={`/collections/${item.toLocaleLowerCase().trim()}`}
