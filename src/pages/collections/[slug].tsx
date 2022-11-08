@@ -3,13 +3,16 @@ import {
   EllipsisHorizontalIcon,
   PlusIcon,
 } from "@heroicons/react/24/solid";
+import { useAtom } from "jotai";
 import Head from "next/head";
 import CompletedTasksContainer from "../../components/collections/CompletedTasksContainer";
 import TodoTasksContainer from "../../components/collections/TodoTasksContainer";
 import MainLayout from "../../components/layout/MainLayout";
 import Sidebar from "../../components/layout/Sidebar";
+import { openTaskModal } from "../../store";
 
 const CollectionDetail = () => {
+  const [_, setOpenModal] = useAtom(openTaskModal);
   return (
     <>
       <Head>
@@ -34,7 +37,11 @@ const CollectionDetail = () => {
                     </div>
                   </div>
 
-                  <div className="withHover flex w-full items-center gap-3 rounded-2xl border-[1px] border-secondaryColor/80 p-3">
+                  <div
+                    className="withHover flex w-full items-center gap-3 rounded-2xl border-[1px] border-secondaryColor/80
+                   p-3"
+                    onClick={() => setOpenModal("Add")}
+                  >
                     <div className="w-fit rounded-lg bg-tertiaryColor p-2">
                       <PlusIcon className="h-5 w-5 text-textColor" />
                     </div>
