@@ -4,20 +4,11 @@ import React from "react";
 interface IProps {
   clickHandler: () => void;
   show: boolean;
-  overlay?: boolean;
 }
 
-const ChevronController = ({ clickHandler, show, overlay }: IProps) => {
+const ChevronController = ({ clickHandler, show }: IProps) => {
   return (
-    <div
-      className={`withHover  text-textColor ${
-        overlay
-          ? `absolute right-1 top-1 p-2
-      `
-          : ""
-      }`}
-      onClick={clickHandler}
-    >
+    <div className={`withHover  text-textColor`} onClick={clickHandler}>
       {show ? (
         <ChevronDownIcon className=" h-5 w-5" />
       ) : (

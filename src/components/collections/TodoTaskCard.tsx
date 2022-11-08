@@ -46,76 +46,74 @@ const TodoTaskCard = ({ content, done }: IProps) => {
   }, [containerRef]);
 
   return (
-    <div className="relative w-full ">
-      <SortableItem id={content}>
-        <div className=" rounded-3xl bg-secondaryColor">
-          <div className="flex justify-between p-3">
-            <div className="flex gap-3">
-              <label className="container">
-                <input type="checkbox" checked={done} />
-                <span className="checkmark border-[3px] border-primaryColor"></span>
-              </label>
-              <div>
-                <p
-                  className={`text-lg font-medium text-textColor/90 ${
-                    done && "lineThroughWhite line-through"
-                  }`}
-                >
-                  {content}
-                </p>
-                <div className="mt-1 flex items-center gap-4 text-white/70">
-                  <div className="flex items-center gap-1.5">
-                    <RectangleGroupIcon className="h-5 w-5" />
-                    <span>0/1</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <CalendarDaysIcon className="h-5 w-5" />
-                    <span>0/1</span>
-                  </div>
+    <>
+      <div className="relative w-full rounded-3xl bg-secondaryColor">
+        <div className="flex justify-between p-3">
+          <div className="flex gap-3">
+            <label className="container">
+              <input type="checkbox" checked={done} />
+              <span className="checkmark border-[3px] border-primaryColor"></span>
+            </label>
+            <div>
+              <p
+                className={`text-lg font-medium text-textColor/90 ${
+                  done && "lineThroughWhite line-through"
+                }`}
+              >
+                {content}
+              </p>
+              <div className="mt-1 flex items-center gap-4 text-white/70">
+                <div className="flex items-center gap-1.5">
+                  <RectangleGroupIcon className="h-5 w-5" />
+                  <span>0/1</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <CalendarDaysIcon className="h-5 w-5" />
+                  <span>0/1</span>
                 </div>
               </div>
             </div>
           </div>
+          <ChevronController show={showTasks} clickHandler={reveal} />
         </div>
-        <div ref={containerRef}>
-          {showTasks && (
-            <div className="ml-2 flex flex-col gap-2.5 py-2">
-              <DndContext onDragEnd={handleDragEnd}>
-                <SortableContext
-                  items={languages}
-                  strategy={verticalListSortingStrategy}
-                >
-                  {languages.map((item) => (
-                    <SortableItem id={item}>
-                      <div className=" rounded-3xl bg-secondaryColor">
-                        <div className="flex justify-between p-3">
-                          <div className="flex gap-3">
-                            <label className="container">
-                              <input type="checkbox" checked={done} />
-                              <span className="checkmark border-[3px] border-primaryColor" />
-                            </label>
-                            <div>
-                              <p
-                                className={`text-lg font-medium text-textColor/90 ${
-                                  done && "lineThroughWhite line-through"
-                                }`}
-                              >
-                                {item} + {content}
-                              </p>
-                            </div>
+      </div>
+      <div ref={containerRef}>
+        {showTasks && (
+          <div className="ml-2 flex flex-col gap-2.5 py-2">
+            <DndContext onDragEnd={handleDragEnd}>
+              <SortableContext
+                items={languages}
+                strategy={verticalListSortingStrategy}
+              >
+                {languages.map((item) => (
+                  <SortableItem id={item}>
+                    <div className=" rounded-3xl bg-secondaryColor">
+                      <div className="flex justify-between p-3">
+                        <div className="flex gap-3">
+                          <label className="container">
+                            <input type="checkbox" checked={done} />
+                            <span className="checkmark border-[3px] border-primaryColor" />
+                          </label>
+                          <div>
+                            <p
+                              className={`text-lg font-medium text-textColor/90 ${
+                                done && "lineThroughWhite line-through"
+                              }`}
+                            >
+                              {item} + {content}
+                            </p>
                           </div>
                         </div>
                       </div>
-                    </SortableItem>
-                  ))}
-                </SortableContext>
-              </DndContext>
-            </div>
-          )}
-        </div>
-      </SortableItem>
-      <ChevronController show={showTasks} clickHandler={reveal} overlay />
-    </div>
+                    </div>
+                  </SortableItem>
+                ))}
+              </SortableContext>
+            </DndContext>
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 

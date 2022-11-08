@@ -1,10 +1,17 @@
-import { DndContext, DragEndEvent } from "@dnd-kit/core";
+import {
+  DndContext,
+  DragEndEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
 import {
   arrayMove,
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { useState } from "react";
+import SortableItem from "../layout/SortableItem";
 import TodoTaskCard from "./TodoTaskCard";
 
 const TodoTasksContainer = () => {
@@ -13,6 +20,15 @@ const TodoTasksContainer = () => {
     "Python",
     "Typescript",
   ]);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  );
+
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (active.id !== over?.id) {
@@ -28,13 +44,15 @@ const TodoTasksContainer = () => {
     <div>
       <h1 className="text-2xl font-semibold text-textColor">Tasks - 8</h1>
       <div className="flex flex-col gap-2.5 py-5">
-        <DndContext onDragEnd={handleDragEnd}>
+        <DndContext onDragEnd={handleDragEnd} sensors={sensors}>
           <SortableContext
             items={languages}
             strategy={verticalListSortingStrategy}
           >
             {languages.map((item) => (
-              <TodoTaskCard key={item} content={item} />
+              <SortableItem key={item} id={item}>
+                <TodoTaskCard content={item} />
+              </SortableItem>
             ))}
           </SortableContext>
         </DndContext>
