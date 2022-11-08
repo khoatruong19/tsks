@@ -23,7 +23,7 @@ const CollectionCard = () => {
             <svg className=" h-10 w-10">
               <circle
                 className="text-primaryColor "
-                stroke-width="5"
+                strokeWidth="5"
                 stroke="currentColor"
                 fill="transparent"
                 r="15"
@@ -32,7 +32,7 @@ const CollectionCard = () => {
               />
               <circle
                 className=" text-tertiaryColor"
-                stroke-width="5"
+                strokeWidth="5"
                 strokeDasharray={circumference}
                 strokeDashoffset={circumference - (10 / 20) * circumference}
                 stroke-linecap="round"
