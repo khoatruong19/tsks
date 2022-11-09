@@ -17,6 +17,7 @@ export const collectionRouter = router({
                 id: ctx.session.user.id,
               },
             },
+            ...input,
             position: collectionsCount > 0 ? collectionsCount : 0,
           },
         });
