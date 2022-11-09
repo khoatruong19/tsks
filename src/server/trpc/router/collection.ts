@@ -1,6 +1,9 @@
 import * as trpc from "@trpc/server";
 import { TRPCError } from "@trpc/server";
-import { createCollectionSchema } from "../../../utils/schemas/collection.schema";
+import {
+  createCollectionSchema,
+  updateCollectionPositionSchema,
+} from "../../../utils/schemas/collection.schema";
 
 import { router, publicProcedure, protectedProcedure } from "../trpc";
 
@@ -30,7 +33,7 @@ export const collectionRouter = router({
         });
       }
     }),
-  getAllCollections: publicProcedure.query(({ ctx }) => {
+  getAllCollections: protectedProcedure.query(({ ctx }) => {
     return ctx.prisma.collection.findMany({
       where: {
         userId: ctx.session?.user?.id,
@@ -41,7 +44,33 @@ export const collectionRouter = router({
         color: true,
         icon: true,
         slug: true,
+        position: true,
+      },
+      orderBy: {
+        position: "desc",
       },
     });
   }),
+
+  updatePosition: protectedProcedure
+    .input(updateCollectionPositionSchema)
+    .mutation(async ({ input, ctx }) => {
+      console.log({ input });
+      await ctx.prisma.collection.update({
+        where: {
+          id: input.activeId,
+        },
+        data: {
+          position: input.overPos,
+        },
+      });
+      await ctx.prisma.collection.update({
+        where: {
+          id: input.overId,
+        },
+        data: {
+          position: input.activePos,
+        },
+      });
+    }),
 });
