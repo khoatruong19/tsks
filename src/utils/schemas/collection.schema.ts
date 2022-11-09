@@ -5,3 +5,10 @@ export const createCollectionSchema = z.object({
   title: z.string().default("Untitled"),
   color: z.string().default("#EEEEEE"),
 });
+
+export const updateCollectionPositionSchema = z.object({
+  activeId: z.string(),
+  activePos: z.number(),
+  overId: z.string(),
+  overPos: z.number(),
+});
