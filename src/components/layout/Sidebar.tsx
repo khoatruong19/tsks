@@ -21,12 +21,18 @@ import { trpc } from "../../utils/trpc";
 import ActiveLink from "./header/ActiveLink";
 import SortableItem from "./SortableItem";
 
-const color = "#00579B";
-
 const Sidebar = () => {
   const [openSidebar] = useAtom(openSidebarAtom);
   const [_, setOpenCollectionModal] = useAtom(openCollectionModal);
-  const { data, isLoading } = trpc.collection.getAllCollections.useQuery();
+  const { data, isLoading } = trpc.collection.getAllCollections.useQuery(
+    undefined,
+    {
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+    }
+  );
+  const { mutate, isLoading: updatePosLoading } =
+    trpc.collection.updatePosition.useMutation();
   const [collections, setCollections] = useState<Partial<Collection>[]>([]);
 
   const sensors = useSensors(
@@ -40,11 +46,23 @@ const Sidebar = () => {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (active.id !== over?.id) {
+      const activeCollection = collections.find(
+        (item) => item.id === active.id
+      );
+      const overCollection = collections.find((item) => item.id === over?.id);
       setCollections((items: Partial<Collection>[]) => {
         const activeIndex = items.findIndex((item) => item.id === active.id);
         const overIndex = items.findIndex((item) => item.id === over?.id);
         return arrayMove(items, activeIndex, overIndex);
       });
+      if (activeCollection && overCollection) {
+        mutate({
+          activeId: active.id as string,
+          overId: over?.id as string,
+          activePos: activeCollection?.position!,
+          overPos: overCollection?.position!,
+        });
+      }
     }
   };
 
@@ -72,7 +90,7 @@ const Sidebar = () => {
           <DndContext onDragEnd={handleDragEnd} sensors={sensors}>
             <SortableContext
               items={collections.map((item) => {
-                return { id: item.id as UniqueIdentifier };
+                return { id: item?.id as UniqueIdentifier };
               })}
               strategy={verticalListSortingStrategy}
             >
@@ -85,9 +103,9 @@ const Sidebar = () => {
                     <div className="withHover flex items-center gap-3  py-4 pl-8">
                       <div
                         className={` grid place-items-center rounded-md p-2`}
-                        style={{ backgroundColor: `${color}` }}
+                        style={{ backgroundColor: `${item.color}` }}
                       >
-                        🎧
+                        {item.icon}
                       </div>
                       <span className="text-lg font-semibold text-textColor">
                         {item.title}
