@@ -19,6 +19,7 @@ export const collectionRouter = router({
             },
             ...input,
             position: collectionsCount > 0 ? collectionsCount : 0,
+            slug: input.title.toLowerCase().replace(" ", "-"),
           },
         });
         return { collection };
@@ -39,6 +40,7 @@ export const collectionRouter = router({
         title: true,
         color: true,
         icon: true,
+        slug: true,
       },
     });
   }),
