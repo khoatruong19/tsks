@@ -2,6 +2,7 @@ import {
   DndContext,
   DragEndEvent,
   PointerSensor,
+  UniqueIdentifier,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
@@ -12,6 +13,7 @@ import {
 } from "@dnd-kit/sortable";
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import { BookOpenIcon } from "@heroicons/react/24/solid";
+import { Collection } from "@prisma/client";
 import { useAtom } from "jotai";
 import { useEffect, useState } from "react";
 import { openCollectionModal, openSidebarAtom } from "../../store";
@@ -25,7 +27,7 @@ const Sidebar = () => {
   const [openSidebar] = useAtom(openSidebarAtom);
   const [_, setOpenCollectionModal] = useAtom(openCollectionModal);
   const { data, isLoading } = trpc.collection.getAllCollections.useQuery();
-  const [collections, setCollections] = useState<string[]>([]);
+  const [collections, setCollections] = useState<Partial<Collection>[]>([]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -38,16 +40,16 @@ const Sidebar = () => {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (active.id !== over?.id) {
-      setCollections((items: string[]) => {
-        const activeIndex = items.indexOf(active.id as string);
-        const overIndex = items.indexOf(over?.id as string);
+      setCollections((items: Partial<Collection>[]) => {
+        const activeIndex = items.findIndex((item) => item.id === active.id);
+        const overIndex = items.findIndex((item) => item.id === over?.id);
         return arrayMove(items, activeIndex, overIndex);
       });
     }
   };
 
   useEffect(() => {
-    if (data) setCollections(data.map((item) => item.title));
+    if (data) setCollections(data);
   }, [data, isLoading]);
 
   return (
@@ -66,33 +68,37 @@ const Sidebar = () => {
             <PlusCircleIcon className="withHover h-7 w-7 text-textColor/80" />
           </div>
         </div>
-        <DndContext onDragEnd={handleDragEnd} sensors={sensors}>
-          <SortableContext
-            items={collections}
-            strategy={verticalListSortingStrategy}
-          >
-            {collections.map((item) => (
-              <SortableItem key={item} id={item}>
-                <ActiveLink
-                  href={`/collections/${item.toLocaleLowerCase().trim()}`}
-                  activeClassName="bg-gray-600"
-                >
-                  <div className="withHover flex items-center gap-3  py-4 pl-8">
-                    <div
-                      className={` grid place-items-center rounded-md p-2`}
-                      style={{ backgroundColor: `${color}` }}
-                    >
-                      🎧
+        {collections && (
+          <DndContext onDragEnd={handleDragEnd} sensors={sensors}>
+            <SortableContext
+              items={collections.map((item) => {
+                return { id: item.id as UniqueIdentifier };
+              })}
+              strategy={verticalListSortingStrategy}
+            >
+              {collections.map((item) => (
+                <SortableItem key={item.id} id={item.id!}>
+                  <ActiveLink
+                    href={`/collections/${item.slug}`}
+                    activeClassName="bg-gray-600"
+                  >
+                    <div className="withHover flex items-center gap-3  py-4 pl-8">
+                      <div
+                        className={` grid place-items-center rounded-md p-2`}
+                        style={{ backgroundColor: `${color}` }}
+                      >
+                        🎧
+                      </div>
+                      <span className="text-lg font-semibold text-textColor">
+                        {item.title}
+                      </span>
                     </div>
-                    <span className="text-lg font-semibold text-textColor">
-                      {item}
-                    </span>
-                  </div>
-                </ActiveLink>
-              </SortableItem>
-            ))}
-          </SortableContext>
-        </DndContext>
+                  </ActiveLink>
+                </SortableItem>
+              ))}
+            </SortableContext>
+          </DndContext>
+        )}
       </div>
     </div>
   );
