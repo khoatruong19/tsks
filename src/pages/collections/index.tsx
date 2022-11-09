@@ -1,13 +1,24 @@
 import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
 import { NextPage } from "next";
+import { useSession } from "next-auth/react";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import React, { useState } from "react";
 import CollectionCard from "../../components/collections/CollectionCard";
 import MainLayout from "../../components/layout/MainLayout";
+import { useEffect } from "react";
+import Loading from "../../components/layout/Loading";
 
 const Collections: NextPage = () => {
   const [viewMode, setViewMode] = useState<0 | 1>(0);
+  const { status } = useSession();
+  const router = useRouter();
 
+  useEffect(() => {
+    if (status === "unauthenticated") router.push("/login");
+  }, [status, router]);
+
+  if (status === "loading") return <Loading />;
   return (
     <>
       <Head>

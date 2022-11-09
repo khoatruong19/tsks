@@ -4,15 +4,27 @@ import {
   PlusIcon,
 } from "@heroicons/react/24/solid";
 import { useAtom } from "jotai";
+import { useSession } from "next-auth/react";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import CompletedTasksContainer from "../../components/collections/CompletedTasksContainer";
 import TodoTasksContainer from "../../components/collections/TodoTasksContainer";
 import MainLayout from "../../components/layout/MainLayout";
 import Sidebar from "../../components/layout/Sidebar";
 import { openTaskModal } from "../../store";
+import { useEffect } from "react";
+import Loading from "../../components/layout/Loading";
 
 const CollectionDetail = () => {
   const [_, setOpenModal] = useAtom(openTaskModal);
+  const { status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === "unauthenticated") router.push("/login");
+  }, [status, router]);
+
+  if (status === "loading") return <Loading />;
   return (
     <>
       <Head>
