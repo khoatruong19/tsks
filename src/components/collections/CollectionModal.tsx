@@ -12,7 +12,6 @@ import "react-color-palette/lib/css/styles.css";
 const CollectionModal = ({ open }: { open: string | null }) => {
   const createCollection = trpc.collection.create.useMutation();
   const [title, setTitle] = useState("");
-  const [color, setColor] = useState("#EEEEEE");
   const [colorHex, setColorHex] = useColor("hex", "#EEEEEE");
   const [icon, setIcon] = useState("📃");
   const [openEmojiPicker, setOpenEmojiPicker] = useState(false);
@@ -37,14 +36,13 @@ const CollectionModal = ({ open }: { open: string | null }) => {
   };
   const handleSelectColor = (color: Color) => {
     setColorHex(color);
-    setColor(color.hex);
   };
 
   const handleCreateCollection = () => {
     createCollection.mutate(
       {
         title,
-        color,
+        color: colorHex.hex,
         icon,
       },
       {
@@ -92,7 +90,7 @@ const CollectionModal = ({ open }: { open: string | null }) => {
               <span className="text-sm text-textColor/90">Color:</span>
               <span
                 className="h-6 w-6 rounded-md"
-                style={{ backgroundColor: color }}
+                style={{ backgroundColor: colorHex.hex }}
               />
             </div>
             {openColorPicker && (
@@ -110,7 +108,7 @@ const CollectionModal = ({ open }: { open: string | null }) => {
             )}
             <div
               className={` ml-2 grid place-items-center rounded-md p-2`}
-              style={{ backgroundColor: `${color}` }}
+              style={{ backgroundColor: `${colorHex.hex}` }}
             >
               {icon}
             </div>
