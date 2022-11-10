@@ -12,17 +12,23 @@ import TodoTasksContainer from "../../components/collections/TodoTasksContainer"
 import MainLayout from "../../components/layout/MainLayout";
 import Sidebar from "../../components/layout/Sidebar";
 import { openTaskModal } from "../../store";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import Loading from "../../components/layout/Loading";
 
 const CollectionDetail = () => {
   const [_, setOpenModal] = useAtom(openTaskModal);
   const { status } = useSession();
   const router = useRouter();
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/login");
   }, [status, router]);
+
+  useEffect(() => {
+    if (containerRef.current)
+      containerRef.current.scrollTo({ top: 0, behavior: "smooth" });
+  }, [router]);
 
   if (status === "loading") return <Loading />;
   return (
@@ -34,7 +40,10 @@ const CollectionDetail = () => {
         <div className="flex">
           <Sidebar />
           <div className="h-[calc(100vh_-_65px)] w-full overflow-hidden">
-            <div className="mx-auto h-[100%] w-full max-w-3xl overflow-y-scroll  pb-10 scrollbar-hide">
+            <div
+              ref={containerRef}
+              className="mx-auto h-[100%] w-full max-w-3xl overflow-y-scroll  pb-10 scrollbar-hide"
+            >
               <div className="pt-10">
                 <div className="mb-6 flex flex-col gap-12 overflow-hidden">
                   <div className="flex items-center justify-between  text-textColor">
