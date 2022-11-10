@@ -1,20 +1,58 @@
 import { DocumentIcon, FlagIcon } from "@heroicons/react/24/solid";
+import { useQueryClient } from "@tanstack/react-query";
 import { useAtom } from "jotai";
+import { useRouter } from "next/router";
+import { useState } from "react";
 import { openCollectionModal } from "../../store";
 import { trpc } from "../../utils/trpc";
+import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
+import { ColorPicker, useColor, Color } from "react-color-palette";
+import "react-color-palette/lib/css/styles.css";
 
 const CollectionModal = ({ open }: { open: string | null }) => {
   const createCollection = trpc.collection.create.useMutation();
+  const [title, setTitle] = useState("");
+  const [color, setColor] = useState("#EEEEEE");
+  const [colorHex, setColorHex] = useColor("hex", "#EEEEEE");
+  const [icon, setIcon] = useState("📃");
+  const [openEmojiPicker, setOpenEmojiPicker] = useState(false);
+  const [openColorPicker, setOpenColorPicker] = useState(false);
   const [_, setOpenModal] = useAtom(openCollectionModal);
+  const qc = useQueryClient();
+  const router = useRouter();
+
+  const handleTriggerEmojiPicker = () => {
+    openColorPicker && setOpenColorPicker(false);
+    setOpenEmojiPicker((prev) => !prev);
+  };
+
+  const handleTriggerColorPicker = () => {
+    openEmojiPicker && setOpenEmojiPicker(false);
+    setOpenColorPicker((prev) => !prev);
+  };
+
+  const handleSelectIcon = (e: EmojiClickData) => {
+    setIcon(e.emoji);
+    setOpenEmojiPicker(false);
+  };
+  const handleSelectColor = (color: Color) => {
+    setColorHex(color);
+    setColor(color.hex);
+  };
 
   const handleCreateCollection = () => {
     createCollection.mutate(
       {
-        title: "New collection",
+        title,
+        color,
+        icon,
       },
       {
-        onSuccess: () => {
+        onSuccess: ({ collection }) => {
           setOpenModal(null);
+          setTitle("");
+          qc.invalidateQueries("collection.getAllCollections");
+          router.replace(`/collections/${collection.slug}`);
         },
       }
     );
@@ -29,24 +67,56 @@ const CollectionModal = ({ open }: { open: string | null }) => {
               className="h-full w-full bg-transparent px-4 text-textColor/90 outline-none placeholder:text-textColor/90"
               type="text"
               placeholder={open === "Add" ? "New Collection..." : "Do homework"}
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
             />
           </div>
 
-          <div className="mt-4 flex items-center gap-2 ">
-            <div className="withHover flex items-center gap-2  rounded-md border border-white/50 py-2 px-3">
-              <DocumentIcon className="h-5 w-5 text-pink-400" />
-              <span className="text-sm text-textColor/90">School</span>
+          <div className="relative mt-4 flex items-center gap-2 ">
+            <div
+              className="withHover  flex items-center gap-2 rounded-md border border-white/50 py-1 px-3"
+              onClick={handleTriggerEmojiPicker}
+            >
+              <span className="text-sm text-textColor/90">Icon:</span>
+              <span className="text-2xl text-textColor/90">{icon}</span>
             </div>
-            <div className="withHover flex items-center gap-2  rounded-md border border-white/50 py-2 px-3">
-              <DocumentIcon className="h-5 w-5 text-green-400" />
-              <span className="text-sm text-textColor/90">Today</span>
+            {openEmojiPicker && (
+              <div className="absolute top-12 z-[9999]">
+                <EmojiPicker onEmojiClick={handleSelectIcon} />
+              </div>
+            )}
+            <div
+              className="withHover flex items-center gap-2  rounded-md border border-white/50 py-2 px-3"
+              onClick={handleTriggerColorPicker}
+            >
+              <span className="text-sm text-textColor/90">Color:</span>
+              <span
+                className="h-6 w-6 rounded-md"
+                style={{ backgroundColor: color }}
+              />
             </div>
-            <div className="withHover flex items-center gap-2  rounded-md border border-white/50 py-2 px-3">
-              <FlagIcon className="h-5 w-5 text-red-400" />
+            {openColorPicker && (
+              <div className="absolute top-12 z-[9999]">
+                <ColorPicker
+                  width={456}
+                  height={228}
+                  color={colorHex}
+                  onChange={handleSelectColor}
+                  hideHSV
+                  dark
+                />
+                ;
+              </div>
+            )}
+            <div
+              className={` ml-2 grid place-items-center rounded-md p-2`}
+              style={{ backgroundColor: `${color}` }}
+            >
+              {icon}
             </div>
           </div>
 
-          <div className="mt-10 flex items-center gap-4 ">
+          <div className=" mt-10 flex items-center gap-4">
             <div
               className="withHover gradientBgColor flex items-center  gap-2 rounded-md py-2 px-8 shadow-xl"
               onClick={handleCreateCollection}
