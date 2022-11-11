@@ -13,7 +13,7 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
   const [openModalCollection] = useAtom(openCollectionModal);
 
   return (
-    <div>
+    <div className="max-h[100vh] max-w-[100vw] overflow-hidden">
       <Header hasSidebar={hasSidebar} />
       <div className="bg-primaryColor">{children}</div>
       {openModalTask && <TaskModal open={openModalTask} />}
