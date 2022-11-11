@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { FC, PropsWithChildren } from "react";
 import { openCollectionModal, openTaskModal } from "../../store";
 import CollectionModal from "../collections/CollectionModal";
-import TaskModal from "../collections/TaskModal";
+import TaskModal from "../task/TaskModal";
 import Header from "./header/Header";
 
 const MainLayout: FC<PropsWithChildren> = ({ children }) => {
