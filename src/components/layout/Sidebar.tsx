@@ -15,7 +15,7 @@ import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import { BookOpenIcon } from "@heroicons/react/24/solid";
 import { Collection } from "@prisma/client";
 import { useAtom } from "jotai";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { openCollectionModal, openSidebarAtom } from "../../store";
 import { trpc } from "../../utils/trpc";
 import ActiveLink from "./header/ActiveLink";
@@ -31,9 +31,12 @@ const Sidebar = () => {
       refetchOnWindowFocus: false,
     }
   );
-  const { mutate, isLoading: updatePosLoading } =
-    trpc.collection.updatePosition.useMutation();
+  const { mutate } = trpc.collection.updatePosition.useMutation();
   const [collections, setCollections] = useState<Partial<Collection>[]>([]);
+  const [showContextMenu, setShowContextMenu] =
+    useState<null | Partial<Collection>>(null);
+  const [points, setPoints] = useState({ x: 0, y: 0 });
+  const sidebarRef = useRef<HTMLDivElement>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -70,14 +73,32 @@ const Sidebar = () => {
     if (data) setCollections(data);
   }, [data, isLoading]);
 
+  useEffect(() => {
+    const handleCloseContextMenu = () => setShowContextMenu(null);
+    if (typeof window !== undefined && sidebarRef.current) {
+      window.addEventListener("click", handleCloseContextMenu);
+      sidebarRef.current.addEventListener("scroll", handleCloseContextMenu);
+      return () => {
+        window.removeEventListener("click", handleCloseContextMenu);
+        sidebarRef.current!.addEventListener(
+          "scroll",
+          () => handleCloseContextMenu
+        );
+      };
+    }
+  }, []);
+
   return (
     <div
-      className={`h-[calc(100vh_-_65px)] min-w-[300px] ${
+      className={`relative h-[calc(100vh_-_65px)] min-w-[300px] ${
         !openSidebar ? "absolute translate-x-[-100%]" : "translate-x-[0]"
       } 
-     transform overflow-y-auto bg-secondaryColor duration-150 ease-linear`}
+     transform overflow-y-visible  bg-secondaryColor duration-150 ease-linear`}
     >
-      <div className="pt-8">
+      <div
+        className="max-h-[93vh] overflow-y-scroll pt-8 scrollbar-hide"
+        ref={sidebarRef}
+      >
         <div className="mb-5 flex items-center gap-3 pl-8">
           <h1 className="text-2xl font-semibold text-textColor/80">
             Collections
@@ -100,7 +121,14 @@ const Sidebar = () => {
                     href={`/collections/${item.slug}`}
                     activeClassName="bg-gray-600"
                   >
-                    <div className="withHover flex items-center gap-3  py-4 pl-8">
+                    <div
+                      className="withHover flex items-center gap-3  py-4 pl-8"
+                      onContextMenu={(e) => {
+                        e.preventDefault();
+                        setShowContextMenu(item);
+                        setPoints({ x: e.pageX, y: e.pageY - 80 });
+                      }}
+                    >
                       <div
                         className={` grid place-items-center rounded-md p-2`}
                         style={{ backgroundColor: `${item.color}` }}
@@ -118,6 +146,15 @@ const Sidebar = () => {
           </DndContext>
         )}
       </div>
+      {showContextMenu && (
+        <div
+          className="absolute z-[999] w-[100px] bg-white p-4"
+          style={{
+            top: points.y,
+            left: points.x,
+          }}
+        ></div>
+      )}
     </div>
   );
 };
