@@ -12,3 +12,7 @@ export const updateCollectionPositionSchema = z.object({
   overId: z.string(),
   overPos: z.number(),
 });
+
+export const getCollectionBySlugSchema = z.object({
+  slug: z.string(),
+});
