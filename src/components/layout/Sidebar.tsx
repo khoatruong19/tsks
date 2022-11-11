@@ -122,7 +122,7 @@ const Sidebar = () => {
                     activeClassName="bg-gray-600"
                   >
                     <div
-                      className="withHover flex items-center gap-3  py-4 pl-8"
+                      className="withHover flex items-center gap-3  py-4 pl-8 hover:bg-gray-600"
                       onContextMenu={(e) => {
                         e.preventDefault();
                         setShowContextMenu(item);
