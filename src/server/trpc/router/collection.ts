@@ -2,10 +2,11 @@ import * as trpc from "@trpc/server";
 import { TRPCError } from "@trpc/server";
 import {
   createCollectionSchema,
+  getCollectionBySlugSchema,
   updateCollectionPositionSchema,
 } from "../../../utils/schemas/collection.schema";
 
-import { router, publicProcedure, protectedProcedure } from "../trpc";
+import { router, protectedProcedure } from "../trpc";
 
 export const collectionRouter = router({
   create: protectedProcedure
@@ -51,6 +52,35 @@ export const collectionRouter = router({
       },
     });
   }),
+
+  getAllCollectionsWithStatus: protectedProcedure.query(({ ctx }) => {
+    return ctx.prisma.collection.findMany({
+      where: {
+        userId: ctx.session?.user?.id,
+      },
+      include: {
+        tasks: {
+          select: {
+            done: true,
+          },
+        },
+      },
+      orderBy: {
+        position: "desc",
+      },
+    });
+  }),
+
+  getCollectionBySlug: protectedProcedure
+    .input(getCollectionBySlugSchema)
+    .query(({ input, ctx }) => {
+      return ctx.prisma.collection.findFirst({
+        where: {
+          userId: ctx.session?.user?.id,
+          slug: input.slug,
+        },
+      });
+    }),
 
   updatePosition: protectedProcedure
     .input(updateCollectionPositionSchema)
