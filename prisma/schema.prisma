@@ -83,6 +83,7 @@ model Task {
   parent       Task?      @relation("TaskToTask", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   parentId     String?
   children     Task[]     @relation("TaskToTask")
+  done         Boolean    @default(false)
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
 }
