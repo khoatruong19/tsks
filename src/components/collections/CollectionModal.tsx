@@ -120,7 +120,7 @@ const CollectionModal = ({ open }: { open: string | null }) => {
             <input
               className="h-full w-full bg-transparent px-4 text-textColor/90 outline-none placeholder:text-textColor/90"
               type="text"
-              placeholder={open === "Add" ? "New Collection..." : "Do homework"}
+              placeholder={open === "ADD" ? "New Collection..." : "Do homework"}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
