@@ -2,7 +2,7 @@ import { DocumentIcon, FlagIcon } from "@heroicons/react/24/solid";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAtom } from "jotai";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { openCollectionModal } from "../../store";
 import { trpc } from "../../utils/trpc";
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
@@ -11,12 +11,16 @@ import "react-color-palette/lib/css/styles.css";
 
 const CollectionModal = ({ open }: { open: string | null }) => {
   const createCollection = trpc.collection.create.useMutation();
+  const [modalMode, setOpenModal] = useAtom(openCollectionModal);
   const [title, setTitle] = useState("");
-  const [colorHex, setColorHex] = useColor("hex", "#EEEEEE");
+  const [colorHex, setColorHex] = useColor(
+    "hex",
+    modalMode?.collection?.color || "#EEEEEE"
+  );
   const [icon, setIcon] = useState("📃");
   const [openEmojiPicker, setOpenEmojiPicker] = useState(false);
   const [openColorPicker, setOpenColorPicker] = useState(false);
-  const [_, setOpenModal] = useAtom(openCollectionModal);
+  const containerRef = useRef<HTMLDivElement>(null);
   const qc = useQueryClient();
   const router = useRouter();
 
@@ -56,8 +60,33 @@ const CollectionModal = ({ open }: { open: string | null }) => {
     );
   };
 
+  useEffect(() => {
+    if (modalMode?.collection) {
+      setTitle(modalMode.collection.title!);
+      setIcon(modalMode.collection.icon!);
+    }
+  }, [modalMode]);
+
+  useEffect(() => {
+    const handleCloseAllPicker = () => {
+      setOpenEmojiPicker(false);
+      setOpenColorPicker(false);
+    };
+
+    if (containerRef && containerRef.current) {
+      containerRef.current.addEventListener("click", handleCloseAllPicker);
+    }
+    return () => {
+      if (containerRef && containerRef.current)
+        containerRef.current.removeEventListener("click", handleCloseAllPicker);
+    };
+  }, [containerRef]);
+
   return (
-    <div className="absolute top-0 left-0 z-[99] h-[100vh] w-[100vw] bg-black/60">
+    <div
+      ref={containerRef}
+      className="absolute top-0 left-0 z-[99] h-[100vh] w-[100vw] bg-black/60"
+    >
       <div className="mx-auto mt-52 w-full max-w-[500px] rounded-3xl bg-primaryColor shadow-2xl">
         <div className="px-5 py-7">
           <div className="h-12 rounded-lg border border-white/50">
@@ -101,6 +130,7 @@ const CollectionModal = ({ open }: { open: string | null }) => {
                   color={colorHex}
                   onChange={handleSelectColor}
                   hideHSV
+                  hideRGB
                   dark
                 />
                 ;
@@ -120,7 +150,7 @@ const CollectionModal = ({ open }: { open: string | null }) => {
               onClick={handleCreateCollection}
             >
               <span className="text-lg font-semibold text-textColor/90">
-                Add Collection
+                {modalMode?.collection ? "Update" : "Add Collection"}
               </span>
             </div>
             <div

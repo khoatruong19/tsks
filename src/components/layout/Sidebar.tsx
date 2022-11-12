@@ -11,7 +11,11 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { PlusCircleIcon } from "@heroicons/react/24/outline";
+import {
+  PencilIcon,
+  PlusCircleIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
 import { BookOpenIcon } from "@heroicons/react/24/solid";
 import { Collection } from "@prisma/client";
 import { useAtom } from "jotai";
@@ -80,10 +84,11 @@ const Sidebar = () => {
       sidebarRef.current.addEventListener("scroll", handleCloseContextMenu);
       return () => {
         window.removeEventListener("click", handleCloseContextMenu);
-        sidebarRef.current!.addEventListener(
-          "scroll",
-          () => handleCloseContextMenu
-        );
+        sidebarRef.current &&
+          sidebarRef.current!.addEventListener(
+            "scroll",
+            () => handleCloseContextMenu
+          );
       };
     }
   }, []);
@@ -103,7 +108,14 @@ const Sidebar = () => {
           <h1 className="text-2xl font-semibold text-textColor/80">
             Collections
           </h1>
-          <div className="pt-0.5" onClick={() => setOpenCollectionModal("Add")}>
+          <div
+            className="pt-0.5"
+            onClick={() =>
+              setOpenCollectionModal({
+                type: "ADD",
+              })
+            }
+          >
             <PlusCircleIcon className="withHover h-7 w-7 text-textColor/80" />
           </div>
         </div>
@@ -148,12 +160,33 @@ const Sidebar = () => {
       </div>
       {showContextMenu && (
         <div
-          className="absolute z-[999] w-[100px] bg-white p-4"
+          className="absolute z-[999] overflow-hidden rounded-md"
           style={{
             top: points.y,
             left: points.x,
           }}
-        ></div>
+        >
+          <div
+            className="flex cursor-pointer items-center gap-2 bg-primaryColor px-3 py-1.5
+           text-textColor/80  hover:bg-gray-600 hover:text-textColor"
+            onClick={() =>
+              setOpenCollectionModal({
+                type: "UPDATE",
+                collection: showContextMenu,
+              })
+            }
+          >
+            <PencilIcon className="h-5 w-5" />
+            <span>Edit</span>
+          </div>
+          <div
+            className="flex cursor-pointer items-center gap-2 bg-primaryColor px-3 py-1.5
+            text-textColor/80  hover:bg-gray-600 hover:text-textColor"
+          >
+            <TrashIcon className="h-5 w-5" />
+            <span>Delete</span>
+          </div>
+        </div>
       )}
     </div>
   );
