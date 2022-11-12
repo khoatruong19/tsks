@@ -6,6 +6,13 @@ export const createCollectionSchema = z.object({
   color: z.string().default("#EEEEEE"),
 });
 
+export const updateCollectionSchema = z.object({
+  id: z.string(),
+  icon: z.string().default("📃"),
+  title: z.string().default("Untitled"),
+  color: z.string().default("#EEEEEE"),
+});
+
 export const updateCollectionPositionSchema = z.object({
   activeId: z.string(),
   activePos: z.number(),

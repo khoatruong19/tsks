@@ -18,7 +18,9 @@ import {
 } from "@heroicons/react/24/outline";
 import { BookOpenIcon } from "@heroicons/react/24/solid";
 import { Collection } from "@prisma/client";
+import { useQueryClient } from "@tanstack/react-query";
 import { useAtom } from "jotai";
+import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import { openCollectionModal, openSidebarAtom } from "../../store";
 import { trpc } from "../../utils/trpc";
@@ -36,6 +38,9 @@ const Sidebar = () => {
     }
   );
   const { mutate } = trpc.collection.updatePosition.useMutation();
+  const deleteCollection = trpc.collection.delete.useMutation();
+  const qc = useQueryClient();
+  const router = useRouter();
   const [collections, setCollections] = useState<Partial<Collection>[]>([]);
   const [showContextMenu, setShowContextMenu] =
     useState<null | Partial<Collection>>(null);
@@ -71,6 +76,20 @@ const Sidebar = () => {
         });
       }
     }
+  };
+
+  const handleDeleteCollection = () => {
+    if (!showContextMenu?.id) return;
+    deleteCollection.mutate(
+      { id: showContextMenu.id },
+      {
+        onSuccess: () => {
+          qc.invalidateQueries("collection.getAllCollections");
+          if (showContextMenu?.slug === router.query.slug)
+            router.replace(`/collections`);
+        },
+      }
+    );
   };
 
   useEffect(() => {
@@ -182,6 +201,7 @@ const Sidebar = () => {
           <div
             className="flex cursor-pointer items-center gap-2 bg-primaryColor px-3 py-1.5
             text-textColor/80  hover:bg-gray-600 hover:text-textColor"
+            onClick={handleDeleteCollection}
           >
             <TrashIcon className="h-5 w-5" />
             <span>Delete</span>

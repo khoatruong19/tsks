@@ -11,6 +11,7 @@ import "react-color-palette/lib/css/styles.css";
 
 const CollectionModal = ({ open }: { open: string | null }) => {
   const createCollection = trpc.collection.create.useMutation();
+  const updateCollection = trpc.collection.update.useMutation();
   const [modalMode, setOpenModal] = useAtom(openCollectionModal);
   const [title, setTitle] = useState("");
   const [colorHex, setColorHex] = useColor(
@@ -58,6 +59,32 @@ const CollectionModal = ({ open }: { open: string | null }) => {
         },
       }
     );
+  };
+
+  const handleUpdateCollection = () => {
+    updateCollection.mutate(
+      {
+        id: modalMode?.collection?.id!,
+        title,
+        color: colorHex.hex,
+        icon,
+      },
+      {
+        onSuccess: ({ slug }) => {
+          setOpenModal(null);
+          setTitle("");
+          qc.invalidateQueries("collection.getAllCollections");
+          router.replace(`/collections/${slug}`);
+        },
+      }
+    );
+  };
+
+  const handleSubmitForm = () => {
+    if (modalMode?.type === "ADD") {
+      handleCreateCollection();
+      return;
+    } else handleUpdateCollection();
   };
 
   useEffect(() => {
@@ -147,7 +174,7 @@ const CollectionModal = ({ open }: { open: string | null }) => {
           <div className=" mt-10 flex items-center gap-4">
             <div
               className="withHover gradientBgColor flex items-center  gap-2 rounded-md py-2 px-8 shadow-xl"
-              onClick={handleCreateCollection}
+              onClick={handleSubmitForm}
             >
               <span className="text-lg font-semibold text-textColor/90">
                 {modalMode?.collection ? "Update" : "Add Collection"}
