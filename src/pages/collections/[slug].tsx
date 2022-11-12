@@ -45,7 +45,7 @@ const CollectionDetail = () => {
   return (
     <>
       <Head>
-        <title>School</title>
+        <title>{data?.title || ""}</title>
       </Head>
       <MainLayout>
         <div className="flex">
