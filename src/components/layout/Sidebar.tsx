@@ -23,7 +23,11 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useAtom } from "jotai";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
-import { openCollectionModal, openSidebarAtom } from "../../store";
+import {
+  collectionsList,
+  openCollectionModal,
+  openSidebarAtom,
+} from "../../store";
 import { trpc } from "../../utils/trpc";
 import ActiveLink from "./header/ActiveLink";
 import SortableItem from "./SortableItem";
@@ -44,7 +48,7 @@ const Sidebar = () => {
     trpc.collection.toggleIsFavourite.useMutation();
   const qc = useQueryClient();
   const router = useRouter();
-  const [collections, setCollections] = useState<Partial<Collection>[]>([]);
+  const [collections, setCollections] = useAtom(collectionsList);
   const [showContextMenu, setShowContextMenu] =
     useState<null | Partial<Collection>>(null);
   const [points, setPoints] = useState({ x: 0, y: 0 });

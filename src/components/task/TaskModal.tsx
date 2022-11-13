@@ -1,10 +1,30 @@
 import { DocumentIcon, FlagIcon } from "@heroicons/react/24/solid";
+import { Collection } from "@prisma/client";
 import { useAtom } from "jotai";
-import React from "react";
-import { openTaskModal } from "../../store";
+import React, { useEffect, useState } from "react";
+import { collectionsList, openTaskModal } from "../../store";
+import { trpc } from "../../utils/trpc";
 
 const TaskModal = ({ open }: { open: string | null }) => {
   const [_, setOpenModal] = useAtom(openTaskModal);
+  const [collections] = useAtom(collectionsList);
+  const [openCollections, setOpenCollections] = useState(true);
+  const [openCalendar, setOpenCalendar] = useState(false);
+  const [collection, setCollection] = useState<Partial<Collection>>();
+
+  const handleToggleCollections = () => {
+    openCalendar && setOpenCalendar(false);
+    setOpenCollections((prev) => !prev);
+  };
+
+  const handleSelectCollection = (value: Partial<Collection>) => {
+    setCollection(value);
+    setOpenCollections(false);
+  };
+
+  useEffect(() => {
+    if (collections) setCollection(collections[0]);
+  }, [collections]);
 
   return (
     <div className="absolute top-0 left-0 z-[99] h-[100vh] w-[100vw] bg-black/60">
@@ -18,10 +38,15 @@ const TaskModal = ({ open }: { open: string | null }) => {
             />
           </div>
 
-          <div className="mt-4 flex items-center gap-2 ">
-            <div className="withHover flex items-center gap-2  rounded-md border border-white/50 py-2 px-3">
-              <DocumentIcon className="h-5 w-5 text-pink-400" />
-              <span className="text-sm text-textColor/90">School</span>
+          <div className="relative mt-4 flex items-center gap-2">
+            <div
+              className="withHover flex items-center gap-2  rounded-md border border-white/50 py-2 px-3"
+              onClick={handleToggleCollections}
+            >
+              <span>{collection?.icon}</span>
+              <span className="text-sm text-textColor/90">
+                {collection?.title}
+              </span>
             </div>
             <div className="withHover flex items-center gap-2  rounded-md border border-white/50 py-2 px-3">
               <DocumentIcon className="h-5 w-5 text-green-400" />
@@ -30,6 +55,26 @@ const TaskModal = ({ open }: { open: string | null }) => {
             <div className="withHover flex items-center gap-2  rounded-md border border-white/50 py-2 px-3">
               <FlagIcon className="h-5 w-5 text-red-400" />
             </div>
+            {openCollections && (
+              <div className="absolute top-10 left-0 z-[999] overflow-hidden rounded-md">
+                {collections.map((item) => (
+                  <div
+                    className="flex cursor-pointer items-center gap-3 bg-secondaryColor px-3 py-2 hover:bg-slate-600"
+                    onClick={() => handleSelectCollection(item)}
+                  >
+                    <div
+                      className={` grid place-items-center rounded-md p-1`}
+                      style={{ backgroundColor: `${item.color}` }}
+                    >
+                      {item.icon}
+                    </div>
+                    <span className="text-base font-semibold text-textColor">
+                      {item.title}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="mt-10 flex items-center gap-4 ">
