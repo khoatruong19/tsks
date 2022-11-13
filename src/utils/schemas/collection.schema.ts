@@ -23,3 +23,12 @@ export const updateCollectionPositionSchema = z.object({
 export const getCollectionBySlugSchema = z.object({
   slug: z.string(),
 });
+
+export const deleteCollectionSchema = z.object({
+  id: z.string(),
+  collections: z.array(
+    z.object({
+      id: z.string(),
+    })
+  ),
+});
