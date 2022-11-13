@@ -7,3 +7,5 @@ export const openCollectionModal = atom<{
   type: "ADD" | "UPDATE";
   collection?: Partial<Collection>;
 } | null>(null);
+
+export const collectionsList = atom<Partial<Collection>[]>([]);
