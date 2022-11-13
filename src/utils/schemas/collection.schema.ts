@@ -32,3 +32,8 @@ export const deleteCollectionSchema = z.object({
     })
   ),
 });
+
+export const toggleCollectionIsFavouriteSchema = z.object({
+  id: z.string(),
+  isFavourite: z.boolean(),
+});

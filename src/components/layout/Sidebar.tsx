@@ -15,8 +15,9 @@ import {
   PencilIcon,
   PlusCircleIcon,
   TrashIcon,
+  HeartIcon as OutlineHeartIcon,
 } from "@heroicons/react/24/outline";
-import { BookOpenIcon } from "@heroicons/react/24/solid";
+import { BookOpenIcon, HeartIcon, StarIcon } from "@heroicons/react/24/solid";
 import { Collection } from "@prisma/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAtom } from "jotai";
@@ -39,6 +40,8 @@ const Sidebar = () => {
   );
   const { mutate } = trpc.collection.updatePosition.useMutation();
   const deleteCollection = trpc.collection.delete.useMutation();
+  const toggleIsFavouriteCollection =
+    trpc.collection.toggleIsFavourite.useMutation();
   const qc = useQueryClient();
   const router = useRouter();
   const [collections, setCollections] = useState<Partial<Collection>[]>([]);
@@ -92,6 +95,21 @@ const Sidebar = () => {
           qc.invalidateQueries("collection.getAllCollections");
           if (showContextMenu?.slug === router.query.slug)
             router.replace(`/collections`);
+        },
+      }
+    );
+  };
+
+  const handleToggleIsFavourite = () => {
+    if (!showContextMenu?.id) return;
+    toggleIsFavouriteCollection.mutate(
+      {
+        id: showContextMenu.id,
+        isFavourite: showContextMenu.isFavourite!,
+      },
+      {
+        onSuccess: () => {
+          qc.invalidateQueries("collection.getAllCollections");
         },
       }
     );
@@ -158,22 +176,29 @@ const Sidebar = () => {
                     activeClassName="bg-gray-600"
                   >
                     <div
-                      className="withHover flex items-center gap-3  py-4 pl-8 hover:bg-gray-600"
+                      className="withHover flex items-center justify-between py-4 pl-8 pr-5 hover:bg-gray-600"
                       onContextMenu={(e) => {
                         e.preventDefault();
                         setShowContextMenu(item);
                         setPoints({ x: e.pageX, y: e.pageY - 80 });
                       }}
                     >
-                      <div
-                        className={` grid place-items-center rounded-md p-2`}
-                        style={{ backgroundColor: `${item.color}` }}
-                      >
-                        {item.icon}
+                      <div className="withHover flex items-center gap-3">
+                        <div
+                          className={` grid place-items-center rounded-md p-2`}
+                          style={{ backgroundColor: `${item.color}` }}
+                        >
+                          {item.icon}
+                        </div>
+                        <span className="text-lg font-semibold text-textColor">
+                          {item.title}
+                        </span>
                       </div>
-                      <span className="text-lg font-semibold text-textColor">
-                        {item.title}
-                      </span>
+                      {item.isFavourite && (
+                        <div>
+                          <StarIcon className="h-5 w-5 text-yellow-400" />
+                        </div>
+                      )}
                     </div>
                   </ActiveLink>
                 </SortableItem>
@@ -190,6 +215,23 @@ const Sidebar = () => {
             left: points.x,
           }}
         >
+          <div
+            className="flex cursor-pointer items-center gap-2 bg-primaryColor px-3 py-1.5
+           text-textColor/80  hover:bg-gray-600 hover:text-textColor"
+            onClick={handleToggleIsFavourite}
+          >
+            {showContextMenu.isFavourite ? (
+              <>
+                <HeartIcon className="h-5 w-5" />
+                <span>Unfavourite</span>
+              </>
+            ) : (
+              <>
+                <OutlineHeartIcon className="h-5 w-5" />
+                <span>Favourite</span>
+              </>
+            )}
+          </div>
           <div
             className="flex cursor-pointer items-center gap-2 bg-primaryColor px-3 py-1.5
            text-textColor/80  hover:bg-gray-600 hover:text-textColor"

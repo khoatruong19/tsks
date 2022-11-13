@@ -1,4 +1,5 @@
 import { BookOpenIcon } from "@heroicons/react/24/outline";
+import { StarIcon } from "@heroicons/react/24/solid";
 import { Collection } from "@prisma/client";
 import { useRouter } from "next/router";
 import React from "react";
@@ -22,12 +23,20 @@ const CollectionCard = ({ collection }: IProps) => {
       onClick={() => router.push(`/collections/${collection.slug}`)}
     >
       <div className=" p-4 md:p-6">
-        <div
-          className="mb-8 grid max-w-fit place-items-center rounded-md p-1.5"
-          style={{ backgroundColor: collection.color }}
-        >
-          <p className="text-lg">{collection.icon}</p>
+        <div className="mb-8  flex items-center justify-between">
+          <div
+            className="grid max-w-fit place-items-center rounded-md p-1.5"
+            style={{ backgroundColor: collection.color }}
+          >
+            <p className="text-lg">{collection.icon}</p>
+          </div>
+          {collection.isFavourite && (
+            <div className="ml-[-10px]">
+              <StarIcon className="h-6 w-6 text-yellow-400" />
+            </div>
+          )}
         </div>
+
         <h1 className="mb-3  text-2xl font-bold text-textColor">
           {collection.title}
         </h1>

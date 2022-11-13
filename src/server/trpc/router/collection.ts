@@ -3,7 +3,9 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import {
   createCollectionSchema,
+  deleteCollectionSchema,
   getCollectionBySlugSchema,
+  toggleCollectionIsFavouriteSchema,
   updateCollectionPositionSchema,
   updateCollectionSchema,
 } from "../../../utils/schemas/collection.schema";
@@ -48,6 +50,7 @@ export const collectionRouter = router({
         icon: true,
         slug: true,
         position: true,
+        isFavourite: true,
       },
       orderBy: {
         position: "desc",
@@ -122,16 +125,7 @@ export const collectionRouter = router({
     }),
 
   delete: protectedProcedure
-    .input(
-      z.object({
-        id: z.string(),
-        collections: z.array(
-          z.object({
-            id: z.string(),
-          })
-        ),
-      })
-    )
+    .input(deleteCollectionSchema)
     .mutation(async ({ input: { id, collections }, ctx }) => {
       await ctx.prisma.collection.delete({
         where: {
@@ -147,5 +141,17 @@ export const collectionRouter = router({
           },
         });
       }
+    }),
+
+  toggleIsFavourite: protectedProcedure
+    .input(toggleCollectionIsFavouriteSchema)
+    .mutation(async ({ input: { id, isFavourite: currentValue }, ctx }) => {
+      console.log({ id, currentValue });
+      await ctx.prisma.collection.update({
+        where: { id },
+        data: {
+          isFavourite: !currentValue,
+        },
+      });
     }),
 });

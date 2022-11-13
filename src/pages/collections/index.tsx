@@ -21,6 +21,10 @@ const Collections: NextPage = () => {
   const { status } = useSession();
   const router = useRouter();
 
+  const favouriteCollections = data?.filter(
+    (collection) => collection.isFavourite === true
+  );
+
   useEffect(() => {
     if (status === "unauthenticated") router.push("/login");
   }, [status, router]);
@@ -68,24 +72,43 @@ const Collections: NextPage = () => {
                       All Collections
                     </button>
                   </div>
+                  {viewMode === 0 ? (
+                    <div className="grid grid-cols-2 gap-x-3 gap-y-4 md:grid-cols-3 md:gap-4 ">
+                      {favouriteCollections &&
+                        favouriteCollections.map((collection) => (
+                          <CollectionCard
+                            collection={collection}
+                            key={collection.id}
+                          />
+                        ))}
 
-                  <div className="grid grid-cols-2 gap-x-3 gap-y-4 md:grid-cols-3 md:gap-4 ">
-                    {data &&
-                      data.map((collection) => (
-                        <CollectionCard
-                          collection={collection}
-                          key={collection.id}
-                        />
-                      ))}
-
-                    <div
-                      className="withHover flex h-[105px] items-center justify-center rounded-3xl
-                   border-[3px] border-secondaryColor text-3xl text-white/60"
-                      onClick={() => setOpenCollectionModal("Add")}
-                    >
-                      +
+                      <div
+                        className="withHover flex h-[105px] items-center justify-center rounded-3xl
+border-[3px] border-secondaryColor text-3xl text-white/60"
+                        onClick={() => setOpenCollectionModal({ type: "ADD" })}
+                      >
+                        +
+                      </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-x-3 gap-y-4 md:grid-cols-3 md:gap-4 ">
+                      {data &&
+                        data.map((collection) => (
+                          <CollectionCard
+                            collection={collection}
+                            key={collection.id}
+                          />
+                        ))}
+
+                      <div
+                        className="withHover flex h-[105px] items-center justify-center rounded-3xl
+                       border-[3px] border-secondaryColor text-3xl text-white/60"
+                        onClick={() => setOpenCollectionModal({ type: "ADD" })}
+                      >
+                        +
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
