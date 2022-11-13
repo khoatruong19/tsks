@@ -81,7 +81,12 @@ const Sidebar = () => {
   const handleDeleteCollection = () => {
     if (!showContextMenu?.id) return;
     deleteCollection.mutate(
-      { id: showContextMenu.id },
+      {
+        id: showContextMenu.id,
+        collections: collections.filter(
+          (collection) => collection.id !== showContextMenu.id
+        ) as { id: string }[],
+      },
       {
         onSuccess: () => {
           qc.invalidateQueries("collection.getAllCollections");
@@ -179,7 +184,7 @@ const Sidebar = () => {
       </div>
       {showContextMenu && (
         <div
-          className="absolute z-[999] overflow-hidden rounded-md"
+          className="absolute z-[999] overflow-hidden rounded-md shadow-2xl"
           style={{
             top: points.y,
             left: points.x,

@@ -125,13 +125,27 @@ export const collectionRouter = router({
     .input(
       z.object({
         id: z.string(),
+        collections: z.array(
+          z.object({
+            id: z.string(),
+          })
+        ),
       })
     )
-    .mutation(async ({ input: { id }, ctx }) => {
+    .mutation(async ({ input: { id, collections }, ctx }) => {
       await ctx.prisma.collection.delete({
         where: {
           id,
         },
       });
+      for (const key in collections.reverse()) {
+        const collection = collections[key];
+        await ctx.prisma.collection.update({
+          where: { id: collection?.id },
+          data: {
+            position: parseInt(key),
+          },
+        });
+      }
     }),
 });
