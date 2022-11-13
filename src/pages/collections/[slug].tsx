@@ -62,7 +62,10 @@ const CollectionDetail = () => {
                   <div className="mb-6 flex flex-col gap-12 overflow-hidden">
                     <div className="flex items-center justify-between  text-textColor">
                       <div className="flex items-center gap-4">
-                        <div className="withHover rounded-lg bg-secondaryColor p-3">
+                        <div
+                          className="withHover rounded-lg bg-secondaryColor p-3"
+                          onClick={() => router.back()}
+                        >
                           <ChevronLeftIcon className="h-6 w-6 text-textColor" />
                         </div>
                         <h3 className="text-3xl font-bold">{data?.title}</h3>
