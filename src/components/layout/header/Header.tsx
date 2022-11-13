@@ -1,4 +1,4 @@
-import { BellIcon } from "@heroicons/react/24/outline";
+import { SunIcon } from "@heroicons/react/24/outline";
 import {
   Bars3Icon,
   ClipboardDocumentIcon,
@@ -7,12 +7,12 @@ import {
   Squares2X2Icon,
 } from "@heroicons/react/24/solid";
 import { useAtom } from "jotai";
-import { useSession, signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
+import { useRouter } from "next/router";
+import { useState } from "react";
 import { openSidebarAtom, openTaskModal } from "../../../store";
 import ActiveLink from "./ActiveLink";
-import { useState } from "react";
-import { useRouter } from "next/router";
 
 interface IProps {
   hasSidebar: boolean;
@@ -63,7 +63,7 @@ const Header = ({ hasSidebar }: IProps) => {
             <MagnifyingGlassIcon className="h-6 w-6 text-white" />
           </div>
           <div>
-            <BellIcon className="h-6 w-6 text-white" />
+            <SunIcon className="h-6 w-6 text-white" />
           </div>
           <div className="relative">
             <div
