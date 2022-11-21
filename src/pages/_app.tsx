@@ -5,6 +5,7 @@ import { SessionProvider } from "next-auth/react";
 import { trpc } from "../utils/trpc";
 
 import "../styles/globals.css";
+import "react-calendar/dist/Calendar.css";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,

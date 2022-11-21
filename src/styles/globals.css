@@ -77,3 +77,23 @@
   text-decoration-color: white;
   text-decoration-thickness: 2px;
 }
+
+.react-calendar {
+  background: #393e46 !important;
+}
+
+.react-calendar__navigation__label:hover {
+  background: #222831 !important;
+}
+.react-calendar__navigation__arrow:hover {
+  background: #222831 !important;
+}
+.react-calendar__navigation__arrow:disabled {
+  background: #222831 !important;
+}
+.react-calendar__tile:hover {
+  background: #222831 !important;
+}
+.react-calendar__tile:disabled {
+  background: #222831 !important;
+}

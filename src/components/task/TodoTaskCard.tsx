@@ -67,9 +67,9 @@ const TodoTaskCard = ({ content, done }: IProps) => {
                   <RectangleGroupIcon className="h-5 w-5" />
                   <span>0/1</span>
                 </div>
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1.5 text-red-200">
                   <CalendarDaysIcon className="h-5 w-5" />
-                  <span>0/1</span>
+                  <span>Today</span>
                 </div>
               </div>
             </div>

@@ -1,25 +1,38 @@
-import { DocumentIcon, FlagIcon } from "@heroicons/react/24/solid";
+import { CheckIcon, DocumentIcon, FlagIcon } from "@heroicons/react/24/solid";
 import { Collection } from "@prisma/client";
 import { useAtom } from "jotai";
 import React, { useEffect, useState } from "react";
 import { collectionsList, openTaskModal } from "../../store";
 import { trpc } from "../../utils/trpc";
+import Calendar from "react-calendar";
+import { formatDateToString } from "../../utils/helpers";
 
 const TaskModal = ({ open }: { open: string | null }) => {
   const [_, setOpenModal] = useAtom(openTaskModal);
   const [collections] = useAtom(collectionsList);
-  const [openCollections, setOpenCollections] = useState(true);
+  const [openCollections, setOpenCollections] = useState(false);
   const [openCalendar, setOpenCalendar] = useState(false);
   const [collection, setCollection] = useState<Partial<Collection>>();
+  const [dueDate, setDueDate] = useState(new Date());
 
   const handleToggleCollections = () => {
     openCalendar && setOpenCalendar(false);
     setOpenCollections((prev) => !prev);
   };
 
+  const handleToggleDueDate = () => {
+    openCollections && setOpenCollections(false);
+    setOpenCalendar((prev) => !prev);
+  };
+
   const handleSelectCollection = (value: Partial<Collection>) => {
     setCollection(value);
     setOpenCollections(false);
+  };
+
+  const handleSelectDueDate = (value: Date) => {
+    setDueDate(value);
+    setOpenCalendar(false);
   };
 
   useEffect(() => {
@@ -48,9 +61,14 @@ const TaskModal = ({ open }: { open: string | null }) => {
                 {collection?.title}
               </span>
             </div>
-            <div className="withHover flex items-center gap-2  rounded-md border border-white/50 py-2 px-3">
+            <div
+              className="withHover relative flex items-center gap-2  rounded-md border border-white/50 py-2 px-3"
+              onClick={handleToggleDueDate}
+            >
               <DocumentIcon className="h-5 w-5 text-green-400" />
-              <span className="text-sm text-textColor/90">Today</span>
+              <span className="text-sm text-textColor/90">
+                {formatDateToString(dueDate)}
+              </span>
             </div>
             <div className="withHover flex items-center gap-2  rounded-md border border-white/50 py-2 px-3">
               <FlagIcon className="h-5 w-5 text-red-400" />
@@ -59,7 +77,7 @@ const TaskModal = ({ open }: { open: string | null }) => {
               <div className="absolute top-10 left-0 z-[999] overflow-hidden rounded-md">
                 {collections.map((item) => (
                   <div
-                    className="flex cursor-pointer items-center gap-3 bg-secondaryColor px-3 py-2 hover:bg-slate-600"
+                    className="flex cursor-pointer items-center gap-3 bg-secondaryColor py-2 px-3  hover:bg-slate-600"
                     onClick={() => handleSelectCollection(item)}
                   >
                     <div
@@ -71,8 +89,22 @@ const TaskModal = ({ open }: { open: string | null }) => {
                     <span className="text-base font-semibold text-textColor">
                       {item.title}
                     </span>
+                    {collection?.id === item.id && (
+                      <div className="justify-self-end">
+                        <CheckIcon className="h-5 w-5 text-gray-500" />
+                      </div>
+                    )}
                   </div>
                 ))}
+              </div>
+            )}
+            {openCalendar && (
+              <div className="absolute top-10 left-0 z-[999] overflow-hidden rounded-md">
+                <Calendar
+                  minDate={new Date()}
+                  onChange={handleSelectDueDate}
+                  value={dueDate}
+                />
               </div>
             )}
           </div>
