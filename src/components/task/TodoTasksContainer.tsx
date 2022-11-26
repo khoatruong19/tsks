@@ -10,17 +10,16 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import { Task } from "@prisma/client";
 import { useState } from "react";
 import SortableItem from "../layout/SortableItem";
 import TodoTaskCard from "./TodoTaskCard";
 
-const TodoTasksContainer = () => {
-  const [languages, setLanguages] = useState<string[]>([
-    "Javascript",
-    "Python",
-    "Typescript",
-  ]);
+interface IProps {
+  tasks: Task[];
+}
 
+const TodoTasksContainer = ({ tasks }: IProps) => {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -32,26 +31,25 @@ const TodoTasksContainer = () => {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (active.id !== over?.id) {
-      setLanguages((items: string[]) => {
-        const activeIndex = items.indexOf(active.id as string);
-        const overIndex = items.indexOf(over?.id as string);
-        return arrayMove(items, activeIndex, overIndex);
-      });
     }
   };
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold text-textColor">Tasks - 8</h1>
+      <h1 className="text-2xl font-semibold text-textColor">
+        Tasks - {tasks.length}
+      </h1>
       <div className="flex flex-col gap-2.5 py-5">
+        {tasks.length === 0 && (
+          <h2 className="text-center text-lg font-semibold text-white">
+            No tasks
+          </h2>
+        )}
         <DndContext onDragEnd={handleDragEnd} sensors={sensors}>
-          <SortableContext
-            items={languages}
-            strategy={verticalListSortingStrategy}
-          >
-            {languages.map((item) => (
-              <SortableItem key={item} id={item}>
-                <TodoTaskCard content={item} />
+          <SortableContext items={tasks} strategy={verticalListSortingStrategy}>
+            {tasks.map((item) => (
+              <SortableItem key={item.id} id={item.id}>
+                <TodoTaskCard content={item.content} />
               </SortableItem>
             ))}
           </SortableContext>
