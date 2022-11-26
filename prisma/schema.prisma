@@ -85,6 +85,8 @@ model Task {
   parentId     String?
   children     Task[]     @relation("TaskToTask")
   done         Boolean    @default(false)
+  flag         Boolean    @default(false)
+  dueDate      DateTime   @default(now())
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
 }
