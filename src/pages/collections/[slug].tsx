@@ -12,11 +12,12 @@ import TodoTasksContainer from "../../components/task/TodoTasksContainer";
 import MainLayout from "../../components/layout/MainLayout";
 import Sidebar from "../../components/layout/Sidebar";
 import { openTaskModal } from "../../store";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import Loading from "../../components/layout/Loading";
 import { trpc } from "../../utils/trpc";
 import ClipLoader from "react-spinners/ClipLoader";
 import Loader from "../../components/others/Loader";
+import { Task } from "@prisma/client";
 
 const CollectionDetail = () => {
   const router = useRouter();
@@ -32,6 +33,14 @@ const CollectionDetail = () => {
   const { status } = useSession();
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const completedTasks = useMemo<Task[]>(() => {
+    let tasks = [] as Task[];
+    if (data?.tasks) {
+      tasks = data.tasks.filter((task) => task.done === true);
+    }
+    return tasks;
+  }, [data]);
+
   useEffect(() => {
     if (status === "unauthenticated") router.push("/login");
   }, [status, router]);
@@ -42,6 +51,9 @@ const CollectionDetail = () => {
   }, [router]);
 
   if (status === "loading") return <Loading />;
+
+  console.log(data?.tasks);
+
   return (
     <>
       <Head>
@@ -88,8 +100,8 @@ const CollectionDetail = () => {
                       </p>
                     </div>
 
-                    <TodoTasksContainer />
-                    <CompletedTasksContainer />
+                    <TodoTasksContainer tasks={data ? data.tasks : []} />
+                    <CompletedTasksContainer tasks={completedTasks} />
                   </div>
                 </div>
               )}

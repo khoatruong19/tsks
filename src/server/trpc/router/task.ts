@@ -9,28 +9,28 @@ import {
   updateCollectionPositionSchema,
   updateCollectionSchema,
 } from "../../../utils/schemas/collection.schema";
+import { createTaskSchema } from "../../../utils/schemas/task.schema";
 
 import { router, protectedProcedure } from "../trpc";
 
-export const collectionRouter = router({
-  create: protectedProcedure
-    .input(createCollectionSchema)
-    .mutation(async ({ input, ctx }) => {
+export const taskRouter = router({
+  createTask: protectedProcedure
+    .input(createTaskSchema)
+    .mutation(async ({ input: { collectionId, ...rest }, ctx }) => {
       try {
-        const collectionsCount = await ctx.prisma.collection.count();
-        const collection = await ctx.prisma.collection.create({
+        const tasksCount = await ctx.prisma.task.count();
+        const task = await ctx.prisma.task.create({
           data: {
-            user: {
+            collection: {
               connect: {
-                id: ctx.session.user.id,
+                id: collectionId,
               },
             },
-            ...input,
-            position: collectionsCount > 0 ? collectionsCount : 0,
-            slug: input.title.toLowerCase().replace(" ", "-"),
+            ...rest,
+            position: tasksCount > 0 ? tasksCount : 0,
           },
         });
-        return { collection };
+        return { task };
       } catch (error) {
         throw new trpc.TRPCError({
           code: "INTERNAL_SERVER_ERROR",
@@ -38,25 +38,15 @@ export const collectionRouter = router({
         });
       }
     }),
-  getAllCollections: protectedProcedure.query(({ ctx }) => {
-    return ctx.prisma.collection.findMany({
-      where: {
-        userId: ctx.session?.user?.id,
-      },
-      select: {
-        id: true,
-        title: true,
-        color: true,
-        icon: true,
-        slug: true,
-        position: true,
-        isFavourite: true,
-      },
-      orderBy: {
-        position: "desc",
-      },
-    });
-  }),
+  getAllTasksByCollection: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(({ ctx, input }) => {
+      return ctx.prisma.task.findMany({
+        where: {
+          collectionId: input.id,
+        },
+      });
+    }),
 
   getAllCollectionsWithStatus: protectedProcedure.query(({ ctx }) => {
     return ctx.prisma.collection.findMany({
@@ -83,9 +73,6 @@ export const collectionRouter = router({
         where: {
           userId: ctx.session?.user?.id,
           slug: input.slug,
-        },
-        include: {
-          tasks: true,
         },
       });
     }),
