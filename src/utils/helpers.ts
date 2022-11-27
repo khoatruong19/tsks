@@ -22,8 +22,20 @@ const isToday = (date: Date) => {
   return false;
 };
 
+const isYesterday = (date: Date) => {
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+
+  if (yesterday.toDateString() === date.toDateString()) {
+    return true;
+  }
+
+  return false;
+};
+
 export const formatDateToString = (date: Date) => {
   if (isToday(date)) return "Today";
   if (isTomorrow(date)) return "Tomorrow";
+  if (isYesterday(date)) return "Yesterday";
   else return moment(date).format("L");
 };

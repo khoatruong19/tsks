@@ -33,7 +33,7 @@ const CompletedTasksContainer = ({ tasks }: IProps) => {
         <DndContext onDragEnd={handleDragEnd}>
           <SortableContext items={tasks} strategy={verticalListSortingStrategy}>
             {tasks.map((item) => (
-              <TodoTaskCard done key={item.id} content={item.content} />
+              <TodoTaskCard key={item.id} task={item} />
             ))}
           </SortableContext>
         </DndContext>

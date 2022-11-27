@@ -49,7 +49,7 @@ const TodoTasksContainer = ({ tasks }: IProps) => {
           <SortableContext items={tasks} strategy={verticalListSortingStrategy}>
             {tasks.map((item) => (
               <SortableItem key={item.id} id={item.id}>
-                <TodoTaskCard content={item.content} />
+                <TodoTaskCard task={item} />
               </SortableItem>
             ))}
           </SortableContext>

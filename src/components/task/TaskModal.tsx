@@ -69,8 +69,7 @@ const TaskModal = ({ open }: { open: string | null }) => {
     if (collections) {
       if (router.query.slug) {
         let collection = collections.find(
-          (item) =>
-            item.title?.toLowerCase().replace(" ", "-") === router.query.slug
+          (item) => item.slug === router.query.slug
         );
         if (collection) {
           setCollection(collection);

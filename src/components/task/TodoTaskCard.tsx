@@ -9,16 +9,17 @@ import {
   CalendarDaysIcon,
   RectangleGroupIcon,
 } from "@heroicons/react/24/outline";
+import { Task } from "@prisma/client";
 import React, { useEffect, useRef, useState } from "react";
+import { formatDateToString } from "../../utils/helpers";
 import SortableItem from "../layout/SortableItem";
 import ChevronController from "../others/ChevronController";
 
 interface IProps {
-  content: string;
-  done?: boolean;
+  task: Task;
 }
 
-const TodoTaskCard = ({ content, done }: IProps) => {
+const TodoTaskCard = ({ task }: IProps) => {
   const [showTasks, setShowTasks] = useState(false);
   const [languages, setLanguages] = useState<string[]>([
     "Javascripts",
@@ -51,16 +52,16 @@ const TodoTaskCard = ({ content, done }: IProps) => {
         <div className="flex justify-between p-3">
           <div className="flex gap-3">
             <label className="container">
-              <input type="checkbox" checked={done} onChange={() => {}} />
+              <input type="checkbox" checked={task.done} onChange={() => {}} />
               <span className="checkmark border-[3px] border-primaryColor"></span>
             </label>
             <div>
               <p
                 className={`text-lg font-medium text-textColor/90 ${
-                  done && "lineThroughWhite line-through"
+                  task.done && "lineThroughWhite line-through"
                 }`}
               >
-                {content}
+                {task.content}
               </p>
               <div className="mt-1 flex items-center gap-4 text-white/70">
                 <div className="flex items-center gap-1.5">
@@ -69,7 +70,7 @@ const TodoTaskCard = ({ content, done }: IProps) => {
                 </div>
                 <div className="flex items-center gap-1.5 text-red-200">
                   <CalendarDaysIcon className="h-5 w-5" />
-                  <span>Today</span>
+                  <span>{formatDateToString(task.dueDate)}</span>
                 </div>
               </div>
             </div>
@@ -91,16 +92,16 @@ const TodoTaskCard = ({ content, done }: IProps) => {
                       <div className="flex justify-between p-3">
                         <div className="flex gap-3">
                           <label className="container">
-                            <input type="checkbox" checked={done} />
+                            <input type="checkbox" checked={task.done} />
                             <span className="checkmark border-[3px] border-primaryColor" />
                           </label>
                           <div>
                             <p
                               className={`text-lg font-medium text-textColor/90 ${
-                                done && "lineThroughWhite line-through"
+                                task.done && "lineThroughWhite line-through"
                               }`}
                             >
-                              {item} + {content}
+                              {item} + {task.content}
                             </p>
                           </div>
                         </div>
