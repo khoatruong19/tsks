@@ -9,7 +9,10 @@ import {
   updateCollectionPositionSchema,
   updateCollectionSchema,
 } from "../../../utils/schemas/collection.schema";
-import { createTaskSchema } from "../../../utils/schemas/task.schema";
+import {
+  createTaskSchema,
+  updateTaskSchema,
+} from "../../../utils/schemas/task.schema";
 
 import { router, protectedProcedure } from "../trpc";
 
@@ -100,18 +103,15 @@ export const taskRouter = router({
     }),
 
   update: protectedProcedure
-    .input(updateCollectionSchema)
+    .input(updateTaskSchema)
     .mutation(async ({ input: { id, ...rest }, ctx }) => {
-      const updatedCollection = await ctx.prisma.collection.update({
+      const updatedTask = await ctx.prisma.task.update({
         where: {
           id,
         },
-        data: {
-          ...rest,
-          slug: rest.title.toLowerCase().replace(" ", "-"),
-        },
+        data: rest,
       });
-      return updatedCollection;
+      return updatedTask;
     }),
 
   delete: protectedProcedure

@@ -6,3 +6,11 @@ export const createTaskSchema = z.object({
   collectionId: z.string(),
   flag: z.boolean().default(false),
 });
+
+export const updateTaskSchema = z.object({
+  id: z.string(),
+  content: z.string().default("Untitled"),
+  dueDate: z.date(),
+  collectionId: z.string(),
+  flag: z.boolean().default(false),
+});
