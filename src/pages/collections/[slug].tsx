@@ -90,7 +90,7 @@ const CollectionDetail = () => {
                     <div
                       className="withHover flex w-full items-center gap-3 rounded-2xl border-[1px] border-secondaryColor/80
                    p-3"
-                      onClick={() => setOpenModal("Add")}
+                      onClick={() => setOpenModal({ type: "ADD" })}
                     >
                       <div className="w-fit rounded-lg bg-tertiaryColor p-2">
                         <PlusIcon className="h-5 w-5 text-textColor" />

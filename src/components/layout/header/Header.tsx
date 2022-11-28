@@ -55,7 +55,7 @@ const Header = ({ hasSidebar }: IProps) => {
         <div className="hidden items-center gap-5 lg:inline-flex">
           <div
             className="withHover gradientBgColor grid h-7 w-7 place-items-center rounded-md shadow-md"
-            onClick={() => setOpenModal("Add")}
+            onClick={() => setOpenModal({ type: "ADD" })}
           >
             <PlusIcon className="h-5 w-5 text-white" />
           </div>
