@@ -9,8 +9,8 @@ import { formatDateToString } from "../../utils/helpers";
 import { useRouter } from "next/router";
 import { useQueryClient } from "@tanstack/react-query";
 
-const TaskModal = ({ open }: { open: string | null }) => {
-  const [_, setOpenModal] = useAtom(openTaskModal);
+const TaskModal = () => {
+  const [openModal, setOpenModal] = useAtom(openTaskModal);
   const [collections] = useAtom(collectionsList);
   const [openCollections, setOpenCollections] = useState(false);
   const [openCalendar, setOpenCalendar] = useState(false);
@@ -22,6 +22,7 @@ const TaskModal = ({ open }: { open: string | null }) => {
   const qc = useQueryClient();
 
   const createTask = trpc.task.createTask.useMutation();
+  const updateTask = trpc.task.update.useMutation();
 
   const handleToggleCollections = () => {
     openCalendar && setOpenCalendar(false);
@@ -43,8 +44,7 @@ const TaskModal = ({ open }: { open: string | null }) => {
     setOpenCalendar(false);
   };
 
-  const handleCreateTaskSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleCreateTask = () => {
     createTask.mutate(
       {
         content,
@@ -56,13 +56,40 @@ const TaskModal = ({ open }: { open: string | null }) => {
         onSuccess: () => {
           qc.invalidateQueries("collection.getAllCollections");
           setOpenModal(null);
-          setContent("");
         },
         onError: ({ message }) => {
           alert(message);
         },
       }
     );
+  };
+
+  const handleUpdateTask = () => {
+    updateTask.mutate(
+      {
+        id: openModal?.task?.id!,
+        content,
+        dueDate,
+        flag,
+        collectionId: collection!.id as string,
+      },
+      {
+        onSuccess: () => {
+          qc.invalidateQueries("collection.getAllCollections");
+          setOpenModal(null);
+        },
+        onError: ({ message }) => {
+          alert(message);
+        },
+      }
+    );
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (openModal?.type === "ADD") {
+      handleCreateTask();
+    } else handleUpdateTask();
   };
 
   useEffect(() => {
@@ -80,16 +107,26 @@ const TaskModal = ({ open }: { open: string | null }) => {
     }
   }, [collections, router]);
 
+  useEffect(() => {
+    if (openModal && openModal.task) {
+      setContent(openModal.task.content!);
+      setDueDate(openModal.task.dueDate!);
+      setFlag(openModal.task.flag!);
+    }
+  }, [openModal]);
+
   return (
     <div className="absolute top-0 left-0 z-[99] h-[100vh] w-[100vw] bg-black/60">
-      <form onSubmit={handleCreateTaskSubmit}>
+      <form onSubmit={handleSubmit}>
         <div className="mx-auto mt-52 w-full max-w-[500px] rounded-3xl bg-primaryColor shadow-2xl">
           <div className="px-5 py-7">
             <div className="h-12 rounded-lg border border-white/50">
               <input
                 className="h-full w-full bg-transparent px-4 text-textColor/90 outline-none placeholder:text-textColor/90"
                 type="text"
-                placeholder={open === "Add" ? "New Task..." : "Do homework"}
+                placeholder={
+                  openModal?.type === "ADD" ? "New Task..." : "Do homework"
+                }
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
               />
@@ -164,7 +201,7 @@ const TaskModal = ({ open }: { open: string | null }) => {
                 className="withHover gradientBgColor flex items-center  gap-2 rounded-md py-2 px-8 shadow-xl"
               >
                 <span className="text-lg font-semibold text-textColor/90">
-                  Add Task
+                  {openModal?.type === "ADD" ? "Add Task" : "Update Task"}
                 </span>
               </button>
               <div

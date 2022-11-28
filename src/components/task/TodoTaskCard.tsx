@@ -9,8 +9,11 @@ import {
   CalendarDaysIcon,
   RectangleGroupIcon,
 } from "@heroicons/react/24/outline";
+import { TrashIcon, PencilIcon } from "@heroicons/react/24/solid";
 import { Task } from "@prisma/client";
+import { useAtom } from "jotai";
 import React, { useEffect, useRef, useState } from "react";
+import { openTaskModal } from "../../store";
 import { formatDateToString } from "../../utils/helpers";
 import SortableItem from "../layout/SortableItem";
 import ChevronController from "../others/ChevronController";
@@ -28,6 +31,8 @@ const TodoTaskCard = ({ task }: IProps) => {
   ]);
 
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const [_, setOpenTaskModal] = useAtom(openTaskModal);
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -49,13 +54,13 @@ const TodoTaskCard = ({ task }: IProps) => {
   return (
     <>
       <div className="relative w-full rounded-3xl bg-secondaryColor">
-        <div className="flex justify-between p-3">
-          <div className="flex gap-3">
+        <div className="flex w-full justify-between p-3">
+          <div className="flex w-full gap-3">
             <label className="container">
               <input type="checkbox" checked={task.done} onChange={() => {}} />
               <span className="checkmark border-[3px] border-primaryColor"></span>
             </label>
-            <div>
+            <div className="w-[100%]">
               <p
                 className={`text-lg font-medium text-textColor/90 ${
                   task.done && "lineThroughWhite line-through"
@@ -63,14 +68,33 @@ const TodoTaskCard = ({ task }: IProps) => {
               >
                 {task.content}
               </p>
-              <div className="mt-1 flex items-center gap-4 text-white/70">
-                <div className="flex items-center gap-1.5">
-                  <RectangleGroupIcon className="h-5 w-5" />
-                  <span>0/1</span>
+              <div className="flex w-[100%]  items-center justify-between">
+                <div className="mt-1 flex items-center gap-4 text-white/70">
+                  <div className="flex items-center gap-1.5">
+                    <RectangleGroupIcon className="h-5 w-5" />
+                    <span>0/1</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-red-200">
+                    <CalendarDaysIcon className="h-5 w-5" />
+                    <span>{formatDateToString(task.dueDate)}</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-1.5 text-red-200">
-                  <CalendarDaysIcon className="h-5 w-5" />
-                  <span>{formatDateToString(task.dueDate)}</span>
+
+                <div className="mt-1 flex items-center gap-2 text-tertiaryColor">
+                  <div
+                    className="withHover flex items-center gap-1.5"
+                    onClick={() =>
+                      setOpenTaskModal({
+                        type: "UPDATE",
+                        task,
+                      })
+                    }
+                  >
+                    <PencilIcon className="h-5 w-5" />
+                  </div>
+                  <div className="withHover flex items-center gap-1.5 text-red-400">
+                    <TrashIcon className="h-5 w-5" />
+                  </div>
                 </div>
               </div>
             </div>
