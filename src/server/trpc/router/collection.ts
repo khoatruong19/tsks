@@ -85,7 +85,11 @@ export const collectionRouter = router({
           slug: input.slug,
         },
         include: {
-          tasks: true,
+          tasks: {
+            orderBy: {
+              position: 'desc'
+            }
+          },
         },
       });
     }),
@@ -93,7 +97,6 @@ export const collectionRouter = router({
   updatePosition: protectedProcedure
     .input(updateCollectionPositionSchema)
     .mutation(async ({ input, ctx }) => {
-      console.log({ input });
       await ctx.prisma.collection.update({
         where: {
           id: input.activeId,

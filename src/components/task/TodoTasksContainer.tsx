@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {
   DndContext,
   DragEndEvent,
@@ -11,7 +13,8 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { Task } from "@prisma/client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { trpc } from "../../utils/trpc";
 import SortableItem from "../layout/SortableItem";
 import TodoTaskCard from "./TodoTaskCard";
 
@@ -20,6 +23,9 @@ interface IProps {
 }
 
 const TodoTasksContainer = ({ tasks }: IProps) => {
+  const [sortedTasks, setSortedTasks] = useState<Task[]>([])
+
+  const { mutate } = trpc.task.updatePosition.useMutation();
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -29,25 +35,46 @@ const TodoTasksContainer = ({ tasks }: IProps) => {
   );
 
   const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
+    const { active, over } = event; 
     if (active.id !== over?.id) {
+      const activeTask = sortedTasks.find(
+        (item) => item.id === active.id
+      );
+      const overTask = sortedTasks.find((item) => item.id === over?.id);
+      setSortedTasks((items: Task[]) => {
+        const activeIndex = items.findIndex((item) => item.id === active.id);
+        const overIndex = items.findIndex((item) => item.id === over?.id);
+        return arrayMove(items, activeIndex, overIndex);
+      });
+      if (activeTask && overTask) {
+        mutate({
+          activeId: active.id as string,
+          overId: over?.id as string,
+          activePos: activeTask?.position!,
+          overPos: overTask?.position!,
+        });
+      }
     }
   };
 
+  useEffect(() => {
+    setSortedTasks(tasks)
+  }, [tasks])
+  console.log({sortedTasks})
   return (
     <div>
       <h1 className="text-2xl font-semibold text-textColor">
-        Tasks - {tasks.length}
+        Tasks - {sortedTasks.length}
       </h1>
       <div className="flex flex-col gap-2.5 py-5">
-        {tasks.length === 0 && (
+        {sortedTasks.length === 0 && (
           <h2 className="text-center text-lg font-semibold text-white">
             No tasks
           </h2>
         )}
         <DndContext onDragEnd={handleDragEnd} sensors={sensors}>
-          <SortableContext items={tasks} strategy={verticalListSortingStrategy}>
-            {tasks.map((item) => (
+          <SortableContext items={sortedTasks} strategy={verticalListSortingStrategy}>
+            {sortedTasks.map((item) => (
               <SortableItem key={item.id} id={item.id}>
                 <TodoTaskCard task={item} />
               </SortableItem>

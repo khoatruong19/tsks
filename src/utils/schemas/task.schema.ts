@@ -14,3 +14,10 @@ export const updateTaskSchema = z.object({
   collectionId: z.string(),
   flag: z.boolean().default(false),
 });
+
+export const updateTaskPositionSchema = z.object({
+  activeId: z.string(),
+  activePos: z.number(),
+  overId: z.string(),
+  overPos: z.number(),
+});

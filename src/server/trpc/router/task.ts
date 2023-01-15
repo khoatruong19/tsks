@@ -11,6 +11,7 @@ import {
 } from "../../../utils/schemas/collection.schema";
 import {
   createTaskSchema,
+  updateTaskPositionSchema,
   updateTaskSchema,
 } from "../../../utils/schemas/task.schema";
 
@@ -21,7 +22,11 @@ export const taskRouter = router({
     .input(createTaskSchema)
     .mutation(async ({ input: { collectionId, ...rest }, ctx }) => {
       try {
-        const tasksCount = await ctx.prisma.task.count();
+        const tasksCount = await ctx.prisma.task.count({
+          where: {
+            collectionId:collectionId
+          }
+        });
         const task = await ctx.prisma.task.create({
           data: {
             collection: {
@@ -41,6 +46,7 @@ export const taskRouter = router({
         });
       }
     }),
+
   getAllTasksByCollection: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(({ ctx, input }) => {
@@ -48,43 +54,16 @@ export const taskRouter = router({
         where: {
           collectionId: input.id,
         },
-      });
-    }),
-
-  getAllCollectionsWithStatus: protectedProcedure.query(({ ctx }) => {
-    return ctx.prisma.collection.findMany({
-      where: {
-        userId: ctx.session?.user?.id,
-      },
-      include: {
-        tasks: {
-          select: {
-            done: true,
-          },
-        },
-      },
-      orderBy: {
-        position: "desc",
-      },
-    });
-  }),
-
-  getCollectionBySlug: protectedProcedure
-    .input(getCollectionBySlugSchema)
-    .query(({ input, ctx }) => {
-      return ctx.prisma.collection.findFirst({
-        where: {
-          userId: ctx.session?.user?.id,
-          slug: input.slug,
+        orderBy: {
+          position: "desc",
         },
       });
     }),
 
   updatePosition: protectedProcedure
-    .input(updateCollectionPositionSchema)
+    .input(updateTaskPositionSchema)
     .mutation(async ({ input, ctx }) => {
-      console.log({ input });
-      await ctx.prisma.collection.update({
+      await ctx.prisma.task.update({
         where: {
           id: input.activeId,
         },
@@ -92,7 +71,7 @@ export const taskRouter = router({
           position: input.overPos,
         },
       });
-      await ctx.prisma.collection.update({
+      await ctx.prisma.task.update({
         where: {
           id: input.overId,
         },
