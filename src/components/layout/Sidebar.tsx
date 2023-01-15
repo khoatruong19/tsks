@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {
   DndContext,
   DragEndEvent,
@@ -63,7 +65,7 @@ const Sidebar = () => {
   );
 
   const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
+    const { active, over } = event; 
     if (active.id !== over?.id) {
       const activeCollection = collections.find(
         (item) => item.id === active.id
