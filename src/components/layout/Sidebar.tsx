@@ -19,7 +19,7 @@ import {
   TrashIcon,
   HeartIcon as OutlineHeartIcon,
 } from "@heroicons/react/24/outline";
-import { BookOpenIcon, HeartIcon, StarIcon } from "@heroicons/react/24/solid";
+import { HeartIcon, StarIcon } from "@heroicons/react/24/solid";
 import { Collection } from "@prisma/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAtom } from "jotai";
