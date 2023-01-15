@@ -146,7 +146,7 @@ const Sidebar = () => {
       className={` h-[calc(100vh_-_65px)] min-w-[300px] ${
         !openSidebar
           ? "absolute translate-x-[-100%]"
-          : "relative translate-x-[0]"
+          : "absolute md:relative translate-x-[0] z-50"
       } 
      transform overflow-y-visible  bg-secondaryColor duration-150 ease-linear`}
     >
