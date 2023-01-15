@@ -1,21 +1,14 @@
 import * as trpc from "@trpc/server";
-import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import {
-  createCollectionSchema,
-  deleteCollectionSchema,
-  getCollectionBySlugSchema,
-  toggleCollectionIsFavouriteSchema,
-  updateCollectionPositionSchema,
-  updateCollectionSchema,
-} from "../../../utils/schemas/collection.schema";
+import { toggleCollectionIsFavouriteSchema } from "../../../utils/schemas/collection.schema";
 import {
   createTaskSchema,
+  deleteTaskSchema,
   updateTaskPositionSchema,
-  updateTaskSchema,
+  updateTaskSchema
 } from "../../../utils/schemas/task.schema";
 
-import { router, protectedProcedure } from "../trpc";
+import { protectedProcedure, router } from "../trpc";
 
 export const taskRouter = router({
   createTask: protectedProcedure
@@ -94,17 +87,17 @@ export const taskRouter = router({
     }),
 
   delete: protectedProcedure
-    .input(deleteCollectionSchema)
-    .mutation(async ({ input: { id, collections }, ctx }) => {
-      await ctx.prisma.collection.delete({
+    .input(deleteTaskSchema)
+    .mutation(async ({ input: { id, tasks }, ctx }) => {
+      await ctx.prisma.task.delete({
         where: {
           id,
         },
       });
-      for (const key in collections.reverse()) {
-        const collection = collections[key];
-        await ctx.prisma.collection.update({
-          where: { id: collection?.id },
+      for (const key in tasks.reverse()) {
+        const task = tasks[key];
+        await ctx.prisma.task.update({
+          where: { id: task?.id },
           data: {
             position: parseInt(key),
           },

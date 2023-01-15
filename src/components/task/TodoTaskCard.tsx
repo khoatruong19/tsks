@@ -20,9 +20,10 @@ import ChevronController from "../others/ChevronController";
 
 interface IProps {
   task: Task;
+  deleteTask: (taskId: string) => void
 }
 
-const TodoTaskCard = ({ task }: IProps) => {
+const TodoTaskCard = ({ task,deleteTask }: IProps) => {
   const [showTasks, setShowTasks] = useState(false);
   const [languages, setLanguages] = useState<string[]>([
     "Javascripts",
@@ -46,6 +47,7 @@ const TodoTaskCard = ({ task }: IProps) => {
   };
 
   const reveal = () => setShowTasks((prev) => !prev);
+
 
   useEffect(() => {
     containerRef.current && autoAnimate(containerRef.current);
@@ -92,7 +94,7 @@ const TodoTaskCard = ({ task }: IProps) => {
                   >
                     <PencilIcon className="h-5 w-5" />
                   </div>
-                  <div className="withHover flex items-center gap-1.5 text-red-400">
+                  <div onClick={() => deleteTask(task.id)} className="withHover flex items-center gap-1.5 text-red-400">
                     <TrashIcon className="h-5 w-5" />
                   </div>
                 </div>

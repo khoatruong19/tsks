@@ -21,3 +21,12 @@ export const updateTaskPositionSchema = z.object({
   overId: z.string(),
   overPos: z.number(),
 });
+
+export const deleteTaskSchema = z.object({
+  id: z.string(),
+  tasks: z.array(
+    z.object({
+      id: z.string(),
+    })
+  ),
+});

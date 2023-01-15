@@ -25,7 +25,8 @@ interface IProps {
 const TodoTasksContainer = ({ tasks }: IProps) => {
   const [sortedTasks, setSortedTasks] = useState<Task[]>([])
 
-  const { mutate } = trpc.task.updatePosition.useMutation();
+  const {mutate: updateMutate} = trpc.task.updatePosition.useMutation();
+  const {mutate: deleteMutate}  = trpc.task.delete.useMutation()
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -47,7 +48,7 @@ const TodoTasksContainer = ({ tasks }: IProps) => {
         return arrayMove(items, activeIndex, overIndex);
       });
       if (activeTask && overTask) {
-        mutate({
+        updateMutate({
           activeId: active.id as string,
           overId: over?.id as string,
           activePos: activeTask?.position!,
@@ -57,10 +58,27 @@ const TodoTasksContainer = ({ tasks }: IProps) => {
     }
   };
 
+  const handleDeleteTask = (taskId: string) => {
+    const newTasks = sortedTasks.filter(
+      (task) => task.id !== taskId
+    ) 
+    deleteMutate(
+      {
+        id: taskId,
+        tasks: newTasks as { id: string }[],
+      },
+      {
+        onSuccess: () => {
+          setSortedTasks(newTasks)
+        },
+      }
+    );
+  }
+
   useEffect(() => {
     setSortedTasks(tasks)
   }, [tasks])
-  console.log({sortedTasks})
+  
   return (
     <div>
       <h1 className="text-2xl font-semibold text-textColor">
@@ -76,7 +94,7 @@ const TodoTasksContainer = ({ tasks }: IProps) => {
           <SortableContext items={sortedTasks} strategy={verticalListSortingStrategy}>
             {sortedTasks.map((item) => (
               <SortableItem key={item.id} id={item.id}>
-                <TodoTaskCard task={item} />
+                <TodoTaskCard deleteTask={handleDeleteTask} task={item} />
               </SortableItem>
             ))}
           </SortableContext>
