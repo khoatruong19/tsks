@@ -52,8 +52,6 @@ const CollectionDetail = () => {
 
   if (status === "loading") return <Loading />;
 
-  console.log(data?.tasks);
-
   return (
     <>
       <Head>
