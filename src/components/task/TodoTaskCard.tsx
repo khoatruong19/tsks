@@ -111,7 +111,7 @@ const TodoTaskCard = ({ task }: IProps) => {
                 strategy={verticalListSortingStrategy}
               >
                 {languages.map((item) => (
-                  <SortableItem id={item}>
+                  <SortableItem key={item} id={item}>
                     <div className=" rounded-3xl bg-secondaryColor">
                       <div className="flex justify-between p-3">
                         <div className="flex gap-3">
