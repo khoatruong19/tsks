@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { CheckIcon, DocumentIcon, FlagIcon } from "@heroicons/react/24/solid";
 import { Collection } from "@prisma/client";
 import { useAtom } from "jotai";
@@ -15,7 +17,7 @@ const TaskModal = () => {
   const [openCollections, setOpenCollections] = useState(false);
   const [openCalendar, setOpenCalendar] = useState(false);
   const [collection, setCollection] = useState<Partial<Collection>>();
-  const [content, setContent] = useState("Untitled");
+  const [content, setContent] = useState("");
   const [dueDate, setDueDate] = useState(new Date());
   const [flag, setFlag] = useState(false);
   const router = useRouter();
@@ -23,6 +25,7 @@ const TaskModal = () => {
 
   const createTask = trpc.task.createTask.useMutation();
   const updateTask = trpc.task.update.useMutation();
+  const addSubTask = trpc.task.addSubTask.useMutation();
 
   const handleToggleCollections = () => {
     openCalendar && setOpenCalendar(false);
@@ -47,14 +50,14 @@ const TaskModal = () => {
   const handleCreateTask = () => {
     createTask.mutate(
       {
-        content,
+        content: content.length > 0 ? content : "Untitled",
         dueDate,
         flag,
         collectionId: collection!.id as string,
       },
       {
         onSuccess: () => {
-          qc.invalidateQueries("collection.getAllCollections");
+          qc.invalidateQueries("collection.getCollectionBySlug");
           setOpenModal(null);
         },
         onError: ({ message }) => {
@@ -68,14 +71,33 @@ const TaskModal = () => {
     updateTask.mutate(
       {
         id: openModal?.task?.id!,
-        content,
+        content: content.length > 0 ? content : "Untitled",
         dueDate,
         flag,
         collectionId: collection!.id as string,
       },
       {
         onSuccess: () => {
-          qc.invalidateQueries("collection.getAllCollections");
+          qc.invalidateQueries("collection.getCollectionBySlug");
+          setOpenModal(null);
+        },
+        onError: ({ message }) => {
+          alert(message);
+        },
+      }
+    );
+  };
+
+  const handleAddSubTask = () => {
+    addSubTask.mutate(
+      {
+        content: content.length > 0 ? content : "Untitled",
+        collectionId: openModal?.task?.collectionId!,
+        parentId: openModal?.task?.id!,
+      },
+      {
+        onSuccess: () => {
+          qc.invalidateQueries("collection.getCollectionBySlug");
           setOpenModal(null);
         },
         onError: ({ message }) => {
@@ -89,13 +111,14 @@ const TaskModal = () => {
     e.preventDefault();
     if (openModal?.type === "ADD") {
       handleCreateTask();
-    } else handleUpdateTask();
+    } else if (openModal?.type === "ADD_SUB_TASK") handleAddSubTask();
+    else handleUpdateTask();
   };
 
   useEffect(() => {
     if (collections) {
       if (router.query.slug) {
-        let collection = collections.find(
+        const collection = collections.find(
           (item) => item.slug === router.query.slug
         );
         if (collection) {
@@ -108,7 +131,7 @@ const TaskModal = () => {
   }, [collections, router]);
 
   useEffect(() => {
-    if (openModal && openModal.task) {
+    if (openModal && openModal.type === "UPDATE" && openModal.task) {
       setContent(openModal.task.content!);
       setDueDate(openModal.task.dueDate!);
       setFlag(openModal.task.flag!);
@@ -125,75 +148,82 @@ const TaskModal = () => {
                 className="h-full w-full bg-transparent px-4 text-textColor/90 outline-none placeholder:text-textColor/90"
                 type="text"
                 placeholder={
-                  openModal?.type === "ADD" ? "New Task..." : "Do homework"
+                  openModal?.type === "ADD"
+                    ? "New Task..."
+                    : openModal?.type === "ADD_SUB_TASK"
+                    ? "New sub task..."
+                    : ""
                 }
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
               />
             </div>
 
-            <div className="relative mt-4 flex items-center gap-2">
-              <div
-                className="withHover flex items-center gap-2  rounded-md border border-white/50 py-2 px-3"
-                onClick={handleToggleCollections}
-              >
-                <span>{collection?.icon}</span>
-                <span className="text-sm text-textColor/90">
-                  {collection?.title}
-                </span>
-              </div>
-              <div
-                className="withHover relative flex items-center gap-2  rounded-md border border-white/50 py-2 px-3"
-                onClick={handleToggleDueDate}
-              >
-                <DocumentIcon className="h-5 w-5 text-green-400" />
-                <span className="text-sm text-textColor/90">
-                  {formatDateToString(dueDate)}
-                </span>
-              </div>
-              <div
-                className={`withHover flex items-center gap-2 ${
-                  flag && "bg-gray-300"
-                }  rounded-md border border-white/50 py-2 px-3`}
-                onClick={() => setFlag((prev) => !prev)}
-              >
-                <FlagIcon className="h-5 w-5 text-red-400" />
-              </div>
-              {openCollections && (
-                <div className="absolute top-10 left-0 z-[999] overflow-hidden rounded-md">
-                  {collections.map((item) => (
-                    <div
-                      className="flex cursor-pointer items-center gap-3 bg-secondaryColor py-2 px-3  hover:bg-slate-600"
-                      onClick={() => handleSelectCollection(item)}
-                    >
+            {openModal?.type !== "ADD_SUB_TASK" && (
+              <div className="relative mt-4 flex items-center gap-2">
+                <div
+                  className="withHover flex items-center gap-2  rounded-md border border-white/50 py-2 px-3"
+                  onClick={handleToggleCollections}
+                >
+                  <span>{collection?.icon}</span>
+                  <span className="text-sm text-textColor/90">
+                    {collection?.title}
+                  </span>
+                </div>
+                <div
+                  className="withHover relative flex items-center gap-2  rounded-md border border-white/50 py-2 px-3"
+                  onClick={handleToggleDueDate}
+                >
+                  <DocumentIcon className="h-5 w-5 text-green-400" />
+                  <span className="text-sm text-textColor/90">
+                    {formatDateToString(dueDate)}
+                  </span>
+                </div>
+                <div
+                  className={`withHover flex items-center gap-2 ${
+                    flag && "bg-gray-300"
+                  }  rounded-md border border-white/50 py-2 px-3`}
+                  onClick={() => setFlag((prev) => !prev)}
+                >
+                  <FlagIcon className="h-5 w-5 text-red-400" />
+                </div>
+                {openCollections && (
+                  <div className="absolute top-10 left-0 z-[999] overflow-hidden rounded-md">
+                    {collections.map((item) => (
                       <div
-                        className={` grid place-items-center rounded-md p-1`}
-                        style={{ backgroundColor: `${item.color}` }}
+                        key={item.id}
+                        className="flex cursor-pointer items-center gap-3 bg-secondaryColor py-2 px-3  hover:bg-slate-600"
+                        onClick={() => handleSelectCollection(item)}
                       >
-                        {item.icon}
-                      </div>
-                      <span className="text-base font-semibold text-textColor">
-                        {item.title}
-                      </span>
-                      {collection?.id === item.id && (
-                        <div className="justify-self-end">
-                          <CheckIcon className="h-5 w-5 text-gray-500" />
+                        <div
+                          className={` grid place-items-center rounded-md p-1`}
+                          style={{ backgroundColor: `${item.color}` }}
+                        >
+                          {item.icon}
                         </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-              {openCalendar && (
-                <div className="absolute top-10 left-0 z-[999] overflow-hidden rounded-md">
-                  <Calendar
-                    minDate={new Date()}
-                    onChange={handleSelectDueDate}
-                    value={dueDate}
-                  />
-                </div>
-              )}
-            </div>
+                        <span className="text-base font-semibold text-textColor">
+                          {item.title}
+                        </span>
+                        {collection?.id === item.id && (
+                          <div className="justify-self-end">
+                            <CheckIcon className="h-5 w-5 text-gray-500" />
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {openCalendar && (
+                  <div className="absolute top-10 left-0 z-[999] overflow-hidden rounded-md">
+                    <Calendar
+                      minDate={new Date()}
+                      onChange={handleSelectDueDate}
+                      value={dueDate}
+                    />
+                  </div>
+                )}
+              </div>
+            )}
 
             <div className="mt-10 flex items-center gap-4 ">
               <button
@@ -201,7 +231,11 @@ const TaskModal = () => {
                 className="withHover gradientBgColor flex items-center  gap-2 rounded-md py-2 px-8 shadow-xl"
               >
                 <span className="text-lg font-semibold text-textColor/90">
-                  {openModal?.type === "ADD" ? "Add Task" : "Update Task"}
+                  {openModal?.type === "ADD"
+                    ? "Add Task"
+                    : openModal?.type === "ADD_SUB_TASK"
+                    ? "Add sub task"
+                    : "Update Task"}
                 </span>
               </button>
               <div

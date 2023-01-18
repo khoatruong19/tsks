@@ -30,3 +30,14 @@ export const deleteTaskSchema = z.object({
     })
   ),
 });
+
+export const toggleTaskIsDoneSchema = z.object({
+  id: z.string(),
+  done: z.boolean(),
+});
+
+export const addSubTaskSchema = z.object({
+  parentId: z.string(),
+  content: z.string().default("Untitled"),
+  collectionId: z.string(),
+});

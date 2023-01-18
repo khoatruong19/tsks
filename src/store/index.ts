@@ -3,7 +3,7 @@ import { atom } from "jotai";
 
 export const openSidebarAtom = atom(true);
 export const openTaskModal = atom<{
-  type: "ADD" | "UPDATE";
+  type: "ADD" | "UPDATE" | "ADD_SUB_TASK";
   task?: Partial<Task>;
 } | null>(null);
 export const openCollectionModal = atom<{

@@ -88,6 +88,9 @@ export const collectionRouter = router({
           tasks: {
             orderBy: {
               position: 'desc'
+            },
+            include: {
+              children: true,
             }
           },
         },

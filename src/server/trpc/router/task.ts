@@ -2,8 +2,10 @@ import * as trpc from "@trpc/server";
 import { z } from "zod";
 import { toggleCollectionIsFavouriteSchema } from "../../../utils/schemas/collection.schema";
 import {
+  addSubTaskSchema,
   createTaskSchema,
   deleteTaskSchema,
+  toggleTaskIsDoneSchema,
   updateTaskPositionSchema,
   updateTaskSchema
 } from "../../../utils/schemas/task.schema";
@@ -105,15 +107,35 @@ export const taskRouter = router({
       }
     }),
 
-  toggleIsFavourite: protectedProcedure
-    .input(toggleCollectionIsFavouriteSchema)
-    .mutation(async ({ input: { id, isFavourite: currentValue }, ctx }) => {
-      console.log({ id, currentValue });
-      await ctx.prisma.collection.update({
+  toggleDone: protectedProcedure
+    .input(toggleTaskIsDoneSchema)
+    .mutation(async ({ input: { id, done }, ctx }) => {
+      await ctx.prisma.task.update({
         where: { id },
         data: {
-          isFavourite: !currentValue,
+          done
         },
       });
     }),
+
+  addSubTask: protectedProcedure
+  .input(addSubTaskSchema)
+  .mutation(async ({ input: {parentId, content, collectionId}, ctx }) => {
+    await ctx.prisma.task.create({
+      data: {
+        content,
+        position: 0,
+        parent: {
+          connect: {
+            id: parentId,
+          },
+        },
+        collection: {
+          connect: {
+            id: collectionId,
+          },
+        },
+      },
+    });
+  }),
 });

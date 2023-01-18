@@ -15,7 +15,6 @@ import { openTaskModal } from "../../store";
 import { useEffect, useMemo, useRef } from "react";
 import Loading from "../../components/layout/Loading";
 import { trpc } from "../../utils/trpc";
-import ClipLoader from "react-spinners/ClipLoader";
 import Loader from "../../components/others/Loader";
 import { Task } from "@prisma/client";
 
@@ -36,7 +35,15 @@ const CollectionDetail = () => {
   const completedTasks = useMemo<Task[]>(() => {
     let tasks = [] as Task[];
     if (data?.tasks) {
-      tasks = data.tasks.filter((task) => task.done === true);
+      tasks = data.tasks.filter((task) => task.done === true && !task.parentId);
+    }
+    return tasks;
+  }, [data]);
+
+  const todoTasks = useMemo<Task[]>(() => {
+    let tasks = [] as Task[];
+    if (data?.tasks) {
+      tasks = data.tasks.filter((task) => task.done !== true && !task.parentId);
     }
     return tasks;
   }, [data]);
@@ -98,7 +105,7 @@ const CollectionDetail = () => {
                       </p>
                     </div>
 
-                    <TodoTasksContainer tasks={data ? data.tasks : []} />
+                    <TodoTasksContainer tasks={todoTasks} />
                     <CompletedTasksContainer tasks={completedTasks} />
                   </div>
                 </div>
