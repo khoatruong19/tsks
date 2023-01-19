@@ -131,7 +131,7 @@ const TaskModal = () => {
   }, [collections, router]);
 
   useEffect(() => {
-    if (openModal && openModal.type === "UPDATE" && openModal.task) {
+    if (openModal && openModal.type.includes("UPDATE") && openModal.task) {
       setContent(openModal.task.content!);
       setDueDate(openModal.task.dueDate!);
       setFlag(openModal.task.flag!);
@@ -159,7 +159,7 @@ const TaskModal = () => {
               />
             </div>
 
-            {openModal?.type !== "ADD_SUB_TASK" && (
+            {!openModal?.type.includes("SUB_TASK") && (
               <div className="relative mt-4 flex items-center gap-2">
                 <div
                   className="withHover flex items-center gap-2  rounded-md border border-white/50 py-2 px-3"

@@ -1,4 +1,10 @@
-import { DndContext, DragEndEvent, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
+import {
+  DndContext,
+  DragEndEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
 import {
   arrayMove,
   SortableContext,
@@ -22,7 +28,7 @@ import SortableItem from "../layout/SortableItem";
 import ChevronController from "../others/ChevronController";
 
 interface IProps {
-  task: Task & {children: Task[]};
+  task: Task & { children: Task[] };
   deleteTask: (taskId: string) => void;
 }
 
@@ -61,8 +67,8 @@ const TodoTaskCard = ({ task, deleteTask }: IProps) => {
 
   const reveal = () => setShowTasks((prev) => !prev);
 
-  const toggleDone = (task: Task) =>{
-    console.log({task})
+  const toggleDone = (task: Task) => {
+    console.log({ task });
     toggleTaskDone.mutate(
       {
         id: task.id,
@@ -74,13 +80,28 @@ const TodoTaskCard = ({ task, deleteTask }: IProps) => {
         },
       }
     );
-  }
-   
+  };
+
+  const openSubTaskActions = (id: string) => {
+    const subTask = document.getElementById(`sub-task-${id}`);
+    if (subTask) {
+      subTask.classList.remove('hidden');
+      subTask.classList.add('flex');
+    } 
+  };
+
+  const closeSubTaskActions = (id: string) => {
+    const subTask = document.getElementById(`sub-task-${id}`);
+    if (subTask) {
+      subTask.classList.add('hidden');
+      subTask.classList.remove('flex');
+    } 
+  };
 
   useEffect(() => {
     containerRef.current && autoAnimate(containerRef.current);
   }, [containerRef]);
-  console.log(task.children)
+
   return (
     <>
       <div className="relative w-full rounded-3xl bg-secondaryColor">
@@ -106,7 +127,15 @@ const TodoTaskCard = ({ task, deleteTask }: IProps) => {
                 <div className="mt-1 flex items-center gap-4 text-white/70">
                   <div className="flex items-center gap-1.5">
                     <RectangleGroupIcon className="h-5 w-5" />
-                    <span>0/1</span>
+                    {task.children.length > 0 && (
+                      <span>
+                        {
+                          task.children.filter((item) => item.done === true)
+                            .length
+                        }
+                        /{task.children.length}
+                      </span>
+                    )}
                   </div>
                   <div className="flex items-center gap-1.5 text-red-200">
                     <CalendarDaysIcon className="h-5 w-5" />
@@ -116,7 +145,7 @@ const TodoTaskCard = ({ task, deleteTask }: IProps) => {
 
                 <div className="mt-1 flex items-center gap-2">
                   <div
-                     onClick={() =>
+                    onClick={() =>
                       setOpenTaskModal({
                         type: "ADD_SUB_TASK",
                         task,
@@ -147,7 +176,9 @@ const TodoTaskCard = ({ task, deleteTask }: IProps) => {
               </div>
             </div>
           </div>
-          {task.children.length > 0 && <ChevronController show={showTasks} clickHandler={reveal} />}
+          {task.children.length > 0 && (
+            <ChevronController show={showTasks} clickHandler={reveal} />
+          )}
         </div>
       </div>
 
@@ -161,11 +192,19 @@ const TodoTaskCard = ({ task, deleteTask }: IProps) => {
               >
                 {task.children.map((item) => (
                   <SortableItem key={item.id} id={item.id}>
-                    <div className=" rounded-3xl bg-secondaryColor">
+                    <div
+                      onMouseEnter={() => openSubTaskActions(item.id)}
+                      onMouseLeave={() => closeSubTaskActions(item.id)}
+                      className="rounded-3xl bg-secondaryColor"
+                    >
                       <div className="flex justify-between p-3">
                         <div className="flex gap-3">
                           <label className="container">
-                            <input type="checkbox" checked={item.done} onChange={() => toggleDone(item)} />
+                            <input
+                              type="checkbox"
+                              checked={item.done}
+                              onChange={() => toggleDone(item)}
+                            />
                             <span className="checkmark border-[3px] border-primaryColor" />
                           </label>
                           <div>
@@ -174,8 +213,30 @@ const TodoTaskCard = ({ task, deleteTask }: IProps) => {
                                 item.done && "lineThroughWhite line-through"
                               }`}
                             >
-                               {item.content}
+                              {item.content}
                             </p>
+                          </div>
+                        </div>
+                        <div
+                          id={`sub-task-${item.id}`}
+                          className="mt-1 hidden items-center gap-2"
+                        >
+                          <div
+                            className="withHover flex items-center gap-1.5  text-green-100"
+                            onClick={() =>
+                              setOpenTaskModal({
+                                type: "UPDATE_SUB_TASK",
+                                task: item,
+                              })
+                            }
+                          >
+                            <PencilIcon className="h-5 w-5" />
+                          </div>
+                          <div
+                            onClick={() => deleteTask(item.id)}
+                            className="withHover flex items-center gap-1.5 text-red-400"
+                          >
+                            <TrashIcon className="h-5 w-5" />
                           </div>
                         </div>
                       </div>
