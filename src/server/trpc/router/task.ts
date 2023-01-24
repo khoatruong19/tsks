@@ -121,10 +121,19 @@ export const taskRouter = router({
   addSubTask: protectedProcedure
   .input(addSubTaskSchema)
   .mutation(async ({ input: {parentId, content, collectionId}, ctx }) => {
+    const parentTask = await ctx.prisma.task.findFirst({
+      where:{
+        id: parentId
+      },
+      include:{
+        children: true
+      }
+    })
+    const subTasksCount = parentTask?.children.length!
     await ctx.prisma.task.create({
       data: {
         content,
-        position: 0,
+        position: subTasksCount > 0 ? subTasksCount : 0,
         parent: {
           connect: {
             id: parentId,

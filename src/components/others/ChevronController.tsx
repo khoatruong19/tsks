@@ -10,9 +10,9 @@ const ChevronController = ({ clickHandler, show }: IProps) => {
   return (
     <div className={`withHover  text-textColor`} onClick={clickHandler}>
       {show ? (
-        <ChevronDownIcon className=" h-5 w-5" />
+        <ChevronUpIcon className=" h-5 w-5" />
       ) : (
-        <ChevronUpIcon className="h-5 w-5" />
+        <ChevronDownIcon className="h-5 w-5" />
       )}
     </div>
   );

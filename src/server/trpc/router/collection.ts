@@ -90,8 +90,12 @@ export const collectionRouter = router({
               position: 'desc'
             },
             include: {
-              children: true,
-            }
+              children: {
+                orderBy: {
+                  position: 'desc'
+                }
+              }
+            },
           },
         },
       });

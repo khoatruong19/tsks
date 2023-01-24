@@ -3,7 +3,7 @@
 import { CheckIcon, DocumentIcon, FlagIcon } from "@heroicons/react/24/solid";
 import { Collection } from "@prisma/client";
 import { useAtom } from "jotai";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { collectionsList, openTaskModal } from "../../store";
 import { trpc } from "../../utils/trpc";
 import Calendar from "react-calendar";
@@ -20,6 +20,7 @@ const TaskModal = () => {
   const [content, setContent] = useState("");
   const [dueDate, setDueDate] = useState(new Date());
   const [flag, setFlag] = useState(false);
+  const inputRef = useRef<HTMLInputElement | null>(null)
   const router = useRouter();
   const qc = useQueryClient();
 
@@ -138,6 +139,10 @@ const TaskModal = () => {
     }
   }, [openModal]);
 
+  useEffect(() => {
+    if(inputRef.current) inputRef.current.focus()
+  }, [inputRef])
+
   return (
     <div className="absolute top-0 left-0 z-[99] h-[100vh] w-[100vw] bg-black/60">
       <form onSubmit={handleSubmit}>
@@ -145,6 +150,7 @@ const TaskModal = () => {
           <div className="px-5 py-7">
             <div className="h-12 rounded-lg border border-white/50">
               <input
+                ref={inputRef}
                 className="h-full w-full bg-transparent px-4 text-textColor/90 outline-none placeholder:text-textColor/90"
                 type="text"
                 placeholder={

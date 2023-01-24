@@ -34,11 +34,11 @@ interface IProps {
 
 const TodoTaskCard = ({ task, deleteTask }: IProps) => {
   const [showTasks, setShowTasks] = useState(false);
-  const [languages, setLanguages] = useState<string[]>([
-    "Javascripts",
-    "Pythons",
-    "Typescripts",
-  ]);
+  const [subTasks, setSubTasks] = useState<Task[]>([])
+  
+  const updateSubTaskPosition = trpc.task.updatePosition.useMutation()
+  const deleteSubTask = trpc.task.delete.useMutation()
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -55,13 +55,25 @@ const TodoTaskCard = ({ task, deleteTask }: IProps) => {
   const [_, setOpenTaskModal] = useAtom(openTaskModal);
 
   const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
+    const { active, over } = event; 
     if (active.id !== over?.id) {
-      setLanguages((items: string[]) => {
-        const activeIndex = items.indexOf(active.id as string);
-        const overIndex = items.indexOf(over?.id as string);
+      const activeTask = subTasks.find(
+        (item) => item.id === active.id
+      );
+      const overTask = subTasks.find((item) => item.id === over?.id);
+      setSubTasks((items: Task[]) => {
+        const activeIndex = items.findIndex((item) => item.id === active.id);
+        const overIndex = items.findIndex((item) => item.id === over?.id);
         return arrayMove(items, activeIndex, overIndex);
       });
+      if (activeTask && overTask) {
+        updateSubTaskPosition.mutate({
+          activeId: active.id as string,
+          overId: over?.id as string,
+          activePos: activeTask?.position!,
+          overPos: overTask?.position!,
+        });
+      }
     }
   };
 
@@ -85,22 +97,43 @@ const TodoTaskCard = ({ task, deleteTask }: IProps) => {
   const openSubTaskActions = (id: string) => {
     const subTask = document.getElementById(`sub-task-${id}`);
     if (subTask) {
-      subTask.classList.remove('hidden');
-      subTask.classList.add('flex');
-    } 
+      subTask.classList.remove("hidden");
+      subTask.classList.add("flex");
+    }
   };
 
   const closeSubTaskActions = (id: string) => {
     const subTask = document.getElementById(`sub-task-${id}`);
     if (subTask) {
-      subTask.classList.add('hidden');
-      subTask.classList.remove('flex');
-    } 
+      subTask.classList.add("hidden");
+      subTask.classList.remove("flex");
+    }
   };
+
+  const handleDeleteSubTask = (taskId: string) => {
+    const newSubTasks = subTasks.filter(
+      (task) => task.id !== taskId
+    ) 
+    deleteSubTask.mutate(
+      {
+        id: taskId,
+        tasks: newSubTasks as { id: string }[],
+      },
+      {
+        onSuccess: () => {
+          setSubTasks(newSubTasks)
+        },
+      }
+    );
+  }
 
   useEffect(() => {
     containerRef.current && autoAnimate(containerRef.current);
   }, [containerRef]);
+
+  useEffect(() => {
+    setSubTasks(task.children)
+  }, [task]);
 
   return (
     <>
@@ -125,9 +158,9 @@ const TodoTaskCard = ({ task, deleteTask }: IProps) => {
               </p>
               <div className="flex w-[100%]  items-center justify-between">
                 <div className="mt-1 flex items-center gap-4 text-white/70">
-                  <div className="flex items-center gap-1.5">
-                    <RectangleGroupIcon className="h-5 w-5" />
-                    {task.children.length > 0 && (
+                  {task.children.length > 0 && (
+                    <div className="flex items-center gap-1.5">
+                      <RectangleGroupIcon className="h-5 w-5" />
                       <span>
                         {
                           task.children.filter((item) => item.done === true)
@@ -135,8 +168,8 @@ const TodoTaskCard = ({ task, deleteTask }: IProps) => {
                         }
                         /{task.children.length}
                       </span>
-                    )}
-                  </div>
+                    </div>
+                  )}
                   <div className="flex items-center gap-1.5 text-red-200">
                     <CalendarDaysIcon className="h-5 w-5" />
                     <span>{formatDateToString(task.dueDate)}</span>
@@ -176,7 +209,7 @@ const TodoTaskCard = ({ task, deleteTask }: IProps) => {
               </div>
             </div>
           </div>
-          {task.children.length > 0 && (
+          {subTasks.length > 0 && (
             <ChevronController show={showTasks} clickHandler={reveal} />
           )}
         </div>
@@ -187,10 +220,10 @@ const TodoTaskCard = ({ task, deleteTask }: IProps) => {
           <div className="ml-2 flex flex-col gap-2.5 py-2">
             <DndContext onDragEnd={handleDragEnd} sensors={sensors}>
               <SortableContext
-                items={task.children}
+                items={subTasks}
                 strategy={verticalListSortingStrategy}
               >
-                {task.children.map((item) => (
+                {subTasks.map((item) => (
                   <SortableItem key={item.id} id={item.id}>
                     <div
                       onMouseEnter={() => openSubTaskActions(item.id)}
@@ -222,7 +255,7 @@ const TodoTaskCard = ({ task, deleteTask }: IProps) => {
                           className="mt-1 hidden items-center gap-2"
                         >
                           <div
-                            className="withHover flex items-center gap-1.5  text-green-100"
+                            className="withHover flex items-center gap-1.5  text-yellow-200"
                             onClick={() =>
                               setOpenTaskModal({
                                 type: "UPDATE_SUB_TASK",
@@ -233,8 +266,8 @@ const TodoTaskCard = ({ task, deleteTask }: IProps) => {
                             <PencilIcon className="h-5 w-5" />
                           </div>
                           <div
-                            onClick={() => deleteTask(item.id)}
-                            className="withHover flex items-center gap-1.5 text-red-400"
+                            onClick={() => handleDeleteSubTask(item.id)}
+                            className="withHover flex items-center gap-1.5 text-purple-500"
                           >
                             <TrashIcon className="h-5 w-5" />
                           </div>
