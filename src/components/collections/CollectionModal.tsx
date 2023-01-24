@@ -2,17 +2,20 @@ import { DocumentIcon, FlagIcon } from "@heroicons/react/24/solid";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAtom } from "jotai";
 import { useRouter } from "next/router";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, FormEvent } from "react";
 import { openCollectionModal } from "../../store";
 import { trpc } from "../../utils/trpc";
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 import { ColorPicker, useColor, Color } from "react-color-palette";
 import "react-color-palette/lib/css/styles.css";
+import { collectionsList } from "../../store";
+import { Collection } from "@prisma/client";
 
 const CollectionModal = ({ open }: { open: string | null }) => {
   const createCollection = trpc.collection.create.useMutation();
   const updateCollection = trpc.collection.update.useMutation();
   const [modalMode, setOpenModal] = useAtom(openCollectionModal);
+  const [collections, setCollections] = useAtom(collectionsList);
   const [title, setTitle] = useState("");
   const [colorHex, setColorHex] = useColor(
     "hex",
@@ -54,8 +57,8 @@ const CollectionModal = ({ open }: { open: string | null }) => {
         onSuccess: ({ collection }) => {
           setOpenModal(null);
           setTitle("");
-          qc.invalidateQueries("collection.getAllCollections");
-          router.replace(`/collections/${collection.slug}`);
+          setCollections([collection, ...collections])
+          router.push(`/collections/${collection.slug}`);
         },
       }
     );
@@ -70,17 +73,22 @@ const CollectionModal = ({ open }: { open: string | null }) => {
         icon,
       },
       {
-        onSuccess: ({ slug }) => {
+        onSuccess: ({ updatedCollection }) => {
           setOpenModal(null);
           setTitle("");
-          qc.invalidateQueries("collection.getAllCollections");
-          router.replace(`/collections/${slug}`);
+          const newCollections = collections.map((item) => {
+            if(item.id === updatedCollection.id) return updatedCollection
+            return item
+          })
+          setCollections(newCollections as Partial<Collection>[])
+          if(router.query.slug !== updatedCollection.slug) router.push(`/collections/${updatedCollection.slug}`);
         },
       }
     );
   };
 
-  const handleSubmitForm = () => {
+  const handleSubmitForm = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
     if (modalMode?.type === "ADD") {
       handleCreateCollection();
       return;
@@ -115,7 +123,7 @@ const CollectionModal = ({ open }: { open: string | null }) => {
       className="absolute top-0 left-0 z-[99] h-[100vh] w-[100vw] bg-black/60"
     >
       <div className="mx-auto mt-52 w-full max-w-[500px] rounded-3xl bg-primaryColor shadow-2xl">
-        <div className="px-5 py-7">
+        <form onSubmit={handleSubmitForm} className="px-5 py-7">
           <div className="h-12 rounded-lg border border-white/50">
             <input
               className="h-full w-full bg-transparent px-4 text-textColor/90 outline-none placeholder:text-textColor/90"
@@ -172,14 +180,15 @@ const CollectionModal = ({ open }: { open: string | null }) => {
           </div>
 
           <div className=" mt-10 flex items-center gap-4">
-            <div
+            <button
               className="withHover gradientBgColor flex items-center  gap-2 rounded-md py-2 px-8 shadow-xl"
               onClick={handleSubmitForm}
+              type="submit"
             >
               <span className="text-lg font-semibold text-textColor/90">
                 {modalMode?.collection ? "Update" : "Add Collection"}
               </span>
-            </div>
+            </button>
             <div
               className="withHover flex items-center gap-2  rounded-md bg-secondaryColor py-2 px-8 shadow-xl"
               onClick={() => setOpenModal(null)}
@@ -189,7 +198,7 @@ const CollectionModal = ({ open }: { open: string | null }) => {
               </span>
             </div>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );

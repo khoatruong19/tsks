@@ -98,7 +98,8 @@ const Sidebar = () => {
       },
       {
         onSuccess: () => {
-          qc.invalidateQueries("collection.getAllCollections");
+          const newCollections = collections.filter(item => item.id !== showContextMenu.id)
+          setCollections(newCollections)
           if (showContextMenu?.slug === router.query.slug)
             router.replace(`/collections`);
         },

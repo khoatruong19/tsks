@@ -1,22 +1,26 @@
 import {
   ChevronLeftIcon,
   EllipsisHorizontalIcon,
-  PlusIcon,
+  PlusIcon
 } from "@heroicons/react/24/solid";
+import { Task } from "@prisma/client";
 import { useAtom } from "jotai";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import CompletedTasksContainer from "../../components/task/CompletedTasksContainer";
-import TodoTasksContainer from "../../components/task/TodoTasksContainer";
+import { useEffect, useMemo, useRef, useState } from "react";
+import Loading from "../../components/layout/Loading";
 import MainLayout from "../../components/layout/MainLayout";
 import Sidebar from "../../components/layout/Sidebar";
-import { openTaskModal } from "../../store";
-import { useEffect, useMemo, useRef } from "react";
-import Loading from "../../components/layout/Loading";
-import { trpc } from "../../utils/trpc";
 import Loader from "../../components/others/Loader";
-import { Task } from "@prisma/client";
+import CompletedTasksContainer from "../../components/task/CompletedTasksContainer";
+import TodoTasksContainer from "../../components/task/TodoTasksContainer";
+import {
+  collectionsList,
+  openCollectionModal,
+  openTaskModal
+} from "../../store";
+import { trpc } from "../../utils/trpc";
 
 const CollectionDetail = () => {
   const router = useRouter();
@@ -28,9 +32,14 @@ const CollectionDetail = () => {
       enabled: router.query.slug ? true : false,
     }
   );
+  const deleteCollection = trpc.collection.delete.useMutation();
+
   const [_, setOpenModal] = useAtom(openTaskModal);
+  const [collections, setCollections] = useAtom(collectionsList);
+  const [__, setOpenCollectionModal] = useAtom(openCollectionModal);
   const { status } = useSession();
   const containerRef = useRef<HTMLDivElement>(null);
+  const [openSetting, setOpenSetting] = useState(false);
 
   const completedTasks = useMemo<Task[]>(() => {
     let tasks = [] as Task[];
@@ -47,6 +56,25 @@ const CollectionDetail = () => {
     }
     return tasks;
   }, [data]);
+
+  const handleDeleteCollection = () => {
+    deleteCollection.mutate(
+      {
+        id: data?.id!,
+        collections: collections.filter(
+          (collection) => collection.id !== data?.id!
+        ) as { id: string }[],
+      },
+      {
+        onSuccess: () => {
+          const newCollections = collections.filter(item => item.id !== data?.id!)
+          setCollections(newCollections)
+          if (router.query.slug === router.query.slug)
+            router.push(`/collections`);
+        },
+      }
+    );
+  };
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/login");
@@ -87,8 +115,31 @@ const CollectionDetail = () => {
                         </div>
                         <h3 className="text-3xl font-bold">{data?.title}</h3>
                       </div>
-                      <div>
-                        <EllipsisHorizontalIcon className="withHover h-8 w-8" />
+                      <div className="relative" onClick={() => setOpenSetting((prev) => !prev)}>
+                        <EllipsisHorizontalIcon
+                          className="withHover h-8 w-8"
+                        />
+                        {openSetting && (
+                          <div className="absolute bottom-[-60px] right-0 z-50 w-[70px] overflow-hidden rounded-md bg-secondaryColor shadow-lg">
+                            <p
+                              onClick={() =>
+                                setOpenCollectionModal({
+                                  type: "UPDATE",
+                                  collection: data!,
+                                })
+                              }
+                              className="withHover py-1 px-2 hover:bg-zinc-400 hover:text-amber-300"
+                            >
+                              Edit
+                            </p>
+                            <p
+                              onClick={handleDeleteCollection}
+                              className="withHover py-1 px-2 hover:bg-zinc-400 hover:text-red-300"
+                            >
+                              Delete
+                            </p>
+                          </div>
+                        )}
                       </div>
                     </div>
 

@@ -134,7 +134,7 @@ export const collectionRouter = router({
           slug: rest.title.toLowerCase().replace(" ", "-"),
         },
       });
-      return updatedCollection;
+      return {updatedCollection};
     }),
 
   delete: protectedProcedure
