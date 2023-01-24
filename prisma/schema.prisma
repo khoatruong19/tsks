@@ -79,7 +79,7 @@ model Task {
   id           String     @id @default(auto()) @map("_id") @db.ObjectId
   content      String     @default("")
   position     Int
-  collection   Collection @relation(fields: [collectionId], references: [id])
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
   collectionId String
   parent       Task?      @relation("TaskToTask", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   parentId     String?
