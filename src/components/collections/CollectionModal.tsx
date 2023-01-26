@@ -49,7 +49,7 @@ const CollectionModal = ({ open }: { open: string | null }) => {
   const handleCreateCollection = () => {
     createCollection.mutate(
       {
-        title,
+        title: title.length  >0 ? title : "Untitled",
         color: colorHex.hex,
         icon,
       },
@@ -131,6 +131,7 @@ const CollectionModal = ({ open }: { open: string | null }) => {
               placeholder={open === "ADD" ? "New Collection..." : "Do homework"}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
+              required
             />
           </div>
 
