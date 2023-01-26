@@ -5,10 +5,13 @@ import CollectionToday from "./CollectionToday";
 import StatisticChart from "./StatisticChart";
 import WeeklyGoal from "./WeeklyGoal";
 import { signOut, useSession } from "next-auth/react";
+import { trpc } from "../../utils/trpc";
 
 const Dashboard = () => {
   const [viewMode, setViewMode] = useState<0 | 1>(0);
   const { data } = useSession();
+  const {data: collectionsWithTodayTasks} = trpc.task.getAllTodayTasks.useQuery()
+
   return (
     <div className="flex">
       <Sidebar />
@@ -54,8 +57,9 @@ const Dashboard = () => {
             <div className="flex flex-col gap-5">
               {viewMode === 0 ? (
                 <>
-                  <CollectionToday />
-                  <CollectionToday />
+                  {collectionsWithTodayTasks && collectionsWithTodayTasks.map(collection => (
+                    <CollectionToday collection={collection} key={collection.id} />
+                  ))}
                 </>
               ) : (
                 <>

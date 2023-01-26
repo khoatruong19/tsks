@@ -55,6 +55,36 @@ export const taskRouter = router({
       });
     }),
 
+  getAllTodayTasks: protectedProcedure
+    .query(async ({ ctx }) => {
+      const lastDay = new Date(Date.now() - (24 * 60 * 60 * 1000)).toISOString();
+      const nextDay = new Date(Date.now() + (24 * 60 * 60 * 1000)).toISOString();
+      
+      const allCollections = await ctx.prisma.collection.findMany({
+        include: {
+          tasks: {
+            select:{
+              id: true,
+              done: true,
+              content: true,
+              parentId: true,
+            },
+            where:{
+              dueDate:{
+                gt: lastDay,
+                lt: nextDay
+              },
+            }
+          }
+        }
+      })
+
+      return allCollections.filter(item => {
+          item.tasks = item.tasks.filter(task => !task.parentId)
+          if(item.tasks.length > 0) return item
+      })
+    }),
+
   updatePosition: protectedProcedure
     .input(updateTaskPositionSchema)
     .mutation(async ({ input, ctx }) => {

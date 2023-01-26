@@ -1,32 +1,47 @@
 import autoAnimate from "@formkit/auto-animate";
 import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import { BookOpenIcon } from "@heroicons/react/24/solid";
+import { Collection, Task } from "@prisma/client";
+import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import ChevronController from "../others/ChevronController";
 import CollectionTodayTask from "./CollectionTodayTask";
 
-const CollectionToday = () => {
+interface IProps{
+  collection: Partial<Collection> & {tasks: Task[]}
+}
+
+const CollectionToday = ({collection}: IProps) => {
   const [showTasks, setShowTasks] = useState(true);
+  const [tasks, setTasks] = useState<Task[]>([])
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const router = useRouter()
+
+  const reveal = () => setShowTasks((prev) => !prev);
+  
+  const navigateToCollection = () => router.push(`/collections/${collection.slug}`)
 
   useEffect(() => {
     containerRef.current && autoAnimate(containerRef.current);
   }, [containerRef]);
 
-  const reveal = () => setShowTasks((prev) => !prev);
+  useEffect(() => {
+    if(collection.tasks.length > 0) setTasks(collection.tasks)
+  },[collection])
 
   return (
     <div className="w-full overflow-hidden rounded-2xl" ref={containerRef}>
       <div className="flex items-center justify-between border-b-[1px] border-black/20 bg-dashboardSecondaryColor/30 p-4">
         <div className="withHover flex items-center gap-3 ">
           <div
-            className="grid place-items-center rounded-md bg-slate-300 p-2"
+            className={`grid place-items-center rounded-md p-2`}
             onClick={reveal}
+            style={{backgroundColor: collection?.color}}
           >
-            <BookOpenIcon className="h-5 w-5" />
+            {collection?.icon}
           </div>
-          <span className="text-xl font-semibold text-textColor">School</span>
+          <span className="text-xl font-semibold text-textColor">{collection?.title}</span>
         </div>
         <ChevronController
           show={showTasks}
@@ -35,13 +50,13 @@ const CollectionToday = () => {
       </div>
       {showTasks && (
         <div className="border-b border-dashboardSecondaryColor/50 bg-secondaryColor">
-          <CollectionTodayTask />
-          <CollectionTodayTask />
-          <CollectionTodayTask />
+          {tasks && tasks.map(task => (
+            <CollectionTodayTask key={task.id} task={task} />
+          ))}
         </div>
       )}
 
-      <div className="group flex cursor-pointer items-center justify-center bg-secondaryColor p-4 hover:bg-secondaryColor/90">
+      <div onClick={navigateToCollection} className="group flex cursor-pointer items-center justify-center bg-secondaryColor p-4 hover:bg-secondaryColor/90">
         <div className="flex items-center justify-center gap-1  text-textColor/95">
           <p className="text-xl font-medium">Go to collection</p>
 
