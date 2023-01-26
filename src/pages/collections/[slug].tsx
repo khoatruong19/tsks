@@ -1,7 +1,7 @@
 import {
   ChevronLeftIcon,
   EllipsisHorizontalIcon,
-  PlusIcon
+  PlusIcon,
 } from "@heroicons/react/24/solid";
 import { Task } from "@prisma/client";
 import { useAtom } from "jotai";
@@ -18,7 +18,7 @@ import TodoTasksContainer from "../../components/task/TodoTasksContainer";
 import {
   collectionsList,
   openCollectionModal,
-  openTaskModal
+  openTaskModal,
 } from "../../store";
 import { trpc } from "../../utils/trpc";
 
@@ -33,6 +33,8 @@ const CollectionDetail = () => {
     }
   );
   const deleteCollection = trpc.collection.delete.useMutation();
+  const toggleIsFavouriteCollection =
+    trpc.collection.toggleIsFavourite.useMutation();
 
   const [_, setOpenModal] = useAtom(openTaskModal);
   const [collections, setCollections] = useAtom(collectionsList);
@@ -40,6 +42,7 @@ const CollectionDetail = () => {
   const { status } = useSession();
   const containerRef = useRef<HTMLDivElement>(null);
   const [openSetting, setOpenSetting] = useState(false);
+  const [isFavourite, setIsFavourite] = useState(false)
 
   const completedTasks = useMemo<Task[]>(() => {
     let tasks = [] as Task[];
@@ -67,10 +70,34 @@ const CollectionDetail = () => {
       },
       {
         onSuccess: () => {
-          const newCollections = collections.filter(item => item.id !== data?.id!)
-          setCollections(newCollections)
+          const newCollections = collections.filter(
+            (item) => item.id !== data?.id!
+          );
+          setCollections(newCollections);
           if (router.query.slug === router.query.slug)
             router.push(`/collections`);
+        },
+      }
+    );
+  };
+
+  const handleToggleIsFavourite = () => {
+    if (!data?.id) return;
+    toggleIsFavouriteCollection.mutate(
+      {
+        id: data.id,
+        isFavourite: isFavourite!,
+      },
+      {
+        onSuccess: () => {
+          setCollections(
+            collections.map((item) => {
+              if (item.id === data.id)
+                return { ...data, isFavourite: !isFavourite };
+              return item;
+            })
+            );
+          setIsFavourite(prev => !prev)
         },
       }
     );
@@ -85,8 +112,11 @@ const CollectionDetail = () => {
       containerRef.current.scrollTo({ top: 0, behavior: "smooth" });
   }, [router]);
 
-  if (status === "loading") return <Loading />;
+  useEffect(() => {
+    if(data?.isFavourite) setIsFavourite(data?.isFavourite)
+  }, [data]);
 
+  if (status === "loading") return <Loading />;
   return (
     <>
       <Head>
@@ -115,12 +145,19 @@ const CollectionDetail = () => {
                         </div>
                         <h3 className="text-3xl font-bold">{data?.title}</h3>
                       </div>
-                      <div className="relative" onClick={() => setOpenSetting((prev) => !prev)}>
-                        <EllipsisHorizontalIcon
-                          className="withHover h-8 w-8"
-                        />
+                      <div
+                        className="relative"
+                        onClick={() => setOpenSetting((prev) => !prev)}
+                      >
+                        <EllipsisHorizontalIcon className="withHover h-8 w-8" />
                         {openSetting && (
-                          <div className="absolute bottom-[-60px] right-0 z-50 w-[70px] overflow-hidden rounded-md bg-secondaryColor shadow-lg">
+                          <div className="absolute bottom-[-90px] right-0 z-50 w-[100px] overflow-hidden rounded-md bg-secondaryColor shadow-lg">
+                            <p
+                              onClick={handleToggleIsFavourite}
+                              className="withHover py-1 px-2 hover:bg-zinc-400 hover:text-pink-300"
+                            >
+                              {isFavourite ? "Unfavourite" : "Favourite"}
+                            </p>
                             <p
                               onClick={() =>
                                 setOpenCollectionModal({

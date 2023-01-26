@@ -34,8 +34,9 @@ const isYesterday = (date: Date) => {
 };
 
 export const formatDateToString = (date: Date) => {
+  
   if (isToday(date)) return "Today";
   if (isTomorrow(date)) return "Tomorrow";
   if (isYesterday(date)) return "Yesterday";
-  else return moment(date).format("L");
+  else return moment(date).locale('vi').format("L");
 };
