@@ -1,15 +1,14 @@
-import { DocumentIcon, FlagIcon } from "@heroicons/react/24/solid";
-import { useQueryClient } from "@tanstack/react-query";
+import { Collection } from "@prisma/client";
+import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 import { useAtom } from "jotai";
 import { useRouter } from "next/router";
-import { useEffect, useState, useRef, FormEvent } from "react";
-import { openCollectionModal } from "../../store";
-import { trpc } from "../../utils/trpc";
-import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
-import { ColorPicker, useColor, Color } from "react-color-palette";
+import { FormEvent, useEffect, useRef, useState } from "react";
+import { Color, ColorPicker, useColor } from "react-color-palette";
 import "react-color-palette/lib/css/styles.css";
-import { collectionsList } from "../../store";
-import { Collection } from "@prisma/client";
+import { collectionsList, openCollectionModal } from "../../store";
+import { trpc } from "../../utils/trpc";
+import {toast} from 'react-toastify'
+import { messages, toastifyErrorStyles, toastifySuccessStyles } from "../../utils/constants";
 
 const CollectionModal = ({ open }: { open: string | null }) => {
   const createCollection = trpc.collection.create.useMutation();
@@ -25,7 +24,6 @@ const CollectionModal = ({ open }: { open: string | null }) => {
   const [openEmojiPicker, setOpenEmojiPicker] = useState(false);
   const [openColorPicker, setOpenColorPicker] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const qc = useQueryClient();
   const router = useRouter();
 
   const handleTriggerEmojiPicker = () => {
@@ -55,11 +53,19 @@ const CollectionModal = ({ open }: { open: string | null }) => {
       },
       {
         onSuccess: ({ collection }) => {
+          toast.success(messages.createCollection, {
+            style: toastifySuccessStyles
+          });
           setOpenModal(null);
           setTitle("");
           setCollections([collection, ...collections])
           router.push(`/collections/${collection.slug}`);
         },
+        onError: () => {
+          toast.error(messages.errorMessage, {
+            style: toastifyErrorStyles
+          });
+        }
       }
     );
   }; 
@@ -74,6 +80,9 @@ const CollectionModal = ({ open }: { open: string | null }) => {
       },
       {
         onSuccess: ({ updatedCollection }) => {
+          toast.success(messages.updateCollection, {
+            style: toastifySuccessStyles
+          });
           setOpenModal(null);
           setTitle("");
           const newCollections = collections.map((item) => {
@@ -81,8 +90,14 @@ const CollectionModal = ({ open }: { open: string | null }) => {
             return item
           })
           setCollections(newCollections as Partial<Collection>[])
+          
           if(router.query.slug !== updatedCollection.slug) router.push(`/collections/${updatedCollection.slug}`);
         },
+        onError: () => {
+          toast.error(messages.errorMessage, {
+            style: toastifyErrorStyles
+          });
+        }
       }
     );
   };
@@ -131,7 +146,6 @@ const CollectionModal = ({ open }: { open: string | null }) => {
               placeholder={open === "ADD" ? "New Collection..." : "Do homework"}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              required
             />
           </div>
 

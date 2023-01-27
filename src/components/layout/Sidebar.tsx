@@ -33,6 +33,8 @@ import {
 import { trpc } from "../../utils/trpc";
 import ActiveLink from "./header/ActiveLink";
 import SortableItem from "./SortableItem";
+import {toast} from "react-toastify"
+import { messages, toastifyErrorStyles, toastifySuccessStyles } from "../../utils/constants";
 
 const Sidebar = () => {
   const [openSidebar] = useAtom(openSidebarAtom);
@@ -98,11 +100,19 @@ const Sidebar = () => {
       },
       {
         onSuccess: () => {
+          toast.success(messages.deleteCollection, {
+            style: toastifySuccessStyles,
+          });
           const newCollections = collections.filter(item => item.id !== showContextMenu.id)
           setCollections(newCollections)
           if (showContextMenu?.slug === router.query.slug)
             router.replace(`/collections`);
         },
+        onError:() => {
+          toast.success(messages.errorMessage, {
+            style: toastifyErrorStyles,
+          });
+        }
       }
     );
   };

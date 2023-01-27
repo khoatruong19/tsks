@@ -23,6 +23,12 @@ import {
   openTaskModal,
 } from "../../store";
 import { trpc } from "../../utils/trpc";
+import { toast } from "react-toastify";
+import {
+  messages,
+  toastifyErrorStyles,
+  toastifySuccessStyles,
+} from "../../utils/constants";
 
 const CollectionDetail = () => {
   const router = useRouter();
@@ -44,7 +50,7 @@ const CollectionDetail = () => {
   const { status } = useSession();
   const containerRef = useRef<HTMLDivElement>(null);
   const [openSetting, setOpenSetting] = useState(false);
-  const [isFavourite, setIsFavourite] = useState(false)
+  const [isFavourite, setIsFavourite] = useState(false);
 
   const completedTasks = useMemo<Task[]>(() => {
     let tasks = [] as Task[];
@@ -72,12 +78,22 @@ const CollectionDetail = () => {
       },
       {
         onSuccess: () => {
+          toast.success(messages.deleteCollection, {
+            style: toastifySuccessStyles,
+          });
           const newCollections = collections.filter(
             (item) => item.id !== data?.id!
           );
           setCollections(newCollections);
+
           if (router.query.slug === router.query.slug)
             router.push(`/collections`);
+         
+        },
+        onError: () => {
+          toast.success(messages.errorMessage, {
+            style: toastifyErrorStyles,
+          });
         },
       }
     );
@@ -98,8 +114,8 @@ const CollectionDetail = () => {
                 return { ...data, isFavourite: !isFavourite };
               return item;
             })
-            );
-          setIsFavourite(prev => !prev)
+          );
+          setIsFavourite((prev) => !prev);
         },
       }
     );
@@ -115,7 +131,7 @@ const CollectionDetail = () => {
   }, [router]);
 
   useEffect(() => {
-    if(data?.isFavourite) setIsFavourite(data?.isFavourite)
+    if (data?.isFavourite) setIsFavourite(data?.isFavourite);
   }, [data]);
 
   if (status === "loading") return <Loading />;
@@ -145,7 +161,9 @@ const CollectionDetail = () => {
                         >
                           <ChevronLeftIcon className="h-6 w-6 text-textColor" />
                         </div>
-                        <h3 className="text-3xl font-bold break-words max-w-2xl">{data?.title}</h3>
+                        <h3 className="max-w-2xl break-words text-3xl font-bold">
+                          {data?.title}
+                        </h3>
                       </div>
                       <div
                         className="relative"
@@ -156,9 +174,15 @@ const CollectionDetail = () => {
                           <div className="absolute bottom-[-80px] right-0 z-50 w-[115px] overflow-hidden rounded-md bg-secondaryColor shadow-lg">
                             <p
                               onClick={handleToggleIsFavourite}
-                              className="withHover text-sm flex items-center gap-1.5 py-1 px-2 hover:bg-zinc-400 hover:text-pink-300"
+                              className="withHover flex items-center gap-1.5 py-1 px-2 text-sm hover:bg-zinc-400 hover:text-pink-300"
                             >
-                              <span>{!isFavourite ? <HeartIcon className="h-5 w-5"/> : <HeartIconS className="h-5 w-5"/>}</span>
+                              <span>
+                                {!isFavourite ? (
+                                  <HeartIcon className="h-5 w-5" />
+                                ) : (
+                                  <HeartIconS className="h-5 w-5" />
+                                )}
+                              </span>
                               {isFavourite ? "Unfavourite" : "Favourite"}
                             </p>
                             <p
@@ -168,16 +192,20 @@ const CollectionDetail = () => {
                                   collection: data!,
                                 })
                               }
-                              className="withHover text-sm flex items-center gap-1.5 py-1 px-2 hover:bg-zinc-400 hover:text-amber-300"
+                              className="withHover flex items-center gap-1.5 py-1 px-2 text-sm hover:bg-zinc-400 hover:text-amber-300"
                             >
-                              <span><PencilIcon className="w-5 h-5"/></span>
+                              <span>
+                                <PencilIcon className="h-5 w-5" />
+                              </span>
                               Edit
                             </p>
                             <p
                               onClick={handleDeleteCollection}
-                              className="withHover text-sm flex items-center gap-1.5 pt-1 pb-1.5 px-2 hover:bg-zinc-400 hover:text-red-300"
+                              className="withHover flex items-center gap-1.5 px-2 pt-1 pb-1.5 text-sm hover:bg-zinc-400 hover:text-red-300"
                             >
-                              <span><TrashIcon className="w-5 h-5"/></span>
+                              <span>
+                                <TrashIcon className="h-5 w-5" />
+                              </span>
                               Delete
                             </p>
                           </div>
