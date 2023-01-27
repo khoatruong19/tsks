@@ -4,13 +4,14 @@ import { formatDateToString } from "../../utils/helpers";
 
 interface IProps{
   task: Task
+  doneTask: (id: string) => void
 }
 
-const CollectionTodayTask = ({task}:  IProps) => {
+const CollectionTodayTask = ({task,doneTask}:  IProps) => {
   return (
     <div className="flex gap-4 p-4">
       <label className="container">
-        <input type="checkbox" />
+        <input type="checkbox" onChange={() => doneTask(task.id)} />
         <span className="checkmark border-[3px] border-primaryColor"></span>
       </label>
       <div>

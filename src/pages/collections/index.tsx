@@ -1,5 +1,5 @@
-import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
-import { NextPage } from "next";
+import type { NextPage } from "next";
+import { EllipsisHorizontalIcon, PlusCircleIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -12,19 +12,27 @@ import { trpc } from "../../utils/trpc";
 import Loader from "../../components/others/Loader";
 import { useAtom } from "jotai";
 import { openCollectionModal } from "../../store";
+import { useQueryClient } from "@tanstack/react-query";
 
 const Collections: NextPage = () => {
-  const { data, isLoading } =
-    trpc.collection.getAllCollectionsWithStatus.useQuery();
+  const { data, isLoading } = trpc.collection.getAllCollectionsWithStatus.useQuery();
+  const deleteAllCollections = trpc.collection.deleteAll.useMutation()
   const [_, setOpenCollectionModal] = useAtom(openCollectionModal);
   const [viewMode, setViewMode] = useState<0 | 1>(0);
   const { status } = useSession();
   const router = useRouter();
+  const qc = useQueryClient()
+
+  const [openSetting, setOpenSetting] = useState(false)
 
   const favouriteCollections = data?.filter(
     (collection) => collection.isFavourite === true
   );
 
+  const handleDeleteAllCollections = () => {
+    deleteAllCollections.mutate(undefined, {onSuccess:() => qc.invalidateQueries("collection.getAllCollections")})
+  }
+ 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/login");
   }, [status, router]);
@@ -45,8 +53,30 @@ const Collections: NextPage = () => {
                 <div className="mb-6 flex flex-col gap-5 md:gap-12">
                   <div className="flex items-center justify-between  text-textColor">
                     <h3 className="text-3xl font-bold">Collections</h3>
-                    <div>
+                    <div className="relative" onClick={() => setOpenSetting((prev) => !prev)}>
                       <EllipsisHorizontalIcon className="withHover h-8 w-8" />
+                      {openSetting && (
+                          <div className="absolute bottom-[-55px] right-0 z-50 w-[110px] overflow-hidden rounded-md bg-secondaryColor shadow-lg">
+                            <p
+                              onClick={() =>
+                                setOpenCollectionModal({
+                                  type: "ADD",
+                                })
+                              }
+                              className="withHover text-sm flex items-center gap-1.5 py-1 px-2 hover:bg-zinc-400 hover:text-green-300"
+                            >
+                              <span><PlusCircleIcon className="h-5 w-5" /></span>
+                              Add new
+                            </p>
+                            <p
+                              onClick={handleDeleteAllCollections}
+                              className="withHover text-sm flex items-center gap-1.5 pt-1 pb-1.5 px-2 hover:bg-zinc-400 hover:text-red-300"
+                            >
+                              <span><TrashIcon className="h-5 w-5" /></span>
+                              Delete all
+                            </p>
+                          </div>
+                        )}
                     </div>
                   </div>
 

@@ -57,8 +57,8 @@ export const taskRouter = router({
 
   getAllTodayTasks: protectedProcedure
     .query(async ({ ctx }) => {
-      const lastDay = new Date(Date.now() - (24 * 60 * 60 * 1000)).toISOString();
-      const nextDay = new Date(Date.now() + (24 * 60 * 60 * 1000)).toISOString();
+      const startDay = new Date(new Date().setHours(0, 0, 0, 0)).toISOString()
+      const endDay = new Date(new Date().setHours(23, 59, 59, 999)).toISOString();
       
       const allCollections = await ctx.prisma.collection.findMany({
         include: {
@@ -71,9 +71,10 @@ export const taskRouter = router({
             },
             where:{
               dueDate:{
-                gt: lastDay,
-                lt: nextDay
+                gt: startDay,
+                lt: endDay
               },
+              done: false
             }
           }
         }

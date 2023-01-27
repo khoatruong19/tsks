@@ -37,8 +37,8 @@ const CollectionCard = ({ collection }: IProps) => {
           )}
         </div>
 
-        <h1 className="mb-3  text-2xl font-bold text-textColor">
-          {collection.title}
+        <h1 className="mb-3  text-2xl font-bold text-textColor break-words">
+        {collection.title && collection.title.length > 30 ? collection.title.slice(0,27) + "..." : collection.title }
         </h1>
         <div className="flex items-center  justify-between">
           <span className="text-sm text-white/60">

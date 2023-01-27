@@ -1,3 +1,5 @@
+import { HeartIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { HeartIcon as HeartIconS } from "@heroicons/react/24/solid";
 import {
   ChevronLeftIcon,
   EllipsisHorizontalIcon,
@@ -143,7 +145,7 @@ const CollectionDetail = () => {
                         >
                           <ChevronLeftIcon className="h-6 w-6 text-textColor" />
                         </div>
-                        <h3 className="text-3xl font-bold">{data?.title}</h3>
+                        <h3 className="text-3xl font-bold break-words max-w-2xl">{data?.title}</h3>
                       </div>
                       <div
                         className="relative"
@@ -151,11 +153,12 @@ const CollectionDetail = () => {
                       >
                         <EllipsisHorizontalIcon className="withHover h-8 w-8" />
                         {openSetting && (
-                          <div className="absolute bottom-[-90px] right-0 z-50 w-[100px] overflow-hidden rounded-md bg-secondaryColor shadow-lg">
+                          <div className="absolute bottom-[-80px] right-0 z-50 w-[115px] overflow-hidden rounded-md bg-secondaryColor shadow-lg">
                             <p
                               onClick={handleToggleIsFavourite}
-                              className="withHover py-1 px-2 hover:bg-zinc-400 hover:text-pink-300"
+                              className="withHover text-sm flex items-center gap-1.5 py-1 px-2 hover:bg-zinc-400 hover:text-pink-300"
                             >
+                              <span>{!isFavourite ? <HeartIcon className="h-5 w-5"/> : <HeartIconS className="h-5 w-5"/>}</span>
                               {isFavourite ? "Unfavourite" : "Favourite"}
                             </p>
                             <p
@@ -165,14 +168,16 @@ const CollectionDetail = () => {
                                   collection: data!,
                                 })
                               }
-                              className="withHover py-1 px-2 hover:bg-zinc-400 hover:text-amber-300"
+                              className="withHover text-sm flex items-center gap-1.5 py-1 px-2 hover:bg-zinc-400 hover:text-amber-300"
                             >
+                              <span><PencilIcon className="w-5 h-5"/></span>
                               Edit
                             </p>
                             <p
                               onClick={handleDeleteCollection}
-                              className="withHover py-1 px-2 hover:bg-zinc-400 hover:text-red-300"
+                              className="withHover text-sm flex items-center gap-1.5 pt-1 pb-1.5 px-2 hover:bg-zinc-400 hover:text-red-300"
                             >
+                              <span><TrashIcon className="w-5 h-5"/></span>
                               Delete
                             </p>
                           </div>

@@ -156,6 +156,11 @@ export const collectionRouter = router({
       }
     }),
 
+  deleteAll: protectedProcedure
+  .mutation(async ({ctx }) => {
+    await ctx.prisma.collection.deleteMany();
+  }),
+
   toggleIsFavourite: protectedProcedure
     .input(toggleCollectionIsFavouriteSchema)
     .mutation(async ({ input: { id, isFavourite: currentValue }, ctx }) => {

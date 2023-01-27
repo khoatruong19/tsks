@@ -20,7 +20,7 @@ const TaskModal = () => {
   const [content, setContent] = useState("");
   const [dueDate, setDueDate] = useState(new Date());
   const [flag, setFlag] = useState(false);
-  const inputRef = useRef<HTMLInputElement | null>(null)
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const router = useRouter();
   const qc = useQueryClient();
 
@@ -49,6 +49,10 @@ const TaskModal = () => {
   };
 
   const handleCreateTask = () => {
+    if(!collection) {
+      alert("No collections found. Create one then can add task!")
+      return
+    }
     createTask.mutate(
       {
         content: content.length > 0 ? content : "Untitled",
@@ -72,7 +76,7 @@ const TaskModal = () => {
     updateTask.mutate(
       {
         id: openModal?.task?.id!,
-        content: content.length > 0 ? content : "Untitled",
+        content: content.length > 0 ? content.trim() : "Untitled",
         dueDate,
         flag,
         collectionId: collection!.id as string,
@@ -92,7 +96,7 @@ const TaskModal = () => {
   const handleAddSubTask = () => {
     addSubTask.mutate(
       {
-        content: content.length > 0 ? content : "Untitled",
+        content: content.length > 0 ? content.trim() : "Untitled",
         collectionId: openModal?.task?.collectionId!,
         parentId: openModal?.task?.id!,
       },
@@ -140,8 +144,8 @@ const TaskModal = () => {
   }, [openModal]);
 
   useEffect(() => {
-    if(inputRef.current) inputRef.current.focus()
-  }, [inputRef])
+    if (inputRef.current) inputRef.current.focus();
+  }, [inputRef]);
 
   return (
     <div className="absolute top-0 left-0 z-[99] h-[100vh] w-[100vw] bg-black/60">
@@ -167,15 +171,19 @@ const TaskModal = () => {
 
             {!openModal?.type.includes("SUB_TASK") && (
               <div className="relative mt-4 flex items-center gap-2">
-                <div
-                  className="withHover flex items-center gap-2  rounded-md border border-white/50 py-2 px-3"
-                  onClick={handleToggleCollections}
-                >
-                  <span>{collection?.icon}</span>
-                  <span className="text-sm text-textColor/90">
-                    {collection?.title}
-                  </span>
-                </div>
+                {collections.length > 0 ? (
+                  <div
+                    className="withHover flex items-center gap-2  rounded-md border border-white/50 py-2 px-3"
+                    onClick={handleToggleCollections}
+                  >
+                    <span>{collection?.icon}</span>
+                    <span className="text-sm text-textColor/90">
+                      {collection?.title}
+                    </span>
+                  </div>
+                ) : (
+                  <p className="text-red-300 font-semibold">No collections!</p>
+                )}
                 <div
                   className="withHover relative flex items-center gap-2  rounded-md border border-white/50 py-2 px-3"
                   onClick={handleToggleDueDate}
@@ -195,28 +203,29 @@ const TaskModal = () => {
                 </div>
                 {openCollections && (
                   <div className="absolute top-10 left-0 z-[999] overflow-hidden rounded-md">
-                    {collections.map((item) => (
-                      <div
-                        key={item.id}
-                        className="flex cursor-pointer items-center gap-3 bg-secondaryColor py-2 px-3  hover:bg-slate-600"
-                        onClick={() => handleSelectCollection(item)}
-                      >
+                    {collections.length > 0 &&
+                      collections.map((item) => (
                         <div
-                          className={` grid place-items-center rounded-md p-1`}
-                          style={{ backgroundColor: `${item.color}` }}
+                          key={item.id}
+                          className="flex cursor-pointer items-center gap-3 bg-secondaryColor py-2 px-3  hover:bg-slate-600"
+                          onClick={() => handleSelectCollection(item)}
                         >
-                          {item.icon}
-                        </div>
-                        <span className="text-base font-semibold text-textColor">
-                          {item.title}
-                        </span>
-                        {collection?.id === item.id && (
-                          <div className="justify-self-end">
-                            <CheckIcon className="h-5 w-5 text-gray-500" />
+                          <div
+                            className={` grid place-items-center rounded-md p-1`}
+                            style={{ backgroundColor: `${item.color}` }}
+                          >
+                            {item.icon}
                           </div>
-                        )}
-                      </div>
-                    ))}
+                          <span className="text-base font-semibold text-textColor">
+                            {item.title}
+                          </span>
+                          {collection?.id === item.id && (
+                            <div className="justify-self-end">
+                              <CheckIcon className="h-5 w-5 text-gray-500" />
+                            </div>
+                          )}
+                        </div>
+                      ))}
                   </div>
                 )}
                 {openCalendar && (

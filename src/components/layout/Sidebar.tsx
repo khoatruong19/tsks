@@ -144,7 +144,7 @@ const Sidebar = () => {
 
   return (
     <div
-      className={` h-[calc(100vh_-_65px)] min-w-[300px] ${
+      className={` h-[calc(100vh_-_65px)] w-[300px] ${
         !openSidebar
           ? "absolute translate-x-[-100%]"
           : "absolute md:relative translate-x-[0] z-50"
@@ -170,7 +170,7 @@ const Sidebar = () => {
             <PlusCircleIcon className="withHover h-7 w-7 text-textColor/80" />
           </div>
         </div>
-        {collections && (
+        {collections && collections.length > 0 ? (
           <DndContext onDragEnd={handleDragEnd} sensors={sensors}>
             <SortableContext
               items={collections.map((item) => {
@@ -199,8 +199,9 @@ const Sidebar = () => {
                         >
                           {item.icon}
                         </div>
-                        <span className="text-lg font-semibold text-textColor">
-                          {item.title}
+                        <span className="text-lg font-semibold text-textColor break-words">
+
+                          {item.title && item.title.length > 20 ? item.title.slice(0,17) + "..." : item.title }
                         </span>
                       </div>
                       {item.isFavourite && (
@@ -214,6 +215,8 @@ const Sidebar = () => {
               ))}
             </SortableContext>
           </DndContext>
+        ) : (
+          <p className="text-center text-lg text-gray-500">No collections</p>
         )}
       </div>
       {showContextMenu && (

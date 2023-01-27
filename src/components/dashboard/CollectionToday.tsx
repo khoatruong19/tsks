@@ -4,6 +4,7 @@ import { BookOpenIcon } from "@heroicons/react/24/solid";
 import { Collection, Task } from "@prisma/client";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
+import { trpc } from "../../utils/trpc";
 import ChevronController from "../others/ChevronController";
 import CollectionTodayTask from "./CollectionTodayTask";
 
@@ -17,10 +18,23 @@ const CollectionToday = ({collection}: IProps) => {
 
   const containerRef = useRef<HTMLDivElement>(null);
   const router = useRouter()
+  const doneTask = trpc.task.toggleDone.useMutation()
 
   const reveal = () => setShowTasks((prev) => !prev);
   
   const navigateToCollection = () => router.push(`/collections/${collection.slug}`)
+
+  const handleDoneTask = (id: string) => {
+    const newTasks = tasks.filter(item => item.id !== id)
+    doneTask.mutate({
+      id,
+      done: true
+    }, {
+      onSuccess:() => {
+        setTasks(newTasks)
+      }
+    })
+  }
 
   useEffect(() => {
     containerRef.current && autoAnimate(containerRef.current);
@@ -51,7 +65,7 @@ const CollectionToday = ({collection}: IProps) => {
       {showTasks && (
         <div className="border-b border-dashboardSecondaryColor/50 bg-secondaryColor">
           {tasks && tasks.map(task => (
-            <CollectionTodayTask key={task.id} task={task} />
+            <CollectionTodayTask doneTask={handleDoneTask} key={task.id} task={task} />
           ))}
         </div>
       )}

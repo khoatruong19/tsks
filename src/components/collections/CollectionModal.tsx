@@ -49,7 +49,7 @@ const CollectionModal = ({ open }: { open: string | null }) => {
   const handleCreateCollection = () => {
     createCollection.mutate(
       {
-        title: title.length  >0 ? title : "Untitled",
+        title: title.length  >0 ? title.trim() : "Untitled",
         color: colorHex.hex,
         icon,
       },
@@ -68,7 +68,7 @@ const CollectionModal = ({ open }: { open: string | null }) => {
     updateCollection.mutate(
       {
         id: modalMode?.collection?.id!,
-        title,
+        title: title.trim(),
         color: colorHex.hex,
         icon,
       },
