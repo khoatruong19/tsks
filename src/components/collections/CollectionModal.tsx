@@ -62,7 +62,7 @@ const CollectionModal = ({ open }: { open: string | null }) => {
         },
       }
     );
-  };
+  }; 
 
   const handleUpdateCollection = () => {
     updateCollection.mutate(
@@ -183,7 +183,6 @@ const CollectionModal = ({ open }: { open: string | null }) => {
           <div className=" mt-10 flex items-center gap-4">
             <button
               className="withHover gradientBgColor flex items-center  gap-2 rounded-md py-2 px-8 shadow-xl"
-              onClick={handleSubmitForm}
               type="submit"
             >
               <span className="text-lg font-semibold text-textColor/90">

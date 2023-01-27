@@ -178,7 +178,7 @@ const TaskModal = () => {
                   >
                     <span>{collection?.icon}</span>
                     <span className="text-sm text-textColor/90">
-                      {collection?.title}
+                    {collection?.title && collection.title.length > 13 ? collection.title.slice(0,13) + "..." : collection?.title }
                     </span>
                   </div>
                 ) : (
