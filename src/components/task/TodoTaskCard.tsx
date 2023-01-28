@@ -16,7 +16,7 @@ import {
   PlusIcon,
   RectangleGroupIcon,
 } from "@heroicons/react/24/outline";
-import { TrashIcon, PencilIcon } from "@heroicons/react/24/solid";
+import { TrashIcon, PencilIcon, FlagIcon } from "@heroicons/react/24/solid";
 import { Task } from "@prisma/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAtom } from "jotai";
@@ -26,6 +26,8 @@ import { formatDateToString } from "../../utils/helpers";
 import { trpc } from "../../utils/trpc";
 import SortableItem from "../layout/SortableItem";
 import ChevronController from "../others/ChevronController";
+import {toast} from "react-toastify"
+import { messages, toastifyErrorStyles, toastifySuccessStyles } from "../../utils/constants";
 
 interface IProps {
   task: Task & { children: Task[] };
@@ -80,7 +82,6 @@ const TodoTaskCard = ({ task, deleteTask }: IProps) => {
   const reveal = () => setShowTasks((prev) => !prev);
 
   const toggleDone = (task: Task) => {
-    console.log({ task });
     toggleTaskDone.mutate(
       {
         id: task.id,
@@ -88,8 +89,16 @@ const TodoTaskCard = ({ task, deleteTask }: IProps) => {
       },
       {
         onSuccess() {
+          toast.success(task.done ? messages.undoneTask : messages.doneTask, {
+            style: toastifySuccessStyles
+          });
           qc.invalidateQueries("collection.getCollectionBySlug");
         },
+        onError: () => {
+          toast.error(messages.errorMessage, {
+            style: toastifyErrorStyles
+          })
+        }
       }
     );
   };
@@ -121,8 +130,16 @@ const TodoTaskCard = ({ task, deleteTask }: IProps) => {
       },
       {
         onSuccess: () => {
+          toast.success(messages.deleteTask, {
+            style: toastifySuccessStyles
+          });
           setSubTasks(newSubTasks)
         },
+        onError: () => {
+          toast.error(messages.errorMessage, {
+            style: toastifyErrorStyles
+          });
+        }
       }
     );
   }
@@ -174,6 +191,11 @@ const TodoTaskCard = ({ task, deleteTask }: IProps) => {
                     <CalendarDaysIcon className="h-5 w-5" />
                     <span>{formatDateToString(task.dueDate)}</span>
                   </div>
+                  {task.flag && (
+                    <div>
+                      <FlagIcon className="h-4 w-4 text-tertiaryColor"/>
+                    </div>
+                  )}
                 </div>
 
                 <div className="mt-1 flex items-center gap-2">

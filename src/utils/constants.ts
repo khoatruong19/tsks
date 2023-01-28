@@ -11,8 +11,16 @@ export const toastifyErrorStyles = {
 };
 
 export const messages = {
-  createCollection: "🦄 Collection created!",
-  updateCollection: "🦄 Collection updated!",
-  deleteCollection: "🦄 Collection deleted!",
+  createCollection: "🦄 Collection's created!",
+  updateCollection: "🦄 Collection's updated!",
+  deleteCollection: "🦄 Collection's deleted!",
+  favouriteCollection: "🦄 Collection's added to favourite list!",
+  unfavouriteCollection: "🦄 Collection's removed from favourite list!",
+  createTask: "🦄 Task's created!",
+  updateTask: "🦄 Task's updated!",
+  deleteTask: "🦄 Task's deleted!",
+  doneTask: "🦄 Task's done!",
+  undoneTask: "🦄 Task's undone!",
+  createSubTask: "🦄 Sub task's created!",
   errorMessage: "❌ Something went wrong!",
 };

@@ -126,8 +126,16 @@ const Sidebar = () => {
       },
       {
         onSuccess: () => {
+          toast.success(showContextMenu.isFavourite ? messages.unfavouriteCollection : messages.favouriteCollection, {
+            style: toastifySuccessStyles,
+          });
           qc.invalidateQueries("collection.getAllCollections");
         },
+        onError: () => {
+          toast.error(messages.errorMessage, {
+            style: toastifyErrorStyles,
+          });
+        }
       }
     );
   };

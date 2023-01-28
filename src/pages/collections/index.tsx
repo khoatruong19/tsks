@@ -11,14 +11,15 @@ import Loading from "../../components/layout/Loading";
 import { trpc } from "../../utils/trpc";
 import Loader from "../../components/others/Loader";
 import { useAtom } from "jotai";
-import { openCollectionModal } from "../../store";
+import { collectionsList, openCollectionModal } from "../../store";
 import { useQueryClient } from "@tanstack/react-query";
 
 const Collections: NextPage = () => {
   const { data, isLoading } = trpc.collection.getAllCollectionsWithStatus.useQuery();
   const deleteAllCollections = trpc.collection.deleteAll.useMutation()
   const [_, setOpenCollectionModal] = useAtom(openCollectionModal);
-  const [viewMode, setViewMode] = useState<0 | 1>(0);
+  const [collections, setCollections] = useAtom(collectionsList);
+  const [viewMode, setViewMode] = useState<0 | 1>(1);
   const { status } = useSession();
   const router = useRouter();
   const qc = useQueryClient()
@@ -30,7 +31,10 @@ const Collections: NextPage = () => {
   );
 
   const handleDeleteAllCollections = () => {
-    deleteAllCollections.mutate(undefined, {onSuccess:() => qc.invalidateQueries("collection.getAllCollections")})
+    deleteAllCollections.mutate(undefined, {onSuccess:() => {
+      qc.invalidateQueries("collection.getAllCollections")
+      setCollections([])
+    }})
   }
  
   useEffect(() => {

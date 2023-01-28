@@ -10,6 +10,8 @@ import Calendar from "react-calendar";
 import { formatDateToString } from "../../utils/helpers";
 import { useRouter } from "next/router";
 import { useQueryClient } from "@tanstack/react-query";
+import {toast} from "react-toastify"
+import { messages, toastifyErrorStyles, toastifySuccessStyles } from "../../utils/constants";
 
 const TaskModal = () => {
   const [openModal, setOpenModal] = useAtom(openTaskModal);
@@ -50,7 +52,9 @@ const TaskModal = () => {
 
   const handleCreateTask = () => {
     if(!collection) {
-      alert("No collections found. Create one then can add task!")
+      toast.error("No collections found!. Create new collection", {
+        style: toastifyErrorStyles
+      });
       return
     }
     createTask.mutate(
@@ -62,11 +66,16 @@ const TaskModal = () => {
       },
       {
         onSuccess: () => {
+          toast.success(messages.createTask, {
+            style: toastifySuccessStyles
+          });
           qc.invalidateQueries("collection.getCollectionBySlug");
           setOpenModal(null);
         },
         onError: ({ message }) => {
-          alert(message);
+          toast.error(messages.errorMessage, {
+            style: toastifyErrorStyles
+          });
         },
       }
     );
@@ -83,11 +92,16 @@ const TaskModal = () => {
       },
       {
         onSuccess: () => {
+          toast.success(messages.updateTask, {
+            style: toastifySuccessStyles
+          });
           qc.invalidateQueries("collection.getCollectionBySlug");
           setOpenModal(null);
         },
         onError: ({ message }) => {
-          alert(message);
+          toast.error(messages.errorMessage, {
+            style: toastifyErrorStyles
+          });
         },
       }
     );
@@ -102,11 +116,16 @@ const TaskModal = () => {
       },
       {
         onSuccess: () => {
+          toast.success(messages.createSubTask, {
+            style: toastifySuccessStyles
+          });
           qc.invalidateQueries("collection.getCollectionBySlug");
           setOpenModal(null);
         },
         onError: ({ message }) => {
-          alert(message);
+          toast.error(messages.errorMessage, {
+            style: toastifyErrorStyles
+          });
         },
       }
     );

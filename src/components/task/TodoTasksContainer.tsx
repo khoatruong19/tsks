@@ -14,6 +14,8 @@ import {
 } from "@dnd-kit/sortable";
 import { Task } from "@prisma/client";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { messages, toastifyErrorStyles, toastifySuccessStyles } from "../../utils/constants";
 import { trpc } from "../../utils/trpc";
 import SortableItem from "../layout/SortableItem";
 import TodoTaskCard from "./TodoTaskCard";
@@ -69,8 +71,16 @@ const TodoTasksContainer = ({ tasks }: IProps) => {
       },
       {
         onSuccess: () => {
+          toast.success(messages.deleteTask, {
+            style: toastifySuccessStyles
+          });
           setSortedTasks(newTasks)
         },
+        onError: () => {
+          toast.error(messages.errorMessage, {
+            style: toastifyErrorStyles
+          });
+        }
       }
     );
   }

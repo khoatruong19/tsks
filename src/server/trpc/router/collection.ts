@@ -164,7 +164,6 @@ export const collectionRouter = router({
   toggleIsFavourite: protectedProcedure
     .input(toggleCollectionIsFavouriteSchema)
     .mutation(async ({ input: { id, isFavourite: currentValue }, ctx }) => {
-      console.log({ id, currentValue });
       await ctx.prisma.collection.update({
         where: { id },
         data: {

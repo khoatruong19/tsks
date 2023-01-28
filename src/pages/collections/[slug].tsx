@@ -1,5 +1,5 @@
 import { HeartIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { HeartIcon as HeartIconS } from "@heroicons/react/24/solid";
+import { HeartIcon as HeartIconS, StarIcon } from "@heroicons/react/24/solid";
 import {
   ChevronLeftIcon,
   EllipsisHorizontalIcon,
@@ -108,6 +108,9 @@ const CollectionDetail = () => {
       },
       {
         onSuccess: () => {
+          toast.success(isFavourite ? messages.unfavouriteCollection : messages.favouriteCollection, {
+            style: toastifySuccessStyles,
+          });
           setCollections(
             collections.map((item) => {
               if (item.id === data.id)
@@ -117,6 +120,11 @@ const CollectionDetail = () => {
           );
           setIsFavourite((prev) => !prev);
         },
+        onError: () => {
+          toast.error(messages.errorMessage, {
+            style: toastifyErrorStyles,
+          });
+        }
       }
     );
   };
@@ -157,12 +165,17 @@ const CollectionDetail = () => {
                       <div className="flex items-center gap-4">
                         <div
                           className="withHover rounded-lg bg-secondaryColor p-3"
-                          onClick={() => router.back()}
+                          onClick={() => router.push("/collections")}
                         >
                           <ChevronLeftIcon className="h-6 w-6 text-textColor" />
                         </div>
-                        <h3 className="max-w-2xl break-words text-3xl font-bold">
+                        <h3 className="flex items-center gap-2 max-w-2xl break-words text-3xl font-bold">
                           {data?.title}
+                          {isFavourite && (
+                            <div>
+                              <StarIcon className="h-5 w-5 text-yellow-400" />
+                            </div>
+                          )}
                         </h3>
                       </div>
                       <div
