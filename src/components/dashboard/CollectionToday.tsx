@@ -65,7 +65,7 @@ const CollectionToday = ({collection}: IProps) => {
       {showTasks && (
         <div className="border-b border-dashboardSecondaryColor/50 bg-secondaryColor">
           {tasks && tasks.map(task => (
-            <CollectionTodayTask doneTask={handleDoneTask} key={task.id} task={task} />
+            <CollectionTodayTask borderColor={collection.color} doneTask={handleDoneTask} key={task.id} task={task} />
           ))}
         </div>
       )}
