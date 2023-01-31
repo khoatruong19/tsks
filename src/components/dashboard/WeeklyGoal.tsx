@@ -1,12 +1,19 @@
 import autoAnimate from "@formkit/auto-animate";
-import { BookOpenIcon, CalendarDaysIcon } from "@heroicons/react/24/solid";
+import { CalendarDaysIcon } from "@heroicons/react/24/solid";
+import { useRouter } from "next/router";
 import { useEffect, useRef } from "react";
 import { getCircumfence } from "../../utils/constants";
 
 const circumference = getCircumfence(30);
 
-const WeeklyGoal = () => {
+interface IProps{
+  doneTasksCount?: number
+  undoneTasksCount?: number
+}
+
+const WeeklyGoal = ({doneTasksCount = 0,undoneTasksCount = 0}: IProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const router = useRouter()
 
   useEffect(() => {
     containerRef.current && autoAnimate(containerRef.current);
@@ -27,14 +34,14 @@ const WeeklyGoal = () => {
               Weekly Goal
             </span>
           </div>
-          <div className="text-sm text-white/60">Mon-Fri</div>
+          <div className="text-sm text-white/60">Mon-Sun</div>
         </div>
 
         <div className="mb-8 flex items-center justify-between">
           <div className="leading-loose">
             <span className="text-sm text-white/60">Goal Progress</span>
             <p className="text-lg font-medium text-textColor">
-              4/20 tasks completeted
+              {doneTasksCount}/{doneTasksCount+undoneTasksCount} tasks completeted
             </p>
           </div>
           <div>
@@ -52,7 +59,7 @@ const WeeklyGoal = () => {
                 className=" text-tertiaryColor"
                 stroke-width="8"
                 strokeDasharray={circumference}
-                strokeDashoffset={circumference - (10 / 20) * circumference}
+                strokeDashoffset={circumference - (doneTasksCount / (doneTasksCount+undoneTasksCount)) * circumference}
                 stroke-linecap="round"
                 stroke="currentColor"
                 fill="transparent"
@@ -68,17 +75,17 @@ const WeeklyGoal = () => {
           <button
             className="dashboardBtn bg-dashboardSecondaryColor"
 
-            // onClick={() => viewMode !== 0 && setViewMode(0)}
+            onClick={() => router.push('/flags-completed')}
           >
-            Show Completed{" "}
+            Show Completed
           </button>
-          <button
+          {/* <button
             className="dashboardBtn border-2 border-dashboardSecondaryColor/80
                    bg-primaryColor"
             // onClick={() => viewMode !== 1 && setViewMode(1)}
           >
             Edit Goal
-          </button>
+          </button> */}
         </div>
       </div>
     </div>

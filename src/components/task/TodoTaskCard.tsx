@@ -28,13 +28,15 @@ import SortableItem from "../layout/SortableItem";
 import ChevronController from "../others/ChevronController";
 import {toast} from "react-toastify"
 import { messages, toastifyErrorStyles, toastifySuccessStyles } from "../../utils/constants";
+import { useRouter } from "next/router";
 
 interface IProps {
-  task: Task & { children: Task[] };
+  task: Task & { children?: Task[], collection?: {slug: string} };
   deleteTask: (taskId: string) => void;
+  show?: boolean
 }
 
-const TodoTaskCard = ({ task, deleteTask }: IProps) => {
+const TodoTaskCard = ({ task, deleteTask,show }: IProps) => {
   const [showTasks, setShowTasks] = useState(false);
   const [subTasks, setSubTasks] = useState<Task[]>([])
   
@@ -50,6 +52,7 @@ const TodoTaskCard = ({ task, deleteTask }: IProps) => {
   );
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const router = useRouter()
 
   const qc = useQueryClient();
   const toggleTaskDone = trpc.task.toggleDone.useMutation();
@@ -144,17 +147,19 @@ const TodoTaskCard = ({ task, deleteTask }: IProps) => {
     );
   }
 
+  const handleNavigateToCollection = () => show && router.push(`/collections/${task.collection.slug}`)
+
   useEffect(() => {
     containerRef.current && autoAnimate(containerRef.current);
   }, [containerRef]);
 
   useEffect(() => {
-    setSubTasks(task.children)
+    if(task.children) setSubTasks(task.children)
   }, [task]);
 
   return (
     <>
-      <div className="relative w-full rounded-3xl bg-secondaryColor">
+      <div onClick={handleNavigateToCollection} className="relative w-full rounded-3xl bg-secondaryColor" style={{cursor: show ? 'pointer' : 'unset'}}>
         <div className="flex w-full justify-between p-3">
           <div className="flex w-full gap-3">
             <label className="container">
@@ -162,6 +167,7 @@ const TodoTaskCard = ({ task, deleteTask }: IProps) => {
                 type="checkbox"
                 checked={task.done}
                 onChange={() => toggleDone(task)}
+                disabled={show}
               />
               <span className="checkmark border-[3px] border-primaryColor"></span>
             </label>
@@ -175,7 +181,7 @@ const TodoTaskCard = ({ task, deleteTask }: IProps) => {
               </p>
               <div className="flex w-[100%]  items-center justify-between">
                 <div className="mt-1 flex items-center gap-4 text-white/70">
-                  {task.children.length > 0 && (
+                  {task.children && task.children.length > 0 && (
                     <div className="flex items-center gap-1.5">
                       <RectangleGroupIcon className="h-5 w-5" />
                       <span>
@@ -198,6 +204,7 @@ const TodoTaskCard = ({ task, deleteTask }: IProps) => {
                   )}
                 </div>
 
+                {!show && (
                 <div className="mt-1 flex items-center gap-2">
                   <div
                     onClick={() =>
@@ -228,8 +235,9 @@ const TodoTaskCard = ({ task, deleteTask }: IProps) => {
                     <TrashIcon className="h-5 w-5" />
                   </div>
                 </div>
+              )}
               </div>
-            </div>
+              </div>
           </div>
           {subTasks.length > 0 && (
             <ChevronController show={showTasks} clickHandler={reveal} />

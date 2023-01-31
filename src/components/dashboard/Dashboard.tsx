@@ -11,7 +11,8 @@ const Dashboard = () => {
   const [viewMode, setViewMode] = useState<0 | 1>(0);
   const { data } = useSession();
   const {data: collectionsWithTodayTasks} = trpc.task.getAllTodayTasks.useQuery()
-
+  const {data: weeklyTasks} = trpc.task.getAllFlagTasksInThisWeek.useQuery()
+  
   return (
     <div className="flex">
       <Sidebar />
@@ -63,7 +64,7 @@ const Dashboard = () => {
                 </>
               ) : (
                 <>
-                  <WeeklyGoal />
+                  <WeeklyGoal doneTasksCount={weeklyTasks?.doneTasksCount} undoneTasksCount={weeklyTasks?.undoneTasksCount} />
                   <StatisticChart />
                 </>
               )}
