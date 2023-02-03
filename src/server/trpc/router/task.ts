@@ -1,4 +1,6 @@
+import { Task } from "@prisma/client";
 import * as trpc from "@trpc/server";
+import moment from "moment";
 import { z } from "zod";
 import { toggleCollectionIsFavouriteSchema } from "../../../utils/schemas/collection.schema";
 import {
@@ -29,6 +31,11 @@ export const taskRouter = router({
                 id: collectionId,
               },
             },
+            user: {
+              connect: {
+                id: ctx.session.user.id,
+              },
+            },
             ...rest,
             position: tasksCount > 0 ? tasksCount : 0,
           },
@@ -54,13 +61,16 @@ export const taskRouter = router({
         },
       });
     }),
-
+  
   getAllTodayTasks: protectedProcedure
     .query(async ({ ctx }) => {
       const startDay = new Date(new Date().setHours(0, 0, 0, 0)).toISOString()
       const endDay = new Date(new Date().setHours(23, 59, 59, 999)).toISOString();
       
       const allCollections = await ctx.prisma.collection.findMany({
+        where:{
+          userId: ctx.session?.user?.id,
+        },
         include: {
           tasks: {
             select:{
@@ -85,6 +95,61 @@ export const taskRouter = router({
           if(item.tasks.length > 0) return item
       })
     }),
+
+    getAllFlagTasksInThisWeek: protectedProcedure
+    .query(async ({ ctx }) => {
+      const startOfWeek = moment().startOf('week').toISOString();
+      const endOfWeek   = moment().endOf('week').toISOString()
+      
+      const allWeekFlagTasks = await ctx.prisma.task.findMany({
+          where:{
+            dueDate:{
+              gte: startOfWeek,
+              lte: endOfWeek
+            },
+            flag: true,
+            userId: ctx.session?.user?.id
+          }
+      })
+
+      const doneTasks = [] as Task[]
+      const undoneTasks = [] as Task[]
+
+      allWeekFlagTasks.forEach(task => {
+        if(task.done) doneTasks.push(task)
+        else undoneTasks.push(task)
+      })
+
+      return {doneTasksCount: doneTasks.length, undoneTasksCount: undoneTasks.length}
+    }),
+
+    getDoneFlagTasksInThisWeek: protectedProcedure
+    .query(async ({ ctx }) => {
+      const startOfWeek = moment().startOf('week').toISOString();
+      const endOfWeek   = moment().endOf('week').toISOString()
+      
+      const weeklyDoneFlagTasks = await ctx.prisma.task.findMany({
+          where:{
+            dueDate:{
+              gte: startOfWeek,
+              lte: endOfWeek
+            },
+            flag: true,
+            done: true,
+            userId: ctx.session?.user?.id
+          },
+          include: {
+            collection:{
+              select: {
+                slug: true
+              }
+            }
+          }
+      })
+
+      return weeklyDoneFlagTasks
+    }),
+
 
   updatePosition: protectedProcedure
     .input(updateTaskPositionSchema)
