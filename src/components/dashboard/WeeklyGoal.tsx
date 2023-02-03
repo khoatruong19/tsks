@@ -27,7 +27,7 @@ const WeeklyGoal = ({doneTasksCount = 0,undoneTasksCount = 0}: IProps) => {
       <div className="p-4">
         <div className="mb-8 flex items-center  justify-between border-black/20">
           <div className="withHover flex items-center gap-3 ">
-            <div className="gradientBgColor grid place-items-center rounded-md p-2 text-textColor">
+            <div className="gradientBgColor grid place-items-center rounded-md p-2 text-textColor shadow-md">
               <CalendarDaysIcon className="h-5 w-5" />
             </div>
             <span className="text-xl font-semibold text-textColor">
