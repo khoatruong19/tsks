@@ -6,10 +6,11 @@ import {
 } from "@heroicons/react/24/solid";
 import { useEffect, useRef, useState } from "react";
 import * as Highcharts from "highcharts";
+import { trpc } from "../../utils/trpc";
 
 
-function drawChart() {
-  // const { data } = input;
+function drawChart(data: {values: number[], categories: string[] } ) {
+  if(!data) return
   Highcharts.chart("container", {
     chart: {
       type: "column",
@@ -20,24 +21,12 @@ function drawChart() {
     },
 
     xAxis: {
-      categories: [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-      ],
+      categories: data.categories,
       crosshair: true,
     },
     yAxis: {
       min: 0,
+      allowDecimals: false,
       title: {
         text: "",
       },
@@ -52,7 +41,7 @@ function drawChart() {
       headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
       pointFormat:
         '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-        '<td style="padding:0"><b>{point.y:.1f} mm</b></td></tr>',
+        '<td style="padding:0"><b>{point.y} tasks </b></td></tr>',
       footerFormat: "</table>",
       shared: true,
       useHTML: true,
@@ -67,11 +56,9 @@ function drawChart() {
     },
     series: [
       {
+        type: 'column',
         name: "Goal Tasks Completed",
-        data: [
-          49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1,
-          95.6, 54.4,
-        ],
+        data: data.values,
         color: {
           linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1.25 },
           stops: [
@@ -102,13 +89,15 @@ const StatisticChart = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [showTimeSetting, setShowTimeSetting] = useState(true);
 
+  const {data, isLoading} = trpc.task.getLast7DaysGoalDoneTask.useQuery()
+
   useEffect(() => {
     containerRef.current && autoAnimate(containerRef.current);
   }, [containerRef]);
 
   useEffect(() => {
-    drawChart();
-  }, []);
+    if(!isLoading && data) drawChart(data);
+  }, [data,isLoading]);
 
   return (
     <div
@@ -117,7 +106,7 @@ const StatisticChart = () => {
     >
       <div className="p-4">
         <div className="mb-8 flex items-center  justify-between border-black/20">
-          <div className="withHover flex items-center gap-3 ">
+          <div className="flex items-center gap-3 ">
             <div className="gradientBgColor grid place-items-center rounded-md p-2 text-textColor shadow-md">
               <ChartBarIcon className="h-5 w-5" />
             </div>

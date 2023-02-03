@@ -9,10 +9,24 @@ import {
   deleteTaskSchema,
   toggleTaskIsDoneSchema,
   updateTaskPositionSchema,
-  updateTaskSchema
+  updateTaskSchema,
 } from "../../../utils/schemas/task.schema";
 
 import { protectedProcedure, router } from "../trpc";
+
+const getWeekDaysRange = () => {
+  const values = []
+  const categories = []
+  const startOfWeek = moment().startOf("week").subtract(2,'days');
+  const endOfWeek = moment().endOf("week").subtract(2,'days');
+  for(let i = startOfWeek.startOf('days'); i.isBefore(endOfWeek); i = i.add(1,'days').startOf('day')){
+    const startDay = i.toISOString();
+    const endDay = i.endOf('day').toISOString();
+    values.push({startDay, endDay})
+    categories.push(i.format('ddd'))
+  }
+  return {values,categories}
+}
 
 export const taskRouter = router({
   createTask: protectedProcedure
@@ -21,8 +35,8 @@ export const taskRouter = router({
       try {
         const tasksCount = await ctx.prisma.task.count({
           where: {
-            collectionId:collectionId
-          }
+            collectionId: collectionId,
+          },
         });
         const task = await ctx.prisma.task.create({
           data: {
@@ -61,95 +75,116 @@ export const taskRouter = router({
         },
       });
     }),
-  
-  getAllTodayTasks: protectedProcedure
-    .query(async ({ ctx }) => {
-      const startDay = new Date(new Date().setHours(0, 0, 0, 0)).toISOString()
-      const endDay = new Date(new Date().setHours(23, 59, 59, 999)).toISOString();
-      
-      const allCollections = await ctx.prisma.collection.findMany({
-        where:{
-          userId: ctx.session?.user?.id,
-        },
-        include: {
-          tasks: {
-            select:{
-              id: true,
-              done: true,
-              content: true,
-              parentId: true,
-            },
-            where:{
-              dueDate:{
-                gt: startDay,
-                lt: endDay
-              },
-              done: false
-            }
-          }
-        }
-      })
 
-      return allCollections.filter(item => {
-          item.tasks = item.tasks.filter(task => !task.parentId)
-          if(item.tasks.length > 0) return item
-      })
-    }),
+  getAllTodayTasks: protectedProcedure.query(async ({ ctx }) => {
+    const startDay = new Date(new Date().setHours(0, 0, 0, 0)).toISOString();
+    const endDay = new Date(new Date().setHours(23, 59, 59, 999)).toISOString();
 
-    getAllFlagTasksInThisWeek: protectedProcedure
-    .query(async ({ ctx }) => {
-      const startOfWeek = moment().startOf('week').toISOString();
-      const endOfWeek   = moment().endOf('week').toISOString()
-      
-      const allWeekFlagTasks = await ctx.prisma.task.findMany({
-          where:{
-            dueDate:{
-              gte: startOfWeek,
-              lte: endOfWeek
-            },
-            flag: true,
-            userId: ctx.session?.user?.id
-          }
-      })
-
-      const doneTasks = [] as Task[]
-      const undoneTasks = [] as Task[]
-
-      allWeekFlagTasks.forEach(task => {
-        if(task.done) doneTasks.push(task)
-        else undoneTasks.push(task)
-      })
-
-      return {doneTasksCount: doneTasks.length, undoneTasksCount: undoneTasks.length}
-    }),
-
-    getDoneFlagTasksInThisWeek: protectedProcedure
-    .query(async ({ ctx }) => {
-      const startOfWeek = moment().startOf('week').toISOString();
-      const endOfWeek   = moment().endOf('week').toISOString()
-      
-      const weeklyDoneFlagTasks = await ctx.prisma.task.findMany({
-          where:{
-            dueDate:{
-              gte: startOfWeek,
-              lte: endOfWeek
-            },
-            flag: true,
+    const allCollections = await ctx.prisma.collection.findMany({
+      where: {
+        userId: ctx.session?.user?.id,
+      },
+      include: {
+        tasks: {
+          select: {
+            id: true,
             done: true,
-            userId: ctx.session?.user?.id
+            content: true,
+            parentId: true,
           },
-          include: {
-            collection:{
-              select: {
-                slug: true
-              }
+          where: {
+            dueDate: {
+              gt: startDay,
+              lt: endDay,
+            },
+            done: false,
+          },
+        },
+      },
+    });
+
+    return allCollections.filter((item) => {
+      item.tasks = item.tasks.filter((task) => !task.parentId);
+      if (item.tasks.length > 0) return item;
+    });
+  }),
+
+  getAllFlagTasksInThisWeek: protectedProcedure.query(async ({ ctx }) => {
+    const startOfWeek = moment().startOf("week").toISOString();
+    const endOfWeek = moment().endOf("week").toISOString();
+
+    const allWeekFlagTasks = await ctx.prisma.task.findMany({
+      where: {
+        dueDate: {
+          gte: startOfWeek,
+          lte: endOfWeek,
+        },
+        flag: true,
+        userId: ctx.session?.user?.id,
+      },
+    });
+
+    const doneTasks = [] as Task[];
+    const undoneTasks = [] as Task[];
+
+    allWeekFlagTasks.forEach((task) => {
+      if (task.done) doneTasks.push(task);
+      else undoneTasks.push(task);
+    });
+
+    return {
+      doneTasksCount: doneTasks.length,
+      undoneTasksCount: undoneTasks.length,
+    };
+  }),
+
+  getDoneFlagTasksInThisWeek: protectedProcedure.query(async ({ ctx }) => {
+    const startOfWeek = moment().startOf("week").toISOString();
+    const endOfWeek = moment().endOf("week").toISOString();
+
+    const weeklyDoneFlagTasks = await ctx.prisma.task.findMany({
+      where: {
+        dueDate: {
+          gte: startOfWeek,
+          lte: endOfWeek,
+        },
+        flag: true,
+        done: true,
+        userId: ctx.session?.user?.id,
+      },
+      include: {
+        collection: {
+          select: {
+            slug: true,
+          },
+        },
+      },
+    });
+
+    return weeklyDoneFlagTasks;
+  }),
+
+  getLast7DaysGoalDoneTask: protectedProcedure.query(async ({ ctx }) => {
+    const {values:weekDaysRange ,categories} = getWeekDaysRange()
+
+    const values = await Promise.all(
+      weekDaysRange.map(async (range) => {
+           return await ctx.prisma.task.count({
+            where: {
+              dueDate: {
+                gt: range.startDay,
+                lt: range.endDay,
+              },
+              done: true,
+              flag: true,
+              userId: ctx.session?.user?.id,
             }
-          }
+           });
       })
+   );
 
-      return weeklyDoneFlagTasks
-    }),
-
+    return {values,categories};
+  }),
 
   updatePosition: protectedProcedure
     .input(updateTaskPositionSchema)
@@ -209,38 +244,38 @@ export const taskRouter = router({
       await ctx.prisma.task.update({
         where: { id },
         data: {
-          done
+          done,
         },
       });
     }),
 
   addSubTask: protectedProcedure
-  .input(addSubTaskSchema)
-  .mutation(async ({ input: {parentId, content, collectionId}, ctx }) => {
-    const parentTask = await ctx.prisma.task.findFirst({
-      where:{
-        id: parentId
-      },
-      include:{
-        children: true
-      }
-    })
-    const subTasksCount = parentTask?.children.length!
-    await ctx.prisma.task.create({
-      data: {
-        content,
-        position: subTasksCount > 0 ? subTasksCount : 0,
-        parent: {
-          connect: {
-            id: parentId,
+    .input(addSubTaskSchema)
+    .mutation(async ({ input: { parentId, content, collectionId }, ctx }) => {
+      const parentTask = await ctx.prisma.task.findFirst({
+        where: {
+          id: parentId,
+        },
+        include: {
+          children: true,
+        },
+      });
+      const subTasksCount = parentTask?.children.length!;
+      await ctx.prisma.task.create({
+        data: {
+          content,
+          position: subTasksCount > 0 ? subTasksCount : 0,
+          parent: {
+            connect: {
+              id: parentId,
+            },
+          },
+          collection: {
+            connect: {
+              id: collectionId,
+            },
           },
         },
-        collection: {
-          connect: {
-            id: collectionId,
-          },
-        },
-      },
-    });
-  }),
+      });
+    }),
 });
