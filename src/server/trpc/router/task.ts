@@ -14,16 +14,30 @@ import {
 
 import { protectedProcedure, router } from "../trpc";
 
-const getWeekDaysRange = () => {
+const getLast7DaysRange = () => {
   const values = []
   const categories = []
-  const startOfWeek = moment().startOf("week").subtract(2,'days');
-  const endOfWeek = moment().endOf("week").subtract(2,'days');
-  for(let i = startOfWeek.startOf('days'); i.isBefore(endOfWeek); i = i.add(1,'days').startOf('day')){
+  const startDate = moment().subtract(7,'days').startOf("day");
+  const endDate = moment().startOf("day");
+  for(let i = startDate.startOf('days'); i.isBefore(endDate); i = i.add(1,'days').startOf('day')){
     const startDay = i.toISOString();
     const endDay = i.endOf('day').toISOString();
     values.push({startDay, endDay})
     categories.push(i.format('ddd'))
+  }
+  return {values,categories}
+}
+
+const getLast30DaysRange = () => {
+  const values = []
+  const categories = []
+  const startDate = moment().subtract(30,'days').startOf("day");
+  const endDate = moment().startOf("day");
+  for(let i = startDate.startOf('days'); i.isBefore(endDate); i = i.add(1,'days').startOf('day')){
+    const startDay = i.toISOString();
+    const endDay = i.endOf('day').toISOString();
+    values.push({startDay, endDay})
+    categories.push(i.format('D/M'))
   }
   return {values,categories}
 }
@@ -165,7 +179,29 @@ export const taskRouter = router({
   }),
 
   getLast7DaysGoalDoneTask: protectedProcedure.query(async ({ ctx }) => {
-    const {values:weekDaysRange ,categories} = getWeekDaysRange()
+    const {values:weekDaysRange ,categories} = getLast7DaysRange()
+
+    const values = await Promise.all(
+      weekDaysRange.map(async (range) => {
+           return await ctx.prisma.task.count({
+            where: {
+              dueDate: {
+                gt: range.startDay,
+                lt: range.endDay,
+              },
+              done: true,
+              flag: true,
+              userId: ctx.session?.user?.id,
+            }
+           });
+      })
+   );
+
+    return {values,categories};
+  }),
+
+  getLast30DaysGoalDoneTask: protectedProcedure.query(async ({ ctx }) => {
+    const {values:weekDaysRange ,categories} = getLast30DaysRange()
 
     const values = await Promise.all(
       weekDaysRange.map(async (range) => {

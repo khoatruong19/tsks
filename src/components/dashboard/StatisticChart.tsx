@@ -1,17 +1,15 @@
 import autoAnimate from "@formkit/auto-animate";
-import { ChevronUpIcon } from "@heroicons/react/24/outline";
-import {
-  ChartBarIcon,
-  ChevronDownIcon,
-} from "@heroicons/react/24/solid";
+import { CheckIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
+import { ChartBarIcon, ChevronDownIcon } from "@heroicons/react/24/solid";
 import { useEffect, useRef, useState } from "react";
 import * as Highcharts from "highcharts";
 import { trpc } from "../../utils/trpc";
+import Loader from "../others/Loader";
 
+function drawChart(data: { values: number[]; categories: string[] }) {
+  if (!data) return;
 
-function drawChart(data: {values: number[], categories: string[] } ) {
-  if(!data) return
-  Highcharts.chart("container", {
+  Highcharts.chart("statistic-chart", {
     chart: {
       type: "column",
       backgroundColor: "transparent",
@@ -50,13 +48,13 @@ function drawChart(data: {values: number[], categories: string[] } ) {
       column: {
         pointPadding: 0.2,
         borderWidth: 0,
-        pointWidth: 12,
-        borderRadius: 5,
+        pointWidth: 10,
       },
+      
     },
     series: [
       {
-        type: 'column',
+        type: "column",
         name: "Goal Tasks Completed",
         data: data.values,
         color: {
@@ -85,20 +83,46 @@ function drawChart(data: {values: number[], categories: string[] } ) {
   });
 }
 
+enum TIME_RANGE {
+  LAST_WEEK = "Last 7 days",
+  LAST_MONTH = "Last 30 days",
+}
+
 const StatisticChart = () => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [showTimeSetting, setShowTimeSetting] = useState(true);
+  const [showTimeSetting, setShowTimeSetting] = useState(false);
+  const [range, setRange] = useState<keyof typeof TIME_RANGE>("LAST_WEEK");
 
-  const {data, isLoading} = trpc.task.getLast7DaysGoalDoneTask.useQuery()
+  const { data: last7DaysData, isFetching: last7DaysLoading } = trpc.task.getLast7DaysGoalDoneTask.useQuery(
+    undefined,
+    {enabled: range === "LAST_WEEK" }
+  );
+  const { data: last30DaysData, isFetching: last30DaysLoading } = trpc.task.getLast30DaysGoalDoneTask.useQuery(
+    undefined,
+    {enabled: range === "LAST_MONTH" }
+  );
+  
+  const renderLoading = () => (
+    <div className="absolute flex items-center justify-center top-0 left-0 w-[100%] h-[100%] bg-primaryColor/80 z-[99999] blur-sm" >
+      <Loader/>
+    </div>
+  )
 
   useEffect(() => {
     containerRef.current && autoAnimate(containerRef.current);
   }, [containerRef]);
 
   useEffect(() => {
-    if(!isLoading && data) drawChart(data);
-  }, [data,isLoading]);
+    if (range === "LAST_WEEK" && !last7DaysLoading && last7DaysData) drawChart(last7DaysData);
+    if (range === "LAST_MONTH" && !last30DaysLoading && last30DaysData) drawChart(last30DaysData);
+    
+    const chart = document.querySelector("#statistic-chart")
+    if(chart) {
+      chart.scrollIntoView()
+    }
 
+  }, [range,last7DaysLoading,last30DaysLoading,last7DaysData,last30DaysData]);
+  console.log({last7DaysLoading, last30DaysLoading})
   return (
     <div
       className="w-full overflow-hidden rounded-2xl  bg-secondaryColor"
@@ -115,20 +139,40 @@ const StatisticChart = () => {
             </span>
           </div>
           <div
-            className="withHover flex items-center gap-2 text-white/60"
+            className="relative"
             onClick={() => setShowTimeSetting((prev) => !prev)}
           >
-            <div>Last 7 Days</div>
-            {showTimeSetting ? (
-              <ChevronDownIcon className="h-5 w-5" />
-            ) : (
-              <ChevronUpIcon className="h-5 w-5" />
+            <div className="withHover flex items-center gap-2 text-white/60">
+              <div>{TIME_RANGE[range]}</div>
+              {!showTimeSetting ? (
+                <ChevronDownIcon className="h-5 w-5" />
+              ) : (
+                <ChevronUpIcon className="h-5 w-5" />
+              )}
+            </div>
+            
+            {showTimeSetting && (
+              <div className="absolute bottom-[-65px] right-0 z-50 w-[110px] text-white/60 overflow-hidden rounded-md bg-primaryColor shadow-lg">
+                {(Object.keys(TIME_RANGE) as Array<keyof typeof TIME_RANGE>).map((value) => (
+                <p
+                  className={`${range === value && 'bg-dashboardSecondaryColor/60'} withHover flex items-center gap-2 pl-2 pt-1 pb-1.5 text-sm hover:bg-zinc-400 hover:text-red-300`}
+                  key={value}
+                  onClick={() => setRange(value)}
+                >
+                  {TIME_RANGE[value]}
+                  {range === value && (
+                    <span><CheckIcon className="w-4 h-4 text-tertiaryColor"/></span>
+                  )}
+                </p>
+                ))}
+              </div>
             )}
           </div>
         </div>
 
-        <div className="mb-2 flex items-center justify-between">
-          <div className="w-[100%]" id="container" />
+        <div className="relative mb-2 flex items-center justify-between">
+          {last7DaysLoading || last30DaysLoading && renderLoading()}
+          <div className="w-[100%]" id="statistic-chart" />
         </div>
       </div>
     </div>
