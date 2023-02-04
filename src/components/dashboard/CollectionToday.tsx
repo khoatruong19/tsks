@@ -9,12 +9,12 @@ import ChevronController from "../others/ChevronController";
 import CollectionTodayTask from "./CollectionTodayTask";
 
 interface IProps{
-  collection: Partial<Collection> & {tasks: Task[]}
+  collection: Partial<Collection> & {tasks: Partial<Task>[]}
 }
 
 const CollectionToday = ({collection}: IProps) => {
   const [showTasks, setShowTasks] = useState(true);
-  const [tasks, setTasks] = useState<Task[]>([])
+  const [tasks, setTasks] = useState<Partial<Task>[]>([])
 
   const containerRef = useRef<HTMLDivElement>(null);
   const router = useRouter()

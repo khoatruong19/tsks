@@ -3,7 +3,7 @@ import React from "react";
 import { formatDateToString } from "../../utils/helpers";
 
 interface IProps{
-  task: Task
+  task: Partial<Task>
   doneTask: (id: string) => void
   borderColor?: string
 }
@@ -12,7 +12,7 @@ const CollectionTodayTask = ({task,doneTask,borderColor}:  IProps) => {
   return (
     <div className="flex gap-4 p-4">
       <label className="container">
-        <input type="checkbox" onChange={() => doneTask(task.id)} />
+        <input type="checkbox" onChange={() => doneTask(task.id!)} />
         <span className="checkmark border-[3px]" style={{borderColor}}></span>
       </label>
       <div>
