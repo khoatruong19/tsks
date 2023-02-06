@@ -16,7 +16,7 @@ const CollectionTodayTask = ({task,doneTask,borderColor}:  IProps) => {
         <span className="checkmark border-[3px]" style={{borderColor}}></span>
       </label>
       <div>
-        <p className="text-lg font-medium text-textColor/95">{task.content}</p>
+        <p className="text-lg font-medium text-textColorL/90 dark:text-textColor/95">{task.content}</p>
         <p className="text-sm text-red-400">{formatDateToString(new Date())}</p>
       </div>
     </div>

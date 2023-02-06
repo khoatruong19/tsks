@@ -91,12 +91,12 @@ const TodoTasksContainer = ({ tasks }: IProps) => {
   
   return (
     <div>
-      <h1 className="text-2xl font-semibold text-textColor">
+      <h1 className="text-2xl font-semibold text-textColorL dark:text-textColor">
         Tasks - {sortedTasks.length}
       </h1>
       <div className="flex flex-col gap-2.5 py-5">
         {sortedTasks.length === 0 && (
-          <h2 className="text-center text-lg font-semibold text-white">
+          <h2 className="text-center text-lg font-semibold text-tertiaryColorL dark:text-white">
             No tasks
           </h2>
         )}

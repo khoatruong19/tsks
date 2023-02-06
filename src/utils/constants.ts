@@ -1,7 +1,7 @@
 export const getCircumfence = (radius: number) => radius * 2 * Math.PI;
 
 export const toastifySuccessStyles = {
-  background: "#222831",
+  background:  typeof window !== "undefined" && localStorage.getItem("theme") === "dark" ? "#222831" : "#6D9886",
   color: "#fff",
 };
 

@@ -8,7 +8,7 @@ interface IProps {
 
 const ChevronController = ({ clickHandler, show }: IProps) => {
   return (
-    <div className={`withHover  text-textColor`} onClick={clickHandler}>
+    <div className={`withHover text-textColorL  dark:text-textColor`} onClick={clickHandler}>
       {show ? (
         <ChevronUpIcon className=" h-5 w-5" />
       ) : (

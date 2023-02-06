@@ -21,7 +21,7 @@ const WeeklyGoal = ({doneTasksCount = 0,undoneTasksCount = 0}: IProps) => {
 
   return (
     <div
-      className="w-full overflow-hidden rounded-2xl  bg-secondaryColor"
+      className="w-full overflow-hidden rounded-2xl bg-secondaryColorL dark:bg-secondaryColor"
       ref={containerRef}
     >
       <div className="p-4">
@@ -30,24 +30,24 @@ const WeeklyGoal = ({doneTasksCount = 0,undoneTasksCount = 0}: IProps) => {
             <div className="gradientBgColor grid place-items-center rounded-md p-2 text-textColor shadow-md">
               <CalendarDaysIcon className="h-5 w-5" />
             </div>
-            <span className="text-xl font-semibold text-textColor">
+            <span className="text-xl font-semibold text-textColorL dark:text-textColor">
               Weekly Goal
             </span>
           </div>
-          <div className="text-sm text-white/60">Mon-Sun</div>
+          <div className="text-sm text-dashboardSecondaryColorL dark:text-white/60">Mon-Sun</div>
         </div>
 
         <div className="mb-8 flex items-center justify-between">
           <div className="leading-loose">
-            <span className="text-sm text-white/60">Goal Progress</span>
-            <p className="text-lg font-medium text-textColor">
+            <span className="text-sm text-dashboardSecondaryColorL dark:text-white/60">Goal Progress</span>
+            <p className="text-lg font-medium text-textColorL dark:text-textColor">
               {doneTasksCount}/{doneTasksCount+undoneTasksCount} tasks completeted
             </p>
           </div>
           <div>
             <svg className="mr-[-10px] h-20 w-20">
               <circle
-                className="text-primaryColor "
+                className="text-primaryColorL dark:text-primaryColor"
                 stroke-width="8"
                 stroke="currentColor"
                 fill="transparent"
@@ -56,7 +56,7 @@ const WeeklyGoal = ({doneTasksCount = 0,undoneTasksCount = 0}: IProps) => {
                 cy="40"
               />
               <circle
-                className=" text-tertiaryColor"
+                className="text-dashboardSecondaryColorL dark:text-tertiaryColor"
                 stroke-width="8"
                 strokeDasharray={circumference}
                 strokeDashoffset={circumference - (doneTasksCount / (doneTasksCount+undoneTasksCount)) * circumference}
@@ -73,7 +73,7 @@ const WeeklyGoal = ({doneTasksCount = 0,undoneTasksCount = 0}: IProps) => {
 
         <div className="flex items-center gap-3">
           <button
-            className="dashboardBtn bg-dashboardSecondaryColor"
+            className="dashboardBtn bg-dashboardSecondaryColorL dark:bg-dashboardSecondaryColor"
 
             onClick={() => router.push('/flags-completed')}
           >

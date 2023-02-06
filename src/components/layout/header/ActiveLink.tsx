@@ -34,7 +34,7 @@ const ActiveLink = ({
       const newClassName =
         linkPathname === activePathname
           ? `${childClassName}  ${activeClassName}`.trim()
-          : `${childClassName} text-slate-500`;
+          : `${childClassName} text-[#B4CDE6] dark:text-slate-500`;
 
       if (newClassName !== className) {
         setClassName(newClassName);

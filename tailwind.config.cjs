@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: 'class',
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
@@ -9,6 +10,11 @@ module.exports = {
         dashboardSecondaryColor: "#6B728E",
         tertiaryColor: "#9F73AB",
         textColor: "#EEEEEE",
+        primaryColorL: "#FFFBF5",
+        secondaryColorL: "#F7EFE5",
+        dashboardSecondaryColorL:"#6D9886",
+        tertiaryColorL: "#678983",
+        textColorL: "#3A8891",
       },
     },
   },

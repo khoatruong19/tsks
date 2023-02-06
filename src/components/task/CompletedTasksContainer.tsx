@@ -72,12 +72,12 @@ const CompletedTasksContainer = ({ tasks }: IProps) => {
   }, [tasks])
   return (
     <div>
-      <h1 className="m-0 text-2xl font-semibold text-textColor">
+      <h1 className="m-0 text-2xl font-semibold text-textColorL dark:text-textColor">
         Completed - {tasks.length}
       </h1>
       <div className="flex flex-col gap-1 py-5">
         {sortedTasks.length === 0 && (
-          <h2 className="text-center text-lg font-semibold text-white">
+          <h2 className="text-center text-lg font-semibold text-tertiaryColorL dark:text-white">
             No completed tasks
           </h2>
         )}

@@ -5,6 +5,8 @@ import { useEffect, useRef, useState } from "react";
 import * as Highcharts from "highcharts";
 import { trpc } from "../../utils/trpc";
 import Loader from "../others/Loader";
+import { useAtom } from "jotai";
+import { themeMode } from "../../store";
 
 function drawChart(data: { values: number[]; categories: string[] }) {
   if (!data) return;
@@ -28,10 +30,10 @@ function drawChart(data: { values: number[]; categories: string[] }) {
       title: {
         text: "",
       },
-      gridLineColor: "#4f5256",
+      gridLineColor: localStorage.getItem('theme') === "light" ? "#6D9886": "#4f5256",
       labels: {
         style: {
-          color: "rgb(255 255 255 / 0.6)",
+          color: localStorage.getItem('theme') === "light" ? "#3A8891": "rgb(255 255 255 / 0.6)",
         },
       },
     },
@@ -58,8 +60,11 @@ function drawChart(data: { values: number[]; categories: string[] }) {
         name: "Goal Tasks Completed",
         data: data.values,
         color: {
-          linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1.25 },
-          stops: [
+          linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 },
+          stops: localStorage.getItem('theme') === "light" ? [
+            [0, "#C58940"],
+            [1, "#6D9886"],
+          ] : [
             [0, "#9F73AB"],
             [1, "#6366f1"],
           ],
@@ -74,7 +79,7 @@ function drawChart(data: { values: number[]; categories: string[] }) {
     ],
     legend: {
       itemStyle: {
-        color: "#fff",
+        color: localStorage.getItem('theme') === "light" ? "#3A8891": "#fff",
       },
     },
     credits: {
@@ -92,6 +97,8 @@ const StatisticChart = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [showTimeSetting, setShowTimeSetting] = useState(false);
   const [range, setRange] = useState<keyof typeof TIME_RANGE>("LAST_WEEK");
+  const [theme, _] = useAtom(themeMode)
+
 
   const { data: last7DaysData, isFetching: last7DaysLoading } = trpc.task.getLast7DaysGoalDoneTask.useQuery(
     undefined,
@@ -120,12 +127,10 @@ const StatisticChart = () => {
     if(chart) {
       chart.scrollIntoView()
     }
-
-  }, [range,last7DaysLoading,last30DaysLoading,last7DaysData,last30DaysData]);
-  console.log({last7DaysLoading, last30DaysLoading})
+  }, [range,last7DaysLoading,last30DaysLoading,last7DaysData,last30DaysData, theme]);
   return (
     <div
-      className="w-full overflow-hidden rounded-2xl  bg-secondaryColor"
+      className="w-full overflow-hidden rounded-2xl bg-secondaryColorL dark:bg-secondaryColor"
       ref={containerRef}
     >
       <div className="p-4">
@@ -134,7 +139,7 @@ const StatisticChart = () => {
             <div className="gradientBgColor grid place-items-center rounded-md p-2 text-textColor shadow-md">
               <ChartBarIcon className="h-5 w-5" />
             </div>
-            <span className="text-xl font-semibold text-textColor">
+            <span className="text-xl font-semibold text-textColorL dark:text-textColor">
               Statistic
             </span>
           </div>

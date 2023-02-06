@@ -159,7 +159,7 @@ const TodoTaskCard = ({ task, deleteTask,show }: IProps) => {
 
   return (
     <>
-      <div onClick={handleNavigateToCollection} className="relative w-full rounded-3xl bg-secondaryColor" style={{cursor: show ? 'pointer' : 'unset'}}>
+      <div onClick={handleNavigateToCollection} className="relative w-full rounded-3xl bg-secondaryColorL dark:bg-secondaryColor" style={{cursor: show ? 'pointer' : 'unset'}}>
         <div className="flex w-full justify-between p-3">
           <div className="flex w-full gap-3">
             <label className="container">
@@ -173,7 +173,7 @@ const TodoTaskCard = ({ task, deleteTask,show }: IProps) => {
             </label>
             <div className="w-[100%]">
               <p
-                className={`text-lg font-medium text-textColor/90 ${
+                className={`text-lg font-medium text-textColorL/90 dark:text-textColor/90 ${
                   task.done && "lineThroughWhite line-through"
                 }`}
               >
@@ -193,13 +193,13 @@ const TodoTaskCard = ({ task, deleteTask,show }: IProps) => {
                       </span>
                     </div>
                   )}
-                  <div className="flex items-center gap-1.5 text-red-200">
+                  <div className="flex items-center gap-1.5 text-red-300">
                     <CalendarDaysIcon className="h-5 w-5" />
                     <span>{formatDateToString(task.dueDate)}</span>
                   </div>
                   {task.flag && (
                     <div>
-                      <FlagIcon className="h-4 w-4 text-tertiaryColor"/>
+                      <FlagIcon className="h-4 w-4 text-tertiaryColorL dark:text-tertiaryColor"/>
                     </div>
                   )}
                 </div>
@@ -213,12 +213,12 @@ const TodoTaskCard = ({ task, deleteTask,show }: IProps) => {
                         task,
                       })
                     }
-                    className="withHover flex items-center gap-1.5 text-tertiaryColor"
+                    className="withHover flex items-center gap-1.5 text-tertiaryColorL dark:text-tertiaryColor"
                   >
                     <PlusIcon className="h-5 w-5" />
                   </div>
                   <div
-                    className="withHover flex items-center gap-1.5  text-green-100"
+                    className="withHover flex items-center gap-1.5  text-green-300"
                     onClick={() =>
                       setOpenTaskModal({
                         type: "UPDATE",
@@ -258,7 +258,7 @@ const TodoTaskCard = ({ task, deleteTask,show }: IProps) => {
                     <div
                       onMouseEnter={() => openSubTaskActions(item.id)}
                       onMouseLeave={() => closeSubTaskActions(item.id)}
-                      className="rounded-3xl bg-secondaryColor"
+                      className="rounded-3xl bg-secondaryColorL dark:bg-secondaryColor"
                     >
                       <div className="flex justify-between p-3">
                         <div className="flex gap-3">
@@ -272,7 +272,7 @@ const TodoTaskCard = ({ task, deleteTask,show }: IProps) => {
                           </label>
                           <div>
                             <p
-                              className={`text-lg font-medium text-textColor/90 ${
+                              className={`text-lg font-medium text-textColorL dark:text-textColor/90 ${
                                 item.done && "lineThroughWhite line-through"
                               }`}
                             >
@@ -285,7 +285,7 @@ const TodoTaskCard = ({ task, deleteTask,show }: IProps) => {
                           className="mt-1 hidden items-center gap-2"
                         >
                           <div
-                            className="withHover flex items-center gap-1.5  text-yellow-200"
+                            className="withHover flex items-center gap-1.5  text-green-300"
                             onClick={() =>
                               setOpenTaskModal({
                                 type: "UPDATE_SUB_TASK",

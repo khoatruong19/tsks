@@ -11,11 +11,12 @@
 }
 
 .dashboardBtn {
-  @apply withHover rounded-lg py-2 px-4 font-semibold text-textColor;
+  @apply withHover rounded-lg py-2 px-4 font-semibold dark:text-textColor text-[#F2DEBA];
 }
 
-.gradientBgColor {
-  @apply bg-gradient-to-r from-indigo-500 to-tertiaryColor;
+
+.gradientBgColor{
+    @apply bg-gradient-to-r dark:from-indigo-500 dark:to-tertiaryColor from-[#6D9886] to-[#C58940];
 }
 
 .container {

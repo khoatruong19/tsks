@@ -158,13 +158,13 @@ export const taskRouter = router({
 
     const weeklyDoneFlagTasks = await ctx.prisma.task.findMany({
       where: {
+        userId: ctx.session?.user?.id,
         dueDate: {
           gte: startOfWeek,
           lte: endOfWeek,
         },
         flag: true,
         done: true,
-        userId: ctx.session?.user?.id,
       },
       include: {
         collection: {
@@ -173,6 +173,9 @@ export const taskRouter = router({
           },
         },
       },
+      orderBy:{
+        dueDate: 'desc'
+      }
     });
 
     return weeklyDoneFlagTasks;
@@ -311,6 +314,11 @@ export const taskRouter = router({
               id: collectionId,
             },
           },
+          user: {
+            connect: {
+              id: ctx.session.user.id
+            }
+          }
         },
       });
     }),

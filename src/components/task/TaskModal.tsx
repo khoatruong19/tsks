@@ -169,12 +169,12 @@ const TaskModal = () => {
   return (
     <div className="absolute top-0 left-0 z-[99] h-[100vh] w-[100vw] bg-black/60">
       <form onSubmit={handleSubmit}>
-        <div className="mx-auto mt-52 w-full max-w-[500px] rounded-3xl bg-primaryColor shadow-2xl">
+        <div className="mx-auto mt-52 w-full max-w-[500px] rounded-3xl bg-primaryColorL dark:bg-primaryColor shadow-2xl">
           <div className="px-5 py-7">
-            <div className="h-12 rounded-lg border border-white/50">
+            <div className="h-12 rounded-lg border border-[#F2DEBA] dark:border-white/50">
               <input
                 ref={inputRef}
-                className="h-full w-full bg-transparent px-4 text-textColor/90 outline-none placeholder:text-textColor/90"
+                className="h-full w-full bg-transparent px-4 text-[#F2DEBA] dark:text-textColor/90 outline-none placeholder:text-[#F2DEBA] placeholder:dark:text-textColor/90"
                 type="text"
                 placeholder={
                   openModal?.type === "ADD"
@@ -192,11 +192,11 @@ const TaskModal = () => {
               <div className="relative mt-4 flex items-center gap-2">
                 {collections.length > 0 ? (
                   <div
-                    className="withHover flex items-center gap-2  rounded-md border border-white/50 py-2 px-3"
+                    className="withHover flex items-center gap-2  rounded-md border border-[#F2DEBA] dark:border-white/50 py-2 px-3"
                     onClick={handleToggleCollections}
                   >
                     <span>{collection?.icon}</span>
-                    <span className="text-sm text-textColor/90">
+                    <span className="text-sm text-textColorL dark:text-textColor/90">
                     {collection?.title && collection.title.length > 13 ? collection.title.slice(0,13) + "..." : collection?.title }
                     </span>
                   </div>
@@ -204,18 +204,18 @@ const TaskModal = () => {
                   <p className="text-red-300 font-semibold">No collections!</p>
                 )}
                 <div
-                  className="withHover relative flex items-center gap-2  rounded-md border border-white/50 py-2 px-3"
+                  className="withHover relative flex items-center gap-2  rounded-md border border-[#F2DEBA] dark:border-white/50 py-2 px-3"
                   onClick={handleToggleDueDate}
                 >
                   <DocumentIcon className="h-5 w-5 text-green-400" />
-                  <span className="text-sm text-textColor/90">
+                  <span className="text-sm text-textColorL dark:text-textColor/90">
                     {formatDateToString(dueDate)}
                   </span>
                 </div>
                 <div
                   className={`withHover flex items-center gap-2 ${
-                    flag && "bg-gray-300"
-                  }  rounded-md border border-white/50 py-2 px-3`}
+                    flag && "bg-[#F2DEBA] dark:bg-gray-300"
+                  }  rounded-md border border-[#F2DEBA] dark:border-white/50 py-2 px-3`}
                   onClick={() => setFlag((prev) => !prev)}
                 >
                   <FlagIcon className="h-5 w-5 text-red-400" />
@@ -273,10 +273,10 @@ const TaskModal = () => {
                 </span>
               </button>
               <div
-                className="withHover flex items-center gap-2  rounded-md bg-secondaryColor py-2 px-8 shadow-xl"
+                className="withHover flex items-center gap-2  rounded-md bg-secondaryColorL dark:bg-secondaryColor py-2 px-8 shadow-xl"
                 onClick={() => setOpenModal(null)}
               >
-                <span className="text-lg font-semibold text-textColor/90">
+                <span className="text-lg font-semibold text-[#F2DEBA] dark:text-textColor/90">
                   Cancel
                 </span>
               </div>

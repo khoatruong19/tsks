@@ -17,7 +17,7 @@ const CollectionCard = ({ collection }: IProps) => {
   )?.length;
   return (
     <div
-      className="withHover rounded-3xl bg-secondaryColor"
+      className="withHover rounded-3xl bg-secondaryColorL dark:bg-secondaryColor shadow-md"
       onClick={() => router.push(`/collections/${collection.slug}`)}
     >
       <div className=" p-4 md:p-6">
@@ -35,28 +35,28 @@ const CollectionCard = ({ collection }: IProps) => {
           )}
         </div>
 
-        <h1 className="mb-3  break-words text-2xl font-bold text-textColor">
+        <h1 className="mb-3  break-words text-2xl font-bold text-textColorL dark:text-textColor">
           {collection.title && collection.title.length > 13
             ? collection.title.slice(0, 13) + "..."
             : collection.title}
         </h1>
         <div className="flex items-center  justify-between">
-          <span className="text-sm text-white/60">
+          <span className="text-sm text-tertiaryColorL dark:text-white/60">
             {doneTasksCount}/{collection.tasks.length} done
           </span>
           <div className="flex items-center justify-center">
             {doneTasksCount !== 0 &&
             doneTasksCount === collection.tasks.length ? (
               <span
-                className="flex h-[36px] w-[36px] items-center justify-center rounded-full border-[3px] border-primaryColor/80"
+                className="flex h-[36px] w-[36px] items-center justify-center rounded-full border-[3px] border-primaryColorL shadow-md dark:border-primaryColor/80"
                 style={{ backgroundColor: collection.color }}
               >
-                <CheckIcon className="h-[20px] w-[20px] text-white" />
+                <CheckIcon className="h-[20px] w-[20px] text-tertiaryColorL dark:text-white" />
               </span>
             ) : (
-              <svg className=" h-10 w-10">
+              <svg className=" h-10 w-10 rounded-full shadow-md p-0">
                 <circle
-                  className="text-primaryColor/50 "
+                  className="text-primaryColorL dark:text-primaryColor/50"
                   strokeWidth="5"
                   stroke="currentColor"
                   fill="transparent"

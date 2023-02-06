@@ -15,7 +15,7 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
   return (
     <div className="max-h[100vh] max-w-[100vw] overflow-hidden">
       <Header hasSidebar={hasSidebar} />
-      <div className="bg-primaryColor">{children}</div>
+      <div className="bg-primaryColorL dark:bg-primaryColor">{children}</div>
       {openModalTask && <TaskModal />}
       {openModalCollection && (
         <CollectionModal open={openModalCollection.type} />

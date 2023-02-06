@@ -55,26 +55,26 @@ const Collections: NextPage = () => {
             <div className="mx-auto h-[100%] w-full max-w-3xl overflow-y-scroll  px-2 pb-10 scrollbar-hide md:px-0">
               <div className="pt-10">
                 <div className="mb-6 flex flex-col gap-5 md:gap-12">
-                  <div className="flex items-center justify-between  text-textColor">
+                  <div className="flex items-center justify-between text-textColorL dark:text-textColor">
                     <h3 className="text-3xl font-bold">Collections</h3>
                     <div className="relative" onClick={() => setOpenSetting((prev) => !prev)}>
                       <EllipsisHorizontalIcon className="withHover h-8 w-8" />
                       {openSetting && (
-                          <div className="absolute bottom-[-55px] right-0 z-50 w-[110px] overflow-hidden rounded-md bg-secondaryColor shadow-lg">
+                          <div className="absolute bottom-[-55px] right-0 z-50 w-[110px] overflow-hidden rounded-md bg-secondaryColorL dark:bg-secondaryColor shadow-lg">
                             <p
                               onClick={() =>
                                 setOpenCollectionModal({
                                   type: "ADD",
                                 })
                               }
-                              className="withHover text-sm flex items-center gap-1.5 py-1 px-2 hover:bg-zinc-400 hover:text-green-300"
+                              className="withHover text-sm flex items-center gap-1.5 py-1 px-2 hover:bg-dashboardSecondaryColorL hover:dark:bg-zinc-400 hover:text-green-300"
                             >
                               <span><PlusCircleIcon className="h-5 w-5" /></span>
                               Add new
                             </p>
                             <p
                               onClick={handleDeleteAllCollections}
-                              className="withHover text-sm flex items-center gap-1.5 pt-1 pb-1.5 px-2 hover:bg-zinc-400 hover:text-red-300"
+                              className="withHover text-sm flex items-center gap-1.5 pt-1 pb-1.5 px-2 hover:bg-dashboardSecondaryColorL hover:dark:bg-zinc-400 hover:text-red-300"
                             >
                               <span><TrashIcon className="h-5 w-5" /></span>
                               Delete all
@@ -88,8 +88,8 @@ const Collections: NextPage = () => {
                     <button
                       className={`${
                         viewMode === 0
-                          ? "bg-dashboardSecondaryColor"
-                          : "border-2 border-secondaryColor bg-transparent shadow-md"
+                          ? "dark:bg-dashboardSecondaryColor bg-dashboardSecondaryColorL"
+                          : "border-2 border-[#F2DEBA] dark:border-secondaryColor bg-transparent shadow-md"
                       } dashboardBtn`}
                       onClick={() => viewMode !== 0 && setViewMode(0)}
                     >
@@ -98,8 +98,8 @@ const Collections: NextPage = () => {
                     <button
                       className={`${
                         viewMode === 1
-                          ? "bg-dashboardSecondaryColor"
-                          : "border-2 border-secondaryColor bg-transparent shadow-md"
+                          ? "dark:bg-dashboardSecondaryColor bg-dashboardSecondaryColorL"
+                          : "border-2 border-[#F2DEBA] dark:border-secondaryColor bg-transparent shadow-md"
                       } dashboardBtn`}
                       onClick={() => viewMode !== 1 && setViewMode(1)}
                     >
@@ -136,7 +136,7 @@ border-[3px] border-secondaryColor text-3xl text-white/60"
 
                       <div
                         className="withHover flex h-[105px] items-center justify-center rounded-3xl
-                       border-[3px] border-secondaryColor text-3xl text-white/60"
+                       border-[3px] border-[#F2DEBA] dark:border-secondaryColor text-3xl text-textColorL dark:text-white/60"
                         onClick={() => setOpenCollectionModal({ type: "ADD" })}
                       >
                         +

@@ -167,14 +167,14 @@ const Sidebar = () => {
           ? "absolute translate-x-[-100%]"
           : "absolute md:relative translate-x-[0] z-50"
       } 
-     transform overflow-y-visible  bg-secondaryColor duration-150 ease-linear`}
+     transform overflow-y-visible bg-secondaryColorL  dark:bg-secondaryColor duration-150 ease-linear`}
     >
       <div
         className="max-h-[93vh] overflow-y-scroll pt-8 scrollbar-hide"
         ref={sidebarRef}
       >
         <div className="mb-5 flex items-center gap-3 pl-8">
-          <h1 className="text-2xl font-semibold text-textColor/80">
+          <h1 className="text-2xl font-semibold text-textColorL dark:text-textColor/80">
             Collections
           </h1>
           <div
@@ -185,7 +185,7 @@ const Sidebar = () => {
               })
             }
           >
-            <PlusCircleIcon className="withHover h-7 w-7 text-textColor/80" />
+            <PlusCircleIcon className="withHover h-7 w-7 text-textColorL dark:text-textColor/80" />
           </div>
         </div>
         {collections && collections.length > 0 ? (
@@ -200,10 +200,10 @@ const Sidebar = () => {
                 <SortableItem key={item.id} id={item.id!}>
                   <ActiveLink
                     href={`/collections/${item.slug}`}
-                    activeClassName="bg-gray-600"
+                    activeClassName="bg-primaryColorL/60 dark:bg-gray-600"
                   >
                     <div
-                      className="withHover flex items-center justify-between py-4 pl-8 pr-5 hover:bg-gray-600"
+                      className="withHover flex items-center justify-between py-4 pl-8 pr-5 hover:bg-primaryColorL hover:dark:bg-gray-600"
                       onContextMenu={(e) => {
                         e.preventDefault();
                         setShowContextMenu(item);
@@ -212,12 +212,12 @@ const Sidebar = () => {
                     >
                       <div className="withHover flex items-center gap-3">
                         <div
-                          className={` grid place-items-center rounded-md p-2`}
+                          className={` grid place-items-center rounded-md p-2 shadow-md`}
                           style={{ backgroundColor: `${item.color}` }}
                         >
                           {item.icon}
                         </div>
-                        <span className="text-lg font-semibold text-textColor break-words">
+                        <span className="text-lg font-semibold text-textColorL dark:text-textColor break-words">
 
                           {item.title && item.title.length > 20 ? item.title.slice(0,17) + "..." : item.title }
                         </span>
@@ -247,7 +247,7 @@ const Sidebar = () => {
         >
           <div
             className="flex cursor-pointer items-center gap-2 bg-primaryColor px-3 py-1.5
-           text-textColor/80  hover:bg-gray-600 hover:text-textColor"
+           text-textColor/80 hover:bg-gray-600 hover:text-textColor"
             onClick={handleToggleIsFavourite}
           >
             {showContextMenu.isFavourite ? (

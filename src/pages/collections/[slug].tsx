@@ -164,12 +164,12 @@ const CollectionDetail = () => {
                     <div className="flex items-center justify-between  text-textColor">
                       <div className="flex items-center gap-4">
                         <div
-                          className="withHover rounded-lg bg-secondaryColor p-3"
+                          className="withHover rounded-lg bg-secondaryColorL dark:bg-secondaryColor p-3"
                           onClick={() => router.push("/collections")}
                         >
-                          <ChevronLeftIcon className="h-6 w-6 text-textColor" />
+                          <ChevronLeftIcon className="h-6 w-6 text-textColorL dark:text-textColor" />
                         </div>
-                        <h3 className="flex items-center gap-2 max-w-2xl break-words text-3xl font-bold">
+                        <h3 className="flex items-center text-textColorL dark:text-textColor gap-2 max-w-2xl break-words text-3xl font-bold">
                           {data?.title}
                           {isFavourite && (
                             <div>
@@ -182,7 +182,7 @@ const CollectionDetail = () => {
                         className="relative"
                         onClick={() => setOpenSetting((prev) => !prev)}
                       >
-                        <EllipsisHorizontalIcon className="withHover h-8 w-8" />
+                        <EllipsisHorizontalIcon className="text-textColorL dark:text-textColor withHover h-8 w-8" />
                         {openSetting && (
                           <div className="absolute bottom-[-80px] right-0 z-50 w-[115px] overflow-hidden rounded-md bg-secondaryColor shadow-lg">
                             <p
@@ -227,14 +227,14 @@ const CollectionDetail = () => {
                     </div>
 
                     <div
-                      className="withHover flex w-full items-center gap-3 rounded-2xl border-[1px] border-secondaryColor/80
+                      className="withHover flex w-full items-center gap-3 rounded-2xl border-[1px] border-[#F2DEBA] dark:border-secondaryColor/80
                    p-3"
                       onClick={() => setOpenModal({ type: "ADD" })}
                     >
-                      <div className="w-fit rounded-lg bg-tertiaryColor p-2">
+                      <div className="w-fit rounded-lg bg-tertiaryColorL dark:bg-tertiaryColor p-2">
                         <PlusIcon className="h-5 w-5 text-textColor" />
                       </div>
-                      <p className="text-lg font-medium text-white/60">
+                      <p className="text-lg font-medium text-textColorL/60 dark:text-white/60">
                         Add a task
                       </p>
                     </div>
