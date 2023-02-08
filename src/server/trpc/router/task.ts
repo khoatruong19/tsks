@@ -90,6 +90,31 @@ export const taskRouter = router({
       });
     }),
 
+  getAllTasksByUser: protectedProcedure
+  .query(({ ctx}) => {
+    return ctx.prisma.task.findMany({
+      where: {
+        userId: ctx.session.user.id,
+      },
+      orderBy: {
+        children: {
+          _count: "desc"
+        },
+      },
+      include: {
+        collection: {
+          select:{
+            title: true,
+            icon: true,
+            color: true,
+            slug: true
+          }
+        },
+        children: true
+      }
+    });
+  }),
+
   getAllTodayTasks: protectedProcedure.query(async ({ ctx }) => {
     const startDay = new Date(new Date().setHours(0, 0, 0, 0)).toISOString();
     const endDay = new Date(new Date().setHours(23, 59, 59, 999)).toISOString();
