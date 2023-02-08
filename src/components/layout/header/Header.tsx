@@ -14,6 +14,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { openSidebarAtom, openTaskModal, themeMode } from "../../../store";
 import ActiveLink from "./ActiveLink";
+import SearchInput from "./SearchInput";
 
 interface IProps {
   hasSidebar: boolean;
@@ -25,40 +26,50 @@ const Header = ({ hasSidebar }: IProps) => {
   const [openLogout, setOpenLogout] = useState(false);
   const { data } = useSession();
   const router = useRouter();
-  const [theme, setTheme] = useAtom(themeMode)
+  const [theme, setTheme] = useAtom(themeMode);
 
-  const toggleTheme = () => {
-    if (localStorage.theme === 'dark') {
-      document.documentElement.classList.remove('dark')
-      localStorage.setItem('theme', 'light')
-      setTheme('light')
+  const [openSearch, setOpenSearch] = useState(false);
+
+  const handleToggleTheme = () => {
+    if (localStorage.theme === "dark") {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+      setTheme("light");
     } else {
-      document.documentElement.classList.add('dark')
-      localStorage.setItem('theme', 'dark')
-      setTheme('dark')
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+      setTheme("dark");
     }
-  }
+  };
+
+  const handleCloseSearch = () => setOpenSearch(false)
 
   const handleLogout = () => {
     router.replace("/login");
     signOut();
   };
   return (
-    <div className="bg-secondaryColorL w-full border-b-[1px] border-black/20 dark:bg-secondaryColor px-6 py-4">
-      <div className="flex items-center justify-between ">
+    <div className="w-full border-b-[1px] border-black/20 bg-secondaryColorL dark:bg-secondaryColor">
+      <div className="flex items-center justify-between px-6 h-16">
         <div className="flex items-center gap-6">
           {hasSidebar && (
             <div onClick={() => setOpenSidebar(!openSidebar)}>
               <Bars3Icon className="withHover h-7 w-7 text-textColorL dark:text-textColor" />
             </div>
           )}
-          <ActiveLink activeClassName="text-textColorL dark:text-textColor" href="/">
+          <ActiveLink
+            activeClassName="text-textColorL dark:text-textColor"
+            href="/"
+          >
             <div className="flex cursor-pointer items-center gap-2 ">
               <Squares2X2Icon className="h-7 w-7" />
               <span className="font-medium">Dashboard</span>
             </div>
           </ActiveLink>
-          <ActiveLink href="/collections" activeClassName="text-textColorL dark:text-textColor">
+          <ActiveLink
+            href="/collections"
+            activeClassName="text-textColorL dark:text-textColor"
+          >
             <div className="flex cursor-pointer items-center gap-2">
               <ClipboardDocumentIcon className="h-7 w-7" />
               <span className="font-medium ">Collections</span>
@@ -66,18 +77,20 @@ const Header = ({ hasSidebar }: IProps) => {
           </ActiveLink>
         </div>
 
-        <div className="hidden items-center gap-5 lg:inline-flex text-textColorL dark:text-textColor">
+        <div className="flex items-center gap-5 text-textColorL dark:text-textColor">
           <div
             className="withHover gradientBgColor grid h-7 w-7 place-items-center rounded-md shadow-md"
             onClick={() => setOpenModal({ type: "ADD" })}
           >
             <PlusIcon className="h-5 w-5 text-secondaryColorL" />
           </div>
-          <div>
-            <MagnifyingGlassIcon className="h-6 w-6" />
-          </div>
-          <div onClick={toggleTheme} className="withHover ">
-            {theme === "light" ? <MoonIcon className="h-6 w-6  text-gray-500"/> : <SunIcon className="h-6 w-6 text-[#FAD6A5]" />}
+          <SearchInput openSearch={openSearch} setOpenSearch={setOpenSearch} />
+          <div onClick={handleToggleTheme} className="withHover ">
+            {theme === "light" ? (
+              <MoonIcon className="h-6 w-6  text-gray-500" />
+            ) : (
+              <SunIcon className="h-6 w-6 text-[#FAD6A5]" />
+            )}
           </div>
           <div className="relative">
             <div
