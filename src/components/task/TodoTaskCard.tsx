@@ -180,7 +180,7 @@ const TodoTaskCard = ({ task, deleteTask,show }: IProps) => {
                 {task.content}
               </p>
               <div className="flex w-[100%]  items-center justify-between">
-                <div className="mt-1 flex items-center gap-4 text-white/70">
+                <div className="mt-1 flex items-center gap-4 text-textColorL/80 dark:text-white/70">
                   {task.children && task.children.length > 0 && (
                     <div className="flex items-center gap-1.5">
                       <RectangleGroupIcon className="h-5 w-5" />
