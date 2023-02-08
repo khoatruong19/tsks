@@ -14,5 +14,6 @@ export const openCollectionModal = atom<{
 } | null>(null);
 
 export const collectionsList = atom<Partial<Collection>[]>([]);
+export const tasksList = atom<(Task & {children: Task[], collection: Partial<Collection>})[]>([]);
 
 export const themeMode = atom("light")
