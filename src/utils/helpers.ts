@@ -40,3 +40,10 @@ export const formatDateToString = (date: Date) => {
   if (isYesterday(date)) return "Yesterday";
   else return moment(date).locale('vi').format("L");
 };
+
+
+export const formatTextLength = (str = "", len: number, threeDot = false) => {
+  const addDot = threeDot ? "..." : "" 
+  if(str.length > len) return str.slice(0, len) + addDot
+  return str
+} 
