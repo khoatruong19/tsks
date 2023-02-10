@@ -38,7 +38,7 @@ const SearchInput = ({ openSearch, setOpenSearch }: IProps) => {
       >
         <MagnifyingGlassIcon className="h-6 w-6" />
       </div>
-      <div className={`relative w-[200px] transition-all duration-75 ease-in-out md:w-[300px] lg:w-[450px] ${!openSearch && "hidden"}`}>
+      <div className={`relative w-[200px] transition-all duration-75 ease-in-out md:w-[350px] lg:w-[450px] ${!openSearch && "hidden"}`}>
         <div className="flex h-10 items-center gap-1.5 rounded-sm bg-primaryColorL py-1 px-2 dark:bg-primaryColor">
           <MagnifyingGlassIcon className="h-6 w-6 text-textColorL dark:text-gray-500" />
           <input

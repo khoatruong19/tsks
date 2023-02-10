@@ -159,35 +159,35 @@ const CollectionDetail = () => {
               {isLoading ? (
                 <Loader />
               ) : (
-                <div className="pt-10">
+                <div className="pt-6 md:pt-10 px-3">
                   <div className="mb-6 flex flex-col gap-12 overflow-hidden">
-                    <div className="flex items-center justify-between  text-textColor">
-                      <div className="flex items-center gap-4">
+                    <div className="flex flex-row  md:flex-row md:items-center justify-between  text-textColor">
+                      <div className="flex md:items-center md:flex-row flex-col items-start gap-4">
                         <div
-                          className="withHover rounded-lg bg-secondaryColorL dark:bg-secondaryColor p-3"
+                          className="withHover rounded-lg bg-secondaryColorL dark:bg-secondaryColor p-3 shadow-md"
                           onClick={() => router.push("/collections")}
                         >
                           <ChevronLeftIcon className="h-6 w-6 text-textColorL dark:text-textColor" />
                         </div>
-                        <h3 className="flex items-center text-textColorL dark:text-textColor gap-2 max-w-2xl break-all text-3xl font-bold">
+                        <h3 className=" text-textColorL dark:text-textColor gap-1 max-w-2xl break-all text-3xl font-bold">
                           {data?.title}
                           {isFavourite && (
-                            <div>
-                              <StarIcon className="h-5 w-5 text-yellow-400" />
-                            </div>
+                            <span className="ml-1">
+                              ⭐
+                            </span>
                           )}
                         </h3>
                       </div>
                       <div
-                        className="relative"
+                        className="absolute right-2 md:relative"
                         onClick={() => setOpenSetting((prev) => !prev)}
                       >
-                        <EllipsisHorizontalIcon className="text-textColorL dark:text-textColor withHover h-8 w-8" />
+                        <EllipsisHorizontalIcon className="mt-2 text-textColorL dark:text-textColor withHover h-8 w-8  md:mt-0" />
                         {openSetting && (
-                          <div className="absolute bottom-[-80px] text-textColorL dark:text-textColor right-0 z-50 w-[115px] overflow-hidden rounded-md bg-secondaryColorL dark:bg-secondaryColor shadow-lg">
+                          <div className="absolute md:bottom-[-95px] text-textColorL dark:text-textColor right-0 z-50 w-[115px] overflow-hidden rounded-md bg-secondaryColorL dark:bg-secondaryColor shadow-lg">
                             <p
                               onClick={handleToggleIsFavourite}
-                              className="withHover flex items-center gap-1.5 py-1 px-2 text-sm hover:bg-dashboardSecondaryColorL hover:dark:bg-zinc-400 hover:text-pink-300"
+                              className="withHover flex items-center gap-1.5 py-1.5 px-2 text-sm hover:bg-dashboardSecondaryColorL hover:dark:bg-zinc-400 hover:text-pink-300"
                             >
                               <span>
                                 {!isFavourite ? (
@@ -205,7 +205,7 @@ const CollectionDetail = () => {
                                   collection: data!,
                                 })
                               }
-                              className="withHover flex items-center gap-1.5 py-1 px-2 text-sm hover:bg-dashboardSecondaryColorL hover:dark:bg-zinc-400 hover:text-amber-300"
+                              className="withHover flex items-center gap-1.5 py-1.5 px-2 text-sm hover:bg-dashboardSecondaryColorL hover:dark:bg-zinc-400 hover:text-amber-300"
                             >
                               <span>
                                 <PencilIcon className="h-5 w-5" />
@@ -214,7 +214,7 @@ const CollectionDetail = () => {
                             </p>
                             <p
                               onClick={handleDeleteCollection}
-                              className="withHover flex items-center gap-1.5 px-2 pt-1 pb-1.5 text-sm hover:bg-dashboardSecondaryColorL hover:dark:bg-zinc-400 hover:text-red-300"
+                              className="withHover flex items-center gap-1.5 px-2 pt-1.5 pb-1.5 text-sm hover:bg-dashboardSecondaryColorL hover:dark:bg-zinc-400 hover:text-red-300"
                             >
                               <span>
                                 <TrashIcon className="h-5 w-5" />

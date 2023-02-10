@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Collection } from "@prisma/client";
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 import { useAtom } from "jotai";
@@ -118,24 +120,24 @@ const CollectionModal = ({ open }: { open: string | null }) => {
   }, [modalMode]);
 
   useEffect(() => {
-    const handleCloseAllPicker = () => {
-      setOpenEmojiPicker(false);
-      setOpenColorPicker(false);
+    const handleCloseAll = () => {
+        setOpenEmojiPicker(false);
+        setOpenColorPicker(false);
     };
 
     if (containerRef && containerRef.current) {
-      containerRef.current.addEventListener("click", handleCloseAllPicker);
+      containerRef.current.addEventListener("click", handleCloseAll);
     }
     return () => {
       if (containerRef && containerRef.current)
-        containerRef.current.removeEventListener("click", handleCloseAllPicker);
+        containerRef.current.removeEventListener("click", handleCloseAll);
     };
   }, [containerRef]);
 
   return (
     <div
       ref={containerRef}
-      className="absolute top-0 left-0 z-[99] h-[100vh] w-[100vw] bg-black/60"
+      className="absolute top-0 left-0 z-[99] h-[100vh] w-[100vw] bg-black/60 p-1 "
     >
       <div className="mx-auto mt-52 w-full max-w-[500px] rounded-3xl bg-primaryColorL dark:bg-primaryColor shadow-2xl">
         <form onSubmit={handleSubmitForm} className="px-5 py-7">

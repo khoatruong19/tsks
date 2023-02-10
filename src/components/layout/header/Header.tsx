@@ -42,42 +42,42 @@ const Header = ({ hasSidebar }: IProps) => {
     }
   };
 
-  const handleCloseSearch = () => setOpenSearch(false)
-
   const handleLogout = () => {
     router.replace("/login");
     signOut();
   };
   return (
     <div className="w-full border-b-[1px] border-black/20 bg-secondaryColorL dark:bg-secondaryColor">
-      <div className="flex items-center justify-between px-6 h-16">
-        <div className="flex items-center gap-6">
+      <div className="flex items-center justify-between px-3 lg:px-6  h-16">
+        <div className="flex items-center md:gap-2 lg:gap-4 xl:gap-6 mr-2">
           {hasSidebar && (
             <div onClick={() => setOpenSidebar(!openSidebar)}>
               <Bars3Icon className="withHover h-7 w-7 text-textColorL dark:text-textColor" />
             </div>
           )}
-          <ActiveLink
-            activeClassName="text-textColorL dark:text-textColor"
-            href="/"
-          >
-            <div className="flex cursor-pointer items-center gap-2 ">
-              <Squares2X2Icon className="h-7 w-7" />
-              <span className="font-medium">Dashboard</span>
-            </div>
-          </ActiveLink>
-          <ActiveLink
-            href="/collections"
-            activeClassName="text-textColorL dark:text-textColor"
-          >
-            <div className="flex cursor-pointer items-center gap-2">
-              <ClipboardDocumentIcon className="h-7 w-7" />
-              <span className="font-medium ">Collections</span>
-            </div>
-          </ActiveLink>
+          <div className="hidden md:flex items-center md:gap-2 lg:gap-4 xl:gap-6">
+            <ActiveLink
+              activeClassName="text-textColorL dark:text-textColor"
+              href="/"
+            >
+              <div className="flex cursor-pointer items-center gap-1 lg:gap-2 ">
+                <Squares2X2Icon className="h-7 w-7" />
+                <span className="font-medium">Dashboard</span>
+              </div>
+            </ActiveLink>
+            <ActiveLink
+              href="/collections"
+              activeClassName="text-textColorL dark:text-textColor"
+            >
+              <div className="flex cursor-pointer items-center gap-1 lg:gap-2">
+                <ClipboardDocumentIcon className="h-7 w-7" />
+                <span className="font-medium ">Collections</span>
+              </div>
+            </ActiveLink>
+          </div>
         </div>
 
-        <div className="flex items-center gap-5 text-textColorL dark:text-textColor">
+        <div className="flex items-center ml-auto gap-3 lg:gap-4 xl:gap-5 text-textColorL dark:text-textColor">
           <div
             className="withHover gradientBgColor grid h-7 w-7 place-items-center rounded-md shadow-md"
             onClick={() => setOpenModal({ type: "ADD" })}
@@ -101,7 +101,7 @@ const Header = ({ hasSidebar }: IProps) => {
             </div>
             {openLogout && (
               <div
-                className="withHover absolute left-[-45px] bottom-[-45px] z-[999] rounded-md bg-white/70 px-3 py-2 
+                className="withHover absolute left-[-45px] bottom-[-45px] z-[999] rounded-md bg-white px-3 py-2 
             font-semibold text-primaryColor shadow-lg"
                 onClick={handleLogout}
               >

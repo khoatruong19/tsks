@@ -17,11 +17,11 @@ const Dashboard = () => {
     <div className="flex">
       <Sidebar />
       <div className="h-[calc(100vh_-_65px)] w-full overflow-hidden">
-        <div className="mx-auto h-[100%] w-full max-w-3xl overflow-y-scroll  pb-8 scrollbar-hide">
+        <div className="mx-auto h-[100%] w-full max-w-3xl overflow-y-scroll pb-8 scrollbar-hide px-3 md:px-4">
           <div className="pt-10">
             <div className="mb-6 flex flex-col gap-12 text-textColorL dark:text-textColor">
               <div className="flex items-center justify-between ">
-                <h3 className="text-3xl font-bold" onClick={() => signOut()}>
+                <h3 className="text-3xl font-bold " onClick={() => signOut()}>
                   Dashboard 
                 </h3>
                 <div>

@@ -7,10 +7,12 @@ import TaskModal from "../task/TaskModal";
 import Header from "./header/Header";
 import {useEffect} from "react"
 import { trpc } from "../../utils/trpc";
+import { useMediaQuery } from 'react-responsive'
 
 const MainLayout: FC<PropsWithChildren> = ({ children }) => {
   const router = useRouter();
-  const hasSidebar = router.pathname !== "/collections";
+  const isMobile = useMediaQuery({ maxWidth: 767 })
+  const hasSidebar = isMobile || router.pathname !== "/collections";
   const [openModalTask] = useAtom(openTaskModal);
   const [openModalCollection] = useAtom(openCollectionModal);
   const {data, isLoading} = trpc.task.getAllTasksByUser.useQuery()
@@ -25,7 +27,7 @@ const MainLayout: FC<PropsWithChildren> = ({ children }) => {
   return (
     <div className="max-h[100vh] max-w-[100vw] overflow-hidden">
       <Header hasSidebar={hasSidebar} />
-      <div className="bg-primaryColorL dark:bg-primaryColor">{children}</div>
+      <div className={`bg-primaryColorL dark:bg-primaryColor`}>{children}</div>
       {openModalTask && <TaskModal />}
       {openModalCollection && (
         <CollectionModal open={openModalCollection.type} />

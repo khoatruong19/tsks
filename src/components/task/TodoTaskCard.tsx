@@ -29,6 +29,7 @@ import ChevronController from "../others/ChevronController";
 import {toast} from "react-toastify"
 import { messages, toastifyErrorStyles, toastifySuccessStyles } from "../../utils/constants";
 import { useRouter } from "next/router";
+import { useMediaQuery } from "react-responsive";
 
 interface IProps {
   task: Task & { children?: Task[], collection?: {slug: string} };
@@ -50,6 +51,8 @@ const TodoTaskCard = ({ task, deleteTask,show }: IProps) => {
       },
     })
   );
+  const isMobileOrTablet = useMediaQuery({ maxWidth: 1023 })
+
 
   const containerRef = useRef<HTMLDivElement>(null);
   const router = useRouter()
@@ -108,7 +111,7 @@ const TodoTaskCard = ({ task, deleteTask,show }: IProps) => {
 
   const openSubTaskActions = (id: string) => {
     const subTask = document.getElementById(`sub-task-${id}`);
-    if (subTask) {
+    if (!isMobileOrTablet && subTask) {
       subTask.classList.remove("hidden");
       subTask.classList.add("flex");
     }
@@ -116,7 +119,7 @@ const TodoTaskCard = ({ task, deleteTask,show }: IProps) => {
 
   const closeSubTaskActions = (id: string) => {
     const subTask = document.getElementById(`sub-task-${id}`);
-    if (subTask) {
+    if (!isMobileOrTablet && subTask) {
       subTask.classList.add("hidden");
       subTask.classList.remove("flex");
     }
@@ -169,11 +172,11 @@ const TodoTaskCard = ({ task, deleteTask,show }: IProps) => {
                 onChange={() => toggleDone(task)}
                 disabled={show}
               />
-              <span className="checkmark border-[3px] border-primaryColor"></span>
+              <span className="checkmark border-[3px] border-primaryColorL dark:border-primaryColor shadow-sm"></span>
             </label>
             <div className="w-[100%]">
               <p
-                className={`text-lg font-medium text-textColorL/90 dark:text-textColor/90 ${
+                className={`text-lg font-medium text-textColorL/90 dark:text-textColor/90 break-all break-words ${
                   task.done && "lineThroughWhite line-through"
                 }`}
               >
@@ -272,7 +275,7 @@ const TodoTaskCard = ({ task, deleteTask,show }: IProps) => {
                           </label>
                           <div>
                             <p
-                              className={`text-lg font-medium text-textColorL dark:text-textColor/90 ${
+                              className={`text-lg font-medium text-textColorL dark:text-textColor/90 break-all break-words${
                                 item.done && "lineThroughWhite line-through"
                               }`}
                             >
@@ -282,7 +285,7 @@ const TodoTaskCard = ({ task, deleteTask,show }: IProps) => {
                         </div>
                         <div
                           id={`sub-task-${item.id}`}
-                          className="mt-1 hidden items-center gap-2"
+                          className={`mt-1 ${isMobileOrTablet ? 'flex' : 'hidden'} items-center gap-2`}
                         >
                           <div
                             className="withHover flex items-center gap-1.5  text-green-300"

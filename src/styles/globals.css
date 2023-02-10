@@ -15,7 +15,7 @@
 }
 
 
-.gradientBgColor{
+.gradientBgColor {
     @apply bg-gradient-to-r dark:from-indigo-500 dark:to-tertiaryColor from-[#6D9886] to-[#C58940];
 }
 
@@ -79,22 +79,28 @@
   text-decoration-thickness: 2px;
 }
 
-.react-calendar {
+.calendar-dark {
   background: #393e46 !important;
+
+  .react-calendar__navigation__label:hover {
+    background: #222831 !important;
+  };
+
+  .react-calendar__navigation__arrow:hover {
+    background: #222831 !important;
+  };
+
+  .react-calendar__navigation__arrow:disabled {
+    background: #222831 !important;
+  };
+
+  .react-calendar__tile:hover {
+    background: #222831 !important;
+  };
+
+  .react-calendar__tile:disabled {
+    background: #222831 !important;
+  }
 }
 
-.react-calendar__navigation__label:hover {
-  background: #222831 !important;
-}
-.react-calendar__navigation__arrow:hover {
-  background: #222831 !important;
-}
-.react-calendar__navigation__arrow:disabled {
-  background: #222831 !important;
-}
-.react-calendar__tile:hover {
-  background: #222831 !important;
-}
-.react-calendar__tile:disabled {
-  background: #222831 !important;
-}
+

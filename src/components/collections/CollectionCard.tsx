@@ -17,7 +17,7 @@ const CollectionCard = ({ collection }: IProps) => {
   )?.length;
   return (
     <div
-      className="withHover rounded-3xl bg-secondaryColorL dark:bg-secondaryColor shadow-md"
+      className="withHover rounded-3xl bg-secondaryColorL dark:bg-secondaryColor shadow-md w-[75%] mx-auto md:w-full"
       onClick={() => router.push(`/collections/${collection.slug}`)}
     >
       <div className=" p-4 md:p-6">

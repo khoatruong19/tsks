@@ -32,6 +32,7 @@
     "react-calendar": "^4.0.0",
     "react-color-palette": "^6.2.0",
     "react-dom": "18.2.0",
+    "react-responsive": "^9.0.2",
     "react-spinners": "^0.13.6",
     "react-toastify": "^9.1.1",
     "superjson": "1.9.1",

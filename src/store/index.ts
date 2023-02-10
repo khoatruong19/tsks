@@ -1,7 +1,7 @@
 import { Collection, Task } from "@prisma/client";
 import { atom } from "jotai";
 
-export const openSidebarAtom = atom(true);
+export const openSidebarAtom = atom(false);
 
 export const openTaskModal = atom<{
   type: "ADD" | "UPDATE" | "ADD_SUB_TASK" | "UPDATE_SUB_TASK";

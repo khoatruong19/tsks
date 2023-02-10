@@ -147,7 +147,7 @@ const StatisticChart = () => {
             className="relative"
             onClick={() => setShowTimeSetting((prev) => !prev)}
           >
-            <div className="withHover flex items-center gap-2 text-white/60">
+            <div className="withHover flex items-center gap-2 text-textColorL/70 dark:text-white/60">
               <div>{TIME_RANGE[range]}</div>
               {!showTimeSetting ? (
                 <ChevronDownIcon className="h-5 w-5" />
@@ -157,16 +157,16 @@ const StatisticChart = () => {
             </div>
             
             {showTimeSetting && (
-              <div className="absolute bottom-[-65px] right-0 z-50 w-[110px] text-white/60 overflow-hidden rounded-md bg-primaryColor shadow-lg">
+              <div className="absolute bottom-[-65px] right-0 z-50 w-[110px] text-[#F2DEBA] dark:text-white/60 overflow-hidden rounded-md bg-primaryColorL dark:bg-primaryColor shadow-lg">
                 {(Object.keys(TIME_RANGE) as Array<keyof typeof TIME_RANGE>).map((value) => (
                 <p
-                  className={`${range === value && 'bg-dashboardSecondaryColor/60'} withHover flex items-center gap-2 pl-2 pt-1 pb-1.5 text-sm hover:bg-zinc-400 hover:text-red-300`}
+                  className={`${range === value && 'bg-dashboardSecondaryColorL/80 dark:bg-dashboardSecondaryColor/60'} withHover flex items-center gap-2 pl-2 pt-1 pb-1.5 text-sm hover:bg-zinc-400 hover:text-red-300`}
                   key={value}
                   onClick={() => setRange(value)}
                 >
                   {TIME_RANGE[value]}
                   {range === value && (
-                    <span><CheckIcon className="w-4 h-4 text-tertiaryColor"/></span>
+                    <span><CheckIcon className="w-4 h-4 text-[#C58940] dark:text-tertiaryColor"/></span>
                   )}
                 </p>
                 ))}

@@ -1,12 +1,15 @@
 import Head from "next/head";
 import React from "react";
+import { useMediaQuery } from "react-responsive";
 import MainLayout from "../components/layout/MainLayout";
+import Sidebar from "../components/layout/Sidebar";
 import Loader from "../components/others/Loader";
 import TodoTaskCard from "../components/task/TodoTaskCard";
 import { trpc } from "../utils/trpc";
 
 const FlagsCompleted = () => {
   const { data, isLoading } = trpc.task.getDoneFlagTasksInThisWeek.useQuery();
+  const isDesktop = useMediaQuery({ minWidth: 1024 });
 
   return (
     <>
@@ -14,6 +17,7 @@ const FlagsCompleted = () => {
         <title>Weekly goal tasks completed</title>
       </Head>
       <MainLayout>
+        {!isDesktop && <Sidebar />}
         <div className="h-[calc(100vh_-_65px)] w-full overflow-hidden">
           {isLoading ? (
             <Loader />
@@ -37,7 +41,7 @@ const FlagsCompleted = () => {
                         show
                         key={task.id}
                         task={task}
-                        deleteTask={() => {}}
+                        deleteTask={() => null}
                       />
                     ))}
                 </div>

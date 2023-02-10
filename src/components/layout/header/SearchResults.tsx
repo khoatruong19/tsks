@@ -7,6 +7,7 @@ import { Collection, Task } from "@prisma/client";
 import { useAtom } from "jotai";
 import { useRouter } from "next/router";
 import React, { memo, useMemo } from "react";
+import { useMediaQuery } from "react-responsive";
 import { collectionsList, tasksList } from "../../../store";
 import { formatTextLength } from "../../../utils/helpers";
 
@@ -15,10 +16,27 @@ interface IProps {
   closeSearch: () => void;
 }
 
+enum TASK_TEXT_LENGTHS {
+  mobile = 29,
+  tablet = 35,
+  desktop = 42
+}
+
+enum COLLECTION_TEXT_LENGTHS {
+  mobile = 30,
+  tablet = 35,
+  desktop = 40
+}
+
 const SearchResults = ({ keyword, closeSearch }: IProps) => {
   const [collections, _] = useAtom(collectionsList);
   const [tasks, __] = useAtom(tasksList);
   const router = useRouter();
+  const isMobile = useMediaQuery({ maxWidth: 767 })
+  const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 1023 })
+
+  const taskTextLength = isMobile ? TASK_TEXT_LENGTHS['mobile'] : isTablet ? TASK_TEXT_LENGTHS['tablet'] : TASK_TEXT_LENGTHS['desktop']
+  const collectionTextLength = isMobile ? COLLECTION_TEXT_LENGTHS['mobile'] : isTablet ? COLLECTION_TEXT_LENGTHS['tablet'] : COLLECTION_TEXT_LENGTHS['desktop']
   
   const results = useMemo(() => {
     if (keyword.length > 0) {
@@ -55,7 +73,7 @@ const SearchResults = ({ keyword, closeSearch }: IProps) => {
           </span>
           <div className="">
             <p className="font-semibold flex items-center gap-1">
-              {formatTextLength(task.content, 45, true)}
+              {formatTextLength(task.content, taskTextLength, true)}
               <span className="flex items-center gap-0.5">
                 {task.flag && <FlagIcon className="h-4 w-4 text-red-300" />}
                 {task.done && <CheckIcon className="w-4 h-4 text-blue-300" />}
@@ -69,7 +87,7 @@ const SearchResults = ({ keyword, closeSearch }: IProps) => {
                 <p>{task.collection.icon}</p>
               </div>
               <p className="text-sm italic text-gray-200">
-                {formatTextLength(task.collection.title, 50, true)}
+                {formatTextLength(task.collection.title, collectionTextLength, true)}
               </p>
             </div>
           </div>
@@ -82,7 +100,7 @@ const SearchResults = ({ keyword, closeSearch }: IProps) => {
         className="flex cursor-pointer items-center justify-between gap-1 p-2 hover:bg-secondaryColorL/30"
       >
         <p className="flex items-center gap-1">
-          {formatTextLength(task.content, 25,true)}
+          {formatTextLength(task.content, taskTextLength -15,true)}
           <span className="flex items-center gap-0.5">
             {task.flag && <FlagIcon className="h-4 w-4 text-red-300" />}
             {task.done && <CheckIcon className="w-4 h-4 text-blue-300" />}
@@ -96,7 +114,7 @@ const SearchResults = ({ keyword, closeSearch }: IProps) => {
             <p>{task.collection.icon}</p>
           </div>
           <p className="text-sm italic text-gray-200">
-            {formatTextLength(task.collection.title, 20,true)}
+            {formatTextLength(task.collection.title, collectionTextLength-22,true)}
           </p>
         </div>
       </div>
@@ -116,17 +134,17 @@ const SearchResults = ({ keyword, closeSearch }: IProps) => {
           <p>{collection.icon}</p>
         </div>
         <p className="text-gray-200">
-          {formatTextLength(collection.title, 40)}
+          {formatTextLength(collection.title, collectionTextLength,true)}
         </p>
       </div>
     </div>
   );
 
   return (
-    <div className="gradientBgColor absolute top-12 z-[99999] w-full rounded-sm shadow-lg">
+    <div className="gradientBgColor absolute top-12 z-[99999] w-[145%] md:w-full rounded-sm shadow-lg">
       {(results.foundCollections.length > 0 ||
         results.foundTasks.length > 0) && (
-        <div className="max-h-[70vh] text-secondaryColorL">
+        <div className="max-h-[80vh] overflow-y-auto overflow-x-hidden text-secondaryColorL">
           {results.foundCollections.map((item) => __renderCollection(item))}
           {results.foundTasks.map((item) => __renderTask(item))}
         </div>

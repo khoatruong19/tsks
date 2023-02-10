@@ -6,38 +6,40 @@ import {
   PointerSensor,
   UniqueIdentifier,
   useSensor,
-  useSensors,
+  useSensors
 } from "@dnd-kit/core";
 import {
   arrayMove,
   SortableContext,
-  verticalListSortingStrategy,
+  verticalListSortingStrategy
 } from "@dnd-kit/sortable";
 import {
-  PencilIcon,
+  HeartIcon as OutlineHeartIcon, PencilIcon,
   PlusCircleIcon,
-  TrashIcon,
-  HeartIcon as OutlineHeartIcon,
+  TrashIcon
 } from "@heroicons/react/24/outline";
 import { HeartIcon, StarIcon } from "@heroicons/react/24/solid";
 import { Collection } from "@prisma/client";
-import { useQueryClient } from "@tanstack/react-query";
 import { useAtom } from "jotai";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
 import {
   collectionsList,
   openCollectionModal,
-  openSidebarAtom,
+  openSidebarAtom
 } from "../../store";
+import {
+  messages,
+  toastifyErrorStyles,
+  toastifySuccessStyles
+} from "../../utils/constants";
 import { trpc } from "../../utils/trpc";
 import ActiveLink from "./header/ActiveLink";
 import SortableItem from "./SortableItem";
-import {toast} from "react-toastify"
-import { messages, toastifyErrorStyles, toastifySuccessStyles } from "../../utils/constants";
 
 const Sidebar = () => {
-  const [openSidebar] = useAtom(openSidebarAtom);
+  const [openSidebar, setOpenSidebar] = useAtom(openSidebarAtom);
   const [_, setOpenCollectionModal] = useAtom(openCollectionModal);
   const { data, isLoading } = trpc.collection.getAllCollections.useQuery(
     undefined,
@@ -50,7 +52,6 @@ const Sidebar = () => {
   const deleteCollection = trpc.collection.delete.useMutation();
   const toggleIsFavouriteCollection =
     trpc.collection.toggleIsFavourite.useMutation();
-  const qc = useQueryClient();
   const router = useRouter();
   const [collections, setCollections] = useAtom(collectionsList);
   const [showContextMenu, setShowContextMenu] =
@@ -67,7 +68,7 @@ const Sidebar = () => {
   );
 
   const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event; 
+    const { active, over } = event;
     if (active.id !== over?.id) {
       const activeCollection = collections.find(
         (item) => item.id === active.id
@@ -103,16 +104,18 @@ const Sidebar = () => {
           toast.success(messages.deleteCollection, {
             style: toastifySuccessStyles,
           });
-          const newCollections = collections.filter(item => item.id !== showContextMenu.id)
-          setCollections(newCollections)
+          const newCollections = collections.filter(
+            (item) => item.id !== showContextMenu.id
+          );
+          setCollections(newCollections);
           if (showContextMenu?.slug === router.query.slug)
             router.replace(`/collections`);
         },
-        onError:() => {
+        onError: () => {
           toast.success(messages.errorMessage, {
             style: toastifyErrorStyles,
           });
-        }
+        },
       }
     );
   };
@@ -126,16 +129,24 @@ const Sidebar = () => {
       },
       {
         onSuccess: () => {
-          toast.success(showContextMenu.isFavourite ? messages.unfavouriteCollection : messages.favouriteCollection, {
-            style: toastifySuccessStyles,
-          });
-          qc.invalidateQueries("collection.getAllCollections");
+          toast.success(
+            showContextMenu.isFavourite
+              ? messages.unfavouriteCollection
+              : messages.favouriteCollection,
+            {
+              style: toastifySuccessStyles,
+            }
+          );
+          setCollections(collections.map(collection => {
+            if(collection.id === showContextMenu.id) return {...collection, isFavourite: !showContextMenu.isFavourite}
+            return collection
+          }))
         },
         onError: () => {
           toast.error(messages.errorMessage, {
             style: toastifyErrorStyles,
           });
-        }
+        },
       }
     );
   };
@@ -162,19 +173,34 @@ const Sidebar = () => {
 
   return (
     <div
-      className={` h-[calc(100vh_-_65px)] w-[300px] ${
+      className={` h-[calc(100vh_-_65px)] w-[85%] shadow-md md:w-[450px] lg:w-[30%] ${
         !openSidebar
           ? "absolute translate-x-[-100%]"
-          : "absolute md:relative translate-x-[0] z-50"
+          : "absolute z-50 translate-x-[0] md:relative"
       } 
-     transform overflow-y-visible bg-secondaryColorL  dark:bg-secondaryColor duration-150 ease-linear`}
+     transform overflow-y-visible bg-secondaryColorL  duration-150 ease-linear dark:bg-secondaryColor`}
     >
       <div
-        className="max-h-[93vh] overflow-y-scroll pt-8 scrollbar-hide"
+        className="max-h-[93vh] overflow-y-scroll md:pt-8 scrollbar-hide"
         ref={sidebarRef}
       >
-        <div className="mb-5 flex items-center gap-3 pl-8">
-          <h1 className="text-2xl font-semibold text-textColorL dark:text-textColor/80">
+          <ActiveLink
+            href={`/`}
+            activeClassName="bg-primaryColorL/60 dark:bg-gray-600"
+          >
+        <div className="md:hidden mb-3" onClick={() => setOpenSidebar(false)}>
+
+            <h1 className="pl-5 py-4 text-2xl font-semibold text-textColorL dark:text-textColor/80">
+              Dashboard
+            </h1>
+        </div>
+
+          </ActiveLink>
+        <div className="mb-5 flex items-center gap-3 pl-5 md:pl-8">
+          <h1
+            className="withHover text-2xl font-semibold text-textColorL dark:text-textColor/80"
+            onClick={() => {router.push("/collections"); setOpenSidebar(false)}}
+          >
             Collections
           </h1>
           <div
@@ -203,7 +229,7 @@ const Sidebar = () => {
                     activeClassName="bg-primaryColorL/60 dark:bg-gray-600"
                   >
                     <div
-                      className="withHover flex items-center justify-between py-4 pl-8 pr-5 hover:bg-primaryColorL hover:dark:bg-gray-600"
+                      className="withHover flex items-center justify-between py-4 pl-5 pr-5 hover:bg-primaryColorL hover:dark:bg-gray-600 md:pl-8"
                       onContextMenu={(e) => {
                         e.preventDefault();
                         setShowContextMenu(item);
@@ -217,9 +243,10 @@ const Sidebar = () => {
                         >
                           {item.icon}
                         </div>
-                        <span className="text-lg font-semibold text-textColorL dark:text-textColor break-words">
-
-                          {item.title && item.title.length > 20 ? item.title.slice(0,17) + "..." : item.title }
+                        <span className="break-words text-lg font-semibold text-textColorL dark:text-textColor">
+                          {item.title && item.title.length > 20
+                            ? item.title.slice(0, 17) + "..."
+                            : item.title}
                         </span>
                       </div>
                       {item.isFavourite && (
