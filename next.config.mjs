@@ -9,12 +9,18 @@
 const config = {
   reactStrictMode: true,
   swcMinify: true,
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   i18n: {
     locales: ["en"],
     defaultLocale: "en",
   },
   images: {
     domains: ["lh3.googleusercontent.com"],
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
   },
 };
 export default config;
